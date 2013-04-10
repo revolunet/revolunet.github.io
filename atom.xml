@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[revolunet blob]]></title>
   <link href="http://revolunet.github.io/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-11T01:35:49+02:00</updated>
+  <updated>2013-04-11T01:43:07+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
-    
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
