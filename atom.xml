@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://revolunet.github.io/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-11T01:44:58+02:00</updated>
+  <updated>2013-04-11T02:34:47+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,5 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[A fresh start]]></title>
+    <link href="http://revolunet.github.io/blog/2013/04/11/a-fresh-start/"/>
+    <updated>2013-04-11T01:46:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/04/11/a-fresh-start</id>
+    <content type="html"><![CDATA[<p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we&#8217;ll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
+
+<p>We&#8217;ve got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
+
+<p>140 chars isn&#8217;t long enough.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Welcome :)&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
 </feed>

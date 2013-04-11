@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: news | revolunet blog]]></title>
+  <link href="http://revolunet.github.io/blog/categories/news/atom.xml" rel="self"/>
+  <link href="http://revolunet.github.io/"/>
+  <updated>2013-04-11T02:34:47+02:00</updated>
+  <id>http://revolunet.github.io/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A fresh start]]></title>
+    <link href="http://revolunet.github.io/blog/2013/04/11/a-fresh-start/"/>
+    <updated>2013-04-11T01:46:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/04/11/a-fresh-start</id>
+    <content type="html"><![CDATA[<p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we'll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
+
+<p>We've got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
+
+<p>140 chars isn't long enough.</p>
+
+<p><code>js
+console.log('Welcome :)');
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
