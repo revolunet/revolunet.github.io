@@ -27,7 +27,7 @@ There are several ways to do this. We could dynamically add a stylesheet to the 
 
 But, as we are AngularJS powered, we could simply bind a style tag to a javascript variable so it can be updated dynamically like any other DOM element.
 
-Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the `ng-bind-html-unsafe` that take cares of not escaping the CSS output.
+Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the `ng-bind-html-unsafe` that take cares of not escaping the CSS output and the use of `transform` CSS property to force the use of GPU and improve transition smoothness, especially on mobile devices.
 
 {% jsfiddle UvP54 result,js,html,css %}
 
