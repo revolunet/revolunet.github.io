@@ -23,7 +23,7 @@ module Jekyll
         @sequence = (sequence unless sequence == 'default') || 'js,resources,html,css,result'
         @skin     = (skin unless skin == 'default') || 'light'
         @width    = width || '100%'
-        @height   = height || '300px'
+        @height   = height || '350px'
       end
     end
 
