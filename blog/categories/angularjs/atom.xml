@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://revolunet.github.io/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-30T10:32:23+02:00</updated>
+  <updated>2013-04-30T12:28:52+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -40,7 +40,7 @@
 
 <p>Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output.</p>
 
-<p><iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe></p>
+<p><iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe></p>
 ]]></content>
   </entry>
   

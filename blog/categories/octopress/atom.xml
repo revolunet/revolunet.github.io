@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | revolunet blog]]></title>
   <link href="http://revolunet.github.io/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-30T10:32:23+02:00</updated>
+  <updated>2013-04-30T12:28:52+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -40,9 +40,8 @@
 
 <h1>commit and backup(automatic message)</h1>
 
-<p>git commit -am "<code>date</code>" &amp;&amp; git push origin source</p>
-
-<p>```</p>
+<p>git commit -am "<code>date</code>" &amp;&amp; git push origin source
+```</p>
 ]]></content>
   </entry>
   
