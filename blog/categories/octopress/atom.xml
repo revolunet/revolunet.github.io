@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: octopress | revolunet blog]]></title>
+  <link href="http://revolunet.github.io/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://revolunet.github.io/"/>
+  <updated>2013-04-30T10:32:23+02:00</updated>
+  <id>http://revolunet.github.io/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
+    <link href="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/"/>
+    <updated>2013-04-15T01:46:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet</id>
+    <content type="html"><![CDATA[<p>When you switch to Octopress for blogging there are a very few thing to know :</p>
+
+<p>```bash</p>
+
+<h1>create a new post</h1>
+
+<p>rake new_post['Title of the post']</p>
+
+<h1>create a new page</h1>
+
+<p>rake new_page['Title of the page']</p>
+
+<h1>preview your work</h1>
+
+<p>rake preview</p>
+
+<h1>publish it</h1>
+
+<p>rake generate &amp;&amp; rake deploy</p>
+
+<h1>commit and backup(automatic message)</h1>
+
+<p>git commit -am "<code>date</code>" &amp;&amp; git push origin source</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

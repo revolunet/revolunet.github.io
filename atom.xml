@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://revolunet.github.io/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-11T11:27:52+02:00</updated>
+  <updated>2013-04-30T10:32:23+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
+    <link href="http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
+    <updated>2013-04-30T20:20:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications</id>
+    <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
+
+<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+
+<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
+
+<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
+
+
+<p>As you can see this is a very simple code and the animation is always the same. But typically, if you open a screen in your mobile application, it may appear sliding from the right, and you may then have a &#8216;Back&#8217; button, and in that case, when clicked, the animation <strong>must</strong> be reversed, or you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+
+<p>With the actual AngularJS implementation, the problem is that the <code>ng-view</code> directive, which is heavily used for the AngularJS routing, doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one enter animation and one leave animation for your application view and for the whole applicaiton lifecycle.</p>
+
+<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
+
+<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
+
+<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
+
+<p>But, as we are AngularJS powered, we could simply bind a style tag to a javascript variable so it can be updated dynamically like any other DOM element.</p>
+
+<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output.</p>
+
+<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
+    <link href="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/"/>
+    <updated>2013-04-15T01:46:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet</id>
+    <content type="html"><![CDATA[<p>When you switch to Octopress for blogging there are a very few thing to know :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
+</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># create a new page </span>
+</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># preview your work</span>
+</span><span class='line'>rake preview
+</span><span class='line'>
+</span><span class='line'><span class="c"># publish it</span>
+</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
+</span><span class='line'>
+</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
+</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A fresh start]]></title>
