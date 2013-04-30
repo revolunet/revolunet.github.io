@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://revolunet.github.io/atom.xml" rel="self"/>
   <link href="http://revolunet.github.io/"/>
-  <updated>2013-04-30T13:06:53+02:00</updated>
+  <updated>2013-05-01T00:02:18+02:00</updated>
   <id>http://revolunet.github.io/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,90 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[AngularJS tips'n'tricks part 1]]></title>
+    <link href="http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/"/>
+    <updated>2013-05-01T00:00:00+02:00</updated>
+    <id>http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks</id>
+    <content type="html"><![CDATA[<p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
+
+<p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
+
+<h3>Scopes</h3>
+
+<p>You definitely need to read this article : <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs</a></p>
+
+<h3>Directives</h3>
+
+<p>The official documentation is not crystal clear at first approach but it documents most of what you need to understand: <a href="http://docs.angularjs.org/guide/directive">http://docs.angularjs.org/guide/directive</a>. So read it. And again. And again.</p>
+
+<h3>Watch an object or a list</h3>
+
+<p>If you watch a list or an object with the <code>objectEquality</code> parameter not set, then the <code>$watch</code> callback won&#8217;t be triggered if the object is only updated partially. Setting it to <code>true</code> will trigger it on any modification; this has performance impact so use carefully.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the last `true` means compare by value and not by ref, useful for nested objects :)</span>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;myConfig&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;myConfig changed !&#39;</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
+</span><span class='line'><span class="p">},</span> <span class="kc">true</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Two way data binding attribute without explicit scope declaration.</h3>
+
+<p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
+
+<p>If the scope would be isolated (<code>scope: {}</code>) then you&#8217;d have to use <code>scope.$parent</code> instead of $scope.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Use a callback function with arguments in your directive</h3>
+
+<p>To call a function defined in one of your attribute, declare it in the scope with <code>&amp;</code>.</p>
+
+<p>If you need to pass arguments, you must execute the callback using an object form for the arguments. AngularJS then call the function with your arguments in the correct order comparing your object and the callback declaration.</p>
+
+<p>The following example also demonstrates how to watch multiples values at once.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/HnrV7/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Custom transclusion</h3>
+
+<p>This example shows how to define a custom transclusion function and control its scope.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Announcer/Notifier pattern</h3>
+
+<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (link function called) and destruction (`scope.$destroy called).</p>
+
+<p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/4ULCS/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Many more tricks to come, stay tuned :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
@@ -25,6 +109,9 @@
 <p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
 
 <iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
 
 
 <p>As you can see this is a very simple code and the animation is always the same. But typically, if you open a screen in your mobile application, it may appear sliding from the right, and you may then have a &#8216;Back&#8217; button, and in that case, when clicked, the animation <strong>must</strong> be reversed, or you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
@@ -42,6 +129,9 @@
 <p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transform</code> CSS property to force the use of GPU and improve transition smoothness, especially on mobile devices.</p>
 
 <iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
 
 
 

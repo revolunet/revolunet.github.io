@@ -5,26 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Octopress Cheat Sheet - revolunet blog</title>
+  <title>AngularJS tips'n'tricks part 1 - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="When you switch to Octopress for blogging there are a very few thing to know : 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-# create a new post
-rake new_post[&# &hellip;">
+  <meta name="description" content="In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -33,7 +18,7 @@ rake new_post[&# &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet">
+  <link rel="canonical" href="http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -85,7 +70,7 @@ rake new_post[&# &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Octopress Cheat Sheet</h1>
+      <h1 class="entry-title">AngularJS Tips'n'tricks Part 1</h1>
     
     
       <p class="meta">
@@ -101,7 +86,7 @@ rake new_post[&# &hellip;">
   
 
 
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
+<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -110,38 +95,82 @@ rake new_post[&# &hellip;">
   </header>
 
 
-<div class="entry-content"><p>When you switch to Octopress for blogging there are a very few thing to know :</p>
+<div class="entry-content"><p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
+
+<p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
+
+<h3>Scopes</h3>
+
+<p>You definitely need to read this article : <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs</a></p>
+
+<h3>Directives</h3>
+
+<p>The official documentation is not crystal clear at first approach but it documents most of what you need to understand: <a href="http://docs.angularjs.org/guide/directive">http://docs.angularjs.org/guide/directive</a>. So read it. And again. And again.</p>
+
+<h3>Watch an object or a list</h3>
+
+<p>If you watch a list or an object with the <code>objectEquality</code> parameter not set, then the <code>$watch</code> callback won&#8217;t be triggered if the object is only updated partially. Setting it to <code>true</code> will trigger it on any modification; this has performance impact so use carefully.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
-</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># create a new page </span>
-</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># preview your work</span>
-</span><span class='line'>rake preview
-</span><span class='line'>
-</span><span class='line'><span class="c"># publish it</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span><span class='line'>
-</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the last `true` means compare by value and not by ref, useful for nested objects :)</span>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;myConfig&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;myConfig changed !&#39;</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
+</span><span class='line'><span class="p">},</span> <span class="kc">true</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h3>Two way data binding attribute without explicit scope declaration.</h3>
+
+<p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
+
+<p>If the scope would be isolated (<code>scope: {}</code>) then you&#8217;d have to use <code>scope.$parent</code> instead of $scope.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Use a callback function with arguments in your directive</h3>
+
+<p>To call a function defined in one of your attribute, declare it in the scope with <code>&amp;</code>.</p>
+
+<p>If you need to pass arguments, you must execute the callback using an object form for the arguments. AngularJS then call the function with your arguments in the correct order comparing your object and the callback declaration.</p>
+
+<p>The following example also demonstrates how to watch multiples values at once.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/HnrV7/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Custom transclusion</h3>
+
+<p>This example shows how to define a custom transclusion function and control its scope.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Announcer/Notifier pattern</h3>
+
+<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (link function called) and destruction (`scope.$destroy called).</p>
+
+<p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/4ULCS/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Many more tricks to come, stay tuned :)</p>
 </div>
 
 
@@ -164,12 +193,12 @@ rake new_post[&# &hellip;">
   
 
 
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
+<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+    <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>
   
 </span>
 
@@ -178,7 +207,7 @@ rake new_post[&# &hellip;">
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/" data-via="revolunet" data-counturl="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/" data-via="revolunet" data-counturl="http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="small"></div>
@@ -191,10 +220,8 @@ rake new_post[&# &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/11/a-fresh-start/" title="Previous Post: A fresh start">&laquo; A fresh start</a>
+        <a class="basic-alignment left" href="/blog/2013/04/30/angularjs-animations-mobile-applications/" title="Previous Post: Using AngularJS views animations for mobile applications">&laquo; Using AngularJS views animations for mobile applications</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/04/30/angularjs-animations-mobile-applications/" title="Next Post: Using AngularJS views animations for mobile applications">Using AngularJS views animations for mobile applications &raquo;</a>
       
     </p>
   </footer>
@@ -290,8 +317,8 @@ rake new_post[&# &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/';
-        var disqus_url = 'http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/';
+        var disqus_identifier = 'http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/';
+        var disqus_url = 'http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/';
         var disqus_script = 'embed.js';
       
     (function () {
