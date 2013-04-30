@@ -13,7 +13,7 @@ From now (AngularJS 1.1.4), you can easily animate any directive, just by adding
 
 As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :
 
-{% jsfiddle 8pny4 result,js,html,css %}
+{% jsfiddle 8pny4 result,js,html,css light 300px %}
 
 As you can see this is a very simple code and the animation is always the same. But typically, if you open a screen in your mobile application, it may appear sliding from the right, and you may then have a 'Back' button, and in that case, when clicked, the animation **must** be reversed, or you expose your users to an unexpected behaviour, and an akward #WTF moment.
 

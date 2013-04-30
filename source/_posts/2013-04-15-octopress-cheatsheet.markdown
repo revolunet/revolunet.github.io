@@ -24,5 +24,4 @@ rake generate && rake deploy
 
 # commit and backup(automatic message)
 git commit -am "`date`" && git push origin source
-
 ```
