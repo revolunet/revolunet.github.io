@@ -15,9 +15,9 @@ As a mobile web developer, the first thing that come to mind is animating your m
 
 {% jsfiddle 8pny4 result,js,html,css light 300px %}
 
-As you can see this is a very simple code and the animation is always the same. But typically, if you open a screen in your mobile application, it may appear sliding from the right, and you may then have a 'Back' button, and in that case, when clicked, the animation **must** be reversed, or you expose your users to an unexpected behaviour, and an akward #WTF moment.
+As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a 'Back' button, the user expects the slide animation to be reversed when he touches it. If you don't do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.
 
-With the actual AngularJS implementation, the problem is that the `ng-view` directive, which is heavily used for the AngularJS routing, doesn't handle dynamic `ng-animate` directive at all, despite what says the doc. You can only set the enter and leave animation once, because these [are set at linking time](https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173) in case of the ng-view. And thus, you can only have one enter animation and one leave animation for your application view and for the whole applicaiton lifecycle.
+With the actual AngularJS implementation, there is a problem with the `ng-view` directive, which is heavily used for the AngularJS routing : it doesn't handle dynamic `ng-animate` directive at all, despite what says the doc. You can only set the enter and leave animation once, because these [are set at linking time](https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173) in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.
 
 There are a [few](https://github.com/angular/angular.js/issues/2480) [issues](https://github.com/angular/angular.js/issues/2464) opened and we can hope the team must be working on it and that should be resolved some day.
 
@@ -25,9 +25,9 @@ But an easy workaround to achieve this is to act on the enter and leave CSS clas
 
 There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using `ng-src` attribute but this wouldn't be very efficient due to multiple downloads of the ressource. 
 
-But, as we are AngularJS powered, we could simply bind a style tag to a javascript variable so it can be updated dynamically like any other DOM element.
+But, as we are AngularJS powered, we could simply **bind a style tag to a javascript variable** so it can be updated dynamically like any other DOM element.
 
-Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the `ng-bind-html-unsafe` that take cares of not escaping the CSS output and the use of `transform` CSS property to force the use of GPU and improve transition smoothness, especially on mobile devices.
+Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the `ng-bind-html-unsafe` that take cares of not escaping the CSS output and the use of `transition` and `transform` CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.
 
 {% jsfiddle UvP54 result,js,html,css %}
 

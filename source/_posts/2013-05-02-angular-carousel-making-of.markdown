@@ -43,23 +43,46 @@ When we detect a `touchstart` we just store the event position. On `touchemove` 
 
 The slide movement is made thanks to the CSS `transition` property and uses the CSS `transform` property to force CSS 3D transforms and thus animate using the GPU which make the movement much more smooth especially on mobile devices.
 
+```js
+carousel.css({
+    '-webkit-transform': 'translate3d(' + offset + 'px,0,0)',
+    '-moz-transform': 'translate3d(' + offset + 'px,0,0)',
+    '-ms-transform': 'translate3d(' + offset + 'px,0,0)',
+    '-o-transform': 'translate3d(' + offset + 'px,0,0)',
+    'transform': 'translate3d(' + offset + 'px,0,0)'
+});
+```
+
 **5) adding an indicator to our carousel**
 
-As we already watch the `ng-repeat` expression its quite easy to bind indicators to our carousel. You can enable the indicators with a `rn-carousel-ìndicator="true"` attribute on your `ul`.
+As we already watch the `ng-repeat` expression, its very easy to add data-bound indicators to our carousel. You can enable these by adding a `rn-carousel-ìndicator="true"` attribute on your `ul`.
 
-The indicator is another directive, with `ìtems` and `index` passed in scope and just some CSS.
+The indicators are produced by the `rn-carousel-indicators` directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the `$compile` service before appending it to our container.
 
+It takes `ìtems` and `index` data-bound attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.
+
+```js
+// enable carousel indicator
+var showIndicator = (iAttrs['rnCarouselIndicator']==='true');
+if (showIndicator) {
+    var indicator = $compile("<div id='" + carouselId +"-indicator' " + 
+        " index='carouselIndex' items='carouselItems' rn-carousel-indicators " +
+        " class='rn-carousel-indicator'></div>"
+    )(scope);
+    container.append(indicator);
+}
+```
 **6) offer a two-way data binding for the active slide index**
 
-blabla
+The carousel current index position is data-bound to a `rn-carousel-index` attribute if provided. This allows you to display the carousel position somewhere else, add custom controls, initialise to a different slide...
 
+**7) tests and grunt automation**
 
-**7) tests, grunt automation...**
-
-blabla
+These subjects will have a dedicated article soon :)
 
 
 **Easy isn't it ?**
+
 
 
 There are still somes limitations though : 
