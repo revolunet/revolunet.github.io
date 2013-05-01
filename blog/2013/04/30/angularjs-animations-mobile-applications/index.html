@@ -119,9 +119,9 @@
 <br><br>
 
 
-<p>As you can see this is a very simple code and the animation is always the same. But typically, if you open a screen in your mobile application, it may appear sliding from the right, and you may then have a &#8216;Back&#8217; button, and in that case, when clicked, the animation <strong>must</strong> be reversed, or you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a &#8216;Back&#8217; button, the user expects the slide animation to be reversed when he touches it. If you don&#8217;t do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
 
-<p>With the actual AngularJS implementation, the problem is that the <code>ng-view</code> directive, which is heavily used for the AngularJS routing, doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one enter animation and one leave animation for your application view and for the whole applicaiton lifecycle.</p>
+<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
 
 <p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
 
@@ -129,9 +129,9 @@
 
 <p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
 
-<p>But, as we are AngularJS powered, we could simply bind a style tag to a javascript variable so it can be updated dynamically like any other DOM element.</p>
+<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
 
-<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transform</code> CSS property to force the use of GPU and improve transition smoothness, especially on mobile devices.</p>
+<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
 
 <iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
 
