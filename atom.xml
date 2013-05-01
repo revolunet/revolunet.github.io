@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[revolunet blog]]></title>
-  <link href="http://revolunet.github.io/atom.xml" rel="self"/>
-  <link href="http://revolunet.github.io/"/>
-  <updated>2013-05-01T15:07:38+02:00</updated>
-  <id>http://revolunet.github.io/</id>
+  <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2013-05-01T15:12:37+02:00</updated>
+  <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
     <email><![CDATA[contact@revolunet.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[AngularJS tips'n'tricks part 1]]></title>
-    <link href="http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks/"/>
+    <link href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/"/>
     <updated>2013-05-01T00:00:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/05/01/angular-tips-n-tricks</id>
+    <id>http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks</id>
     <content type="html"><![CDATA[<p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
 
 <p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
@@ -99,9 +99,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
-    <link href="http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
+    <link href="http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
     <updated>2013-04-30T20:20:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications</id>
+    <id>http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications</id>
     <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
 
 <p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
@@ -140,9 +140,9 @@
   
   <entry>
     <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
-    <link href="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/"/>
+    <link href="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/"/>
     <updated>2013-04-15T01:46:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet</id>
+    <id>http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet</id>
     <content type="html"><![CDATA[<p>When you switch to Octopress for blogging there are a very few thing to know :</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -180,9 +180,9 @@
   
   <entry>
     <title type="html"><![CDATA[A fresh start]]></title>
-    <link href="http://revolunet.github.io/blog/2013/04/11/a-fresh-start/"/>
+    <link href="http://blog.revolunet.com/blog/2013/04/11/a-fresh-start/"/>
     <updated>2013-04-11T01:46:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/04/11/a-fresh-start</id>
+    <id>http://blog.revolunet.com/blog/2013/04/11/a-fresh-start</id>
     <content type="html"><![CDATA[<p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we&#8217;ll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
 
 <p>We&#8217;ve got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
