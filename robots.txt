@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://blog.revolunet.com/sitemap.xml 
+Sitemap: http://revolunet.github.io/sitemap.xml 
