@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mobile | revolunet blog]]></title>
-  <link href="http://revolunet.github.io/blog/categories/mobile/atom.xml" rel="self"/>
-  <link href="http://revolunet.github.io/"/>
-  <updated>2013-05-02T10:15:21+02:00</updated>
-  <id>http://revolunet.github.io/</id>
+  <link href="http://blog.revolunet.com/blog/categories/mobile/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2013-05-02T10:16:44+02:00</updated>
+  <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
     <email><![CDATA[contact@revolunet.com]]></email>
@@ -14,105 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Making of the angular-carousel]]></title>
-    <link href="http://revolunet.github.io/blog/2013/05/02/angular-carousel-making-of/"/>
-    <updated>2013-05-02T00:00:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/05/02/angular-carousel-making-of</id>
-    <content type="html"><![CDATA[<p>Our first real life project with AngularJS is a mobile and touch-friendly carousel directive.</p>
-
-<p>The goal is to transform any <code>ng-repeat</code> directive in a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
-
-<p>That means you can convert any kind of ng-repeat template into a carousel, with just 10 LOC :</p>
-
-<p><iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe><br><br></p>
-
-<p>As this project shed some lights on various AngularJS aspects, we'd like to share it with you;</p>
-
-<p>This <code>rn-carousel</code> directive is responsible of :</p>
-
-<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
-
-<p>The directive link function uses the JQlite <code>wraps</code> method to add a container to the original <code>ul</code> element. Theorically, template modification should happen in the directive <code>compile</code> phase, but specifically wrapping the original template here is impossible as it leads to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
-
-<p>We also add some CSS classes to make the ul/li suitable for the carousel and also a carousel instance specific class so we can target it easily later.</p>
-
-<p><strong>2) watching the ng-repeat expression</strong></p>
-
-<p>Because we want to monitor precisely which items are in our carousel, we need to extract and watch the <code>ng-repeat</code> expression. We can then watch that expression and then be notified when the <code>ng-repeat</code> is updated. This is useful to know how many slides we have and also to update our indicators accordingly.</p>
-
-<p>This extraction is done by literally parsing the <code>ng-repeat</code> expression in a generic way. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick.</p>
-
-<p><strong>3) binding touch and click events</strong></p>
-
-<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
-
-<p><strong>4) animating the slides smoothly</strong></p>
-
-<p>When we detect a <code>touchstart</code> we just store the event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and do some control. We then dynamically add CSS styles and classes to move the slides to the new desired position, or restore the current position in some cases.</p>
-
-<p>The slide movement is made thanks to the CSS <code>transition</code> property and uses the CSS <code>transform</code> property to force CSS 3D transforms and thus animate using the GPU which make the movement much more smooth especially on mobile devices.</p>
-
-<p>```js
-carousel.css({</p>
-
-<pre><code>'-webkit-transform': 'translate3d(' + offset + 'px,0,0)',
-'-moz-transform': 'translate3d(' + offset + 'px,0,0)',
-'-ms-transform': 'translate3d(' + offset + 'px,0,0)',
-'-o-transform': 'translate3d(' + offset + 'px,0,0)',
-'transform': 'translate3d(' + offset + 'px,0,0)'
-</code></pre>
-
-<p>});
-```</p>
-
-<p><strong>5) adding an indicator to our carousel</strong></p>
-
-<p>As we already watch the <code>ng-repeat</code> expression, its very easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-ìndicator="true"</code> attribute on your <code>ul</code>.</p>
-
-<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
-
-<p>It takes <code>ìtems</code> and <code>index</code> data-bound attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
-
-<p>```js
-// enable carousel indicator
-var showIndicator = (iAttrs['rnCarouselIndicator']==='true');
-if (showIndicator) {</p>
-
-<pre><code>var indicator = $compile("&lt;div id='" + carouselId +"-indicator' " + 
-    " index='carouselIndex' items='carouselItems' rn-carousel-indicators " +
-    " class='rn-carousel-indicator'&gt;&lt;/div&gt;"
-)(scope);
-container.append(indicator);
-</code></pre>
-
-<p>}
-```
-<strong>6) offer a two-way data binding for the active slide index</strong></p>
-
-<p>The carousel current index position is data-bound to a <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls, initialise to a different slide...</p>
-
-<p><strong>7) tests and grunt automation</strong></p>
-
-<p>These subjects will have a dedicated article soon :)</p>
-
-<p><strong>Easy isn't it ?</strong></p>
-
-<p>There are still somes limitations though :</p>
-
-<ul>
-<li>ony works with ul/li structure</li>
-<li>carousel dimensions is based on the first li detected</li>
-<li>we should implement slides buffering so the ng-repeat is rendered progressively not entirely</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
-    <link href="http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
+    <link href="http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
     <updated>2013-04-30T20:20:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/04/30/angularjs-animations-mobile-applications</id>
+    <id>http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications</id>
     <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
 
 <p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>

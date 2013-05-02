@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: octopress | revolunet blog]]></title>
-  <link href="http://revolunet.github.io/blog/categories/octopress/atom.xml" rel="self"/>
-  <link href="http://revolunet.github.io/"/>
-  <updated>2013-05-02T10:15:21+02:00</updated>
-  <id>http://revolunet.github.io/</id>
+  <link href="http://blog.revolunet.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2013-05-02T10:16:44+02:00</updated>
+  <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
     <email><![CDATA[contact@revolunet.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
-    <link href="http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet/"/>
+    <link href="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/"/>
     <updated>2013-04-15T01:46:00+02:00</updated>
-    <id>http://revolunet.github.io/blog/2013/04/15/octopress-cheatsheet</id>
+    <id>http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet</id>
     <content type="html"><![CDATA[<p>When you switch to Octopress for blogging there are a very few thing to know :</p>
 
 <p>```bash</p>

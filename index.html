@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="If you didn&#8217;t read it yet, please check the part 1 Various normalized attributes : From your directive link or compile function, the iAttrs or &hellip;">
+  <meta name="description" content="In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://revolunet.github.io">
+  <link rel="canonical" href="http://blog.revolunet.com">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -63,7 +63,7 @@
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:revolunet.github.io" />
+    <input type="hidden" name="q" value="site:blog.revolunet.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -79,187 +79,6 @@
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/05/angularjs-tips-n-tricks-2/">AngularJS Tips&#8217;n&#8217;tricks Part 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-05T00:00:00+02:00" pubdate data-updated="true">May 5<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/05/05/angularjs-tips-n-tricks-2/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>If you didn&#8217;t read it yet, please check the part 1</p>
-
-<h3>Various</h3>
-
-<p><strong>normalized attributes</strong> : From your directive link or compile function, the <code>iAttrs</code> or <code>tAttrs</code> objects gives you normalized attributes. This means if you have a <code>data-rn-carousel-index</code> or  <code>rn-carousel-index</code> attribute, you&#8217;ll always get a <code>rnCarouselIndex</code> key.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/02/angular-carousel-making-of/">Making of the Angular-carousel</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-02T00:00:00+02:00" pubdate data-updated="true">May 2<span>nd</span>, 2013</time>
-        
-         | <a href="/blog/2013/05/02/angular-carousel-making-of/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Our first real life project with AngularJS is a mobile and touch-friendly carousel directive.</p>
-
-<p>The goal is to transform any <code>ng-repeat</code> directive in a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
-
-<p>That means you can convert any kind of ng-repeat template into a carousel, with just 10 LOC :</p>
-
-<iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe>
-
-
-<br><br>
-
-
-<p>As this project shed some lights on various AngularJS aspects, we&#8217;d like to share it with you;</p>
-
-<p>This <code>rn-carousel</code> directive is responsible of :</p>
-
-<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
-
-<p>The directive link function uses the JQlite <code>wraps</code> method to add a container to the original <code>ul</code> element. Theorically, template modification should happen in the directive <code>compile</code> phase, but specifically wrapping the original template here is impossible as it leads to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
-
-<p>We also add some CSS classes to make the ul/li suitable for the carousel and also a carousel instance specific class so we can target it easily later.</p>
-
-<p><strong>2) watching the ng-repeat expression</strong></p>
-
-<p>Because we want to monitor precisely which items are in our carousel, we need to extract and watch the <code>ng-repeat</code> expression. We can then watch that expression and then be notified when the <code>ng-repeat</code> is updated. This is useful to know how many slides we have and also to update our indicators accordingly.</p>
-
-<p>This extraction is done by literally parsing the <code>ng-repeat</code> expression in a generic way. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick.</p>
-
-<p><strong>3) binding touch and click events</strong></p>
-
-<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
-
-<p><strong>4) animating the slides smoothly</strong></p>
-
-<p>When we detect a <code>touchstart</code> we just store the event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and do some control. We then dynamically add CSS styles and classes to move the slides to the new desired position, or restore the current position in some cases.</p>
-
-<p>The slide movement is made thanks to the CSS <code>transition</code> property and uses the CSS <code>transform</code> property to force CSS 3D transforms and thus animate using the GPU which make the movement much more smooth especially on mobile devices.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">carousel</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
-</span><span class='line'>    <span class="s1">&#39;-webkit-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-moz-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-ms-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-o-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>5) adding an indicator to our carousel</strong></p>
-
-<p>As we already watch the <code>ng-repeat</code> expression, its very easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-ìndicator="true"</code> attribute on your <code>ul</code>.</p>
-
-<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
-
-<p>It takes <code>ìtems</code> and <code>index</code> data-bound attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// enable carousel indicator</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">showIndicator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">iAttrs</span><span class="p">[</span><span class="s1">&#39;rnCarouselIndicator&#39;</span><span class="p">]</span><span class="o">===</span><span class="s1">&#39;true&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">showIndicator</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">indicator</span> <span class="o">=</span> <span class="nx">$compile</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;&quot;</span> <span class="o">+</span> <span class="nx">carouselId</span> <span class="o">+</span><span class="s2">&quot;-indicator&#39; &quot;</span> <span class="o">+</span>
-</span><span class='line'>        <span class="s2">&quot; index=&#39;carouselIndex&#39; items=&#39;carouselItems&#39; rn-carousel-indicators &quot;</span> <span class="o">+</span>
-</span><span class='line'>        <span class="s2">&quot; class=&#39;rn-carousel-indicator&#39;&gt;&lt;/div&gt;&quot;</span>
-</span><span class='line'>    <span class="p">)(</span><span class="nx">scope</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">indicator</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>6) offer a two-way data binding for the active slide index</strong></p>
-
-<p>The carousel current index position is data-bound to a <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls, initialise to a different slide&#8230;</p>
-
-<p><strong>7) tests and grunt automation</strong></p>
-
-<p>These subjects will have a dedicated article soon :)</p>
-
-<p><strong>Easy isn&#8217;t it ?</strong></p>
-
-<p>There are still somes limitations though :</p>
-
-<ul>
-<li>ony works with ul/li structure</li>
-<li>carousel dimensions is based on the first li detected</li>
-<li>we should implement slides buffering so the ng-repeat is rendered progressively not entirely</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -322,7 +141,7 @@
 
 <p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
 
-<p>If the scope would be isolated (<code>scope: {}</code>) then you&#8217;d have to use <code>scope.$parent</code> instead of $scope.</p>
+<p>If your directive scope is isolated (<code>scope: {}</code>) you have to use <code>scope.$parent</code> instead of <code>scope</code>.</p>
 
 <iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
 
@@ -573,14 +392,6 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/05/05/angularjs-tips-n-tricks-2/">AngularJS tips&#8217;n&#8217;tricks part 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/05/02/angular-carousel-making-of/">Making of the angular-carousel</a>
-      </li>
-    
-      <li class="post">
         <a href="/blog/2013/05/01/angular-tips-n-tricks/">AngularJS tips&#8217;n&#8217;tricks part 1</a>
       </li>
     
@@ -590,6 +401,10 @@
     
       <li class="post">
         <a href="/blog/2013/04/15/octopress-cheatsheet/">Octopress Cheat Sheet</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/11/a-fresh-start/">A fresh start</a>
       </li>
     
   </ul>
@@ -630,7 +445,7 @@
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (2)</a></li><li><a href='/blog/categories/news/'>news (1)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (2)</a></li><li><a href='/blog/categories/mobile/'>mobile (1)</a></li><li><a href='/blog/categories/news/'>news (1)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li></ul>
 </section>
 
   
