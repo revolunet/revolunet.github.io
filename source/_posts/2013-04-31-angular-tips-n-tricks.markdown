@@ -31,7 +31,7 @@ $scope.$watch('myConfig', function(newValue, oldValue) {
 ### Two way data binding attribute without explicit scope declaration.
 Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the `$parse` service. 
 
-If the scope would be isolated (`scope: {}`) then you'd have to use `scope.$parent` instead of $scope.
+If your directive scope is isolated (`scope: {}`) you have to use `scope.$parent` instead of `scope`.
 
 {% jsfiddle p2cjt js,html,result light 500px %}
 
