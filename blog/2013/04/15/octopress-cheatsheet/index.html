@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="When you switch to Octopress for blogging there are a very few thing to know : 1
+  <meta name="description" content="When you switch to Octopress for blogging there are a very few things to know : Command line 1
 2
 3
 4
@@ -23,8 +23,7 @@
 12
 13
 14
-# create a new post
-rake new_post[&# &hellip;">
+# create a new post &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,7 +121,9 @@ rake new_post[&# &hellip;">
   </header>
 
 
-<div class="entry-content"><p>When you switch to Octopress for blogging there are a very few thing to know :</p>
+<div class="entry-content"><p>When you switch to Octopress for blogging there are a very few things to know :</p>
+
+<h2>Command line</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -153,6 +154,56 @@ rake new_post[&# &hellip;">
 </span><span class='line'><span class="c"># commit and backup(automatic message)</span>
 </span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Creating a post</h2>
+
+<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
+
+<p>You must add some metas at the top of the file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
+</span><span class='line'>layout: post
+</span><span class='line'>title: My Awesome article.
+</span><span class='line'>date: 2013-05-1 00:00
+</span><span class='line'>categories: news technology web
+</span><span class='line'>author: Super Man
+</span><span class='line'>comments: <span class="nb">true</span>
+</span><span class='line'>published: <span class="nb">false</span>
+</span><span class='line'>---
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
+
+<h2>Publish</h2>
+
+<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
+
+<p>Here&#8217;s a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># push.sh : publish &amp; commit with a single command</span>
+</span><span class='line'>git add <span class="nb">source</span>
+</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
+</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
 
 </div>
 
