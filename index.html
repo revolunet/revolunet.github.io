@@ -165,7 +165,7 @@
 
 <h3>Custom transclusion</h3>
 
-<p>This example shows how to define a custom transclusion function and control its scope.</p>
+<p>This example shows how to define a custom transclusion function and modify its scope.</p>
 
 <iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
 
@@ -175,7 +175,7 @@
 
 <h3>Announcer/Notifier pattern</h3>
 
-<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (link function called) and destruction (<code>scope.$destroy</code> called).</p>
+<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (<code>link</code> called) and destruction (<code>scope.$destroy</code> called).</p>
 
 <p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
 
