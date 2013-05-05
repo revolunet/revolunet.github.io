@@ -45,13 +45,13 @@ The following example also demonstrates how to watch multiples values at once.
 
 ### Custom transclusion
 
-This example shows how to define a custom transclusion function and control its scope.
+This example shows how to define a custom transclusion function and modify its scope.
 
 {% jsfiddle pHZNY js,html,result light 400px %}
 
 ### Announcer/Notifier pattern
 
-If you need to listen to DOM objects creation/deletion, you can simply create a 'notifier' directive and an 'announcer' directive that you'll add to the objects you want to monitor. That directive will announce new instances creation (link function called) and destruction (`scope.$destroy` called).
+If you need to listen to DOM objects creation/deletion, you can simply create a 'notifier' directive and an 'announcer' directive that you'll add to the objects you want to monitor. That directive will announce new instances creation (`link` called) and destruction (`scope.$destroy` called).
 
 It can be useful if you want to monitor arbitrary objects lifecycles, for example a `ng-repeat`. The 'announcement' can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.
 

@@ -14,3 +14,21 @@ If you didn't read it yet, please check the part 1
 
 **normalized attributes** : From your directive link or compile function, the `iAttrs` or `tAttrs` objects gives you normalized attributes. This means if you have a `data-rn-carousel-index` or  `rn-carousel-index` attribute, you'll always get a `rnCarouselIndex` key.
 
+Forms : 
+form creates a scope variable
+type="button" for buttons
+novalidate
+wrap the data in a single variable
+validation happend only on setviewvalue
+formatters/parsers
+
+put global functions/variables in services, not rootScope
+
+ng-bind-html-unsafe
+
+
+mobile
+ - ngtap 
+ -animation
+
+promise
