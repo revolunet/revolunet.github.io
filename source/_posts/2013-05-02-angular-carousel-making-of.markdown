@@ -5,7 +5,6 @@ date: 2013-05-2 00:00
 comments: true
 categories: AngularJS mobile
 author: Julien Bouquillon
-published: false
 ---
 
 Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.
@@ -26,6 +25,8 @@ This `rn-carousel` directive is responsible of :
 We first wrap the original `ul` block in an outer div using JQlite `wraps` method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).
 
 Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.
+
+The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.
 
 
 **2) watching the ng-repeat expression**
@@ -123,7 +124,7 @@ These subjects will have a dedicated article soon :)
 
  - Only works with ul/li structure
  - Carousel dimensions is based on the first li detected
- - We should implement slides buffering so the ng-repeat is rendered progressively so we can implement infinite carousel.
+ - We should implement slides buffering so the ng-repeat is rendered progressively so we can implement infinite carousel. WE NEED HELP ON THIS :)
 
 
 
