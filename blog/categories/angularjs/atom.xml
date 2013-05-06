@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-05-05T14:19:12+02:00</updated>
+  <updated>2013-05-06T11:15:32+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,150 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Making of the angular-carousel]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/"/>
+    <updated>2013-05-02T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of</id>
+    <content type="html"><![CDATA[<p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
+
+<p>As this project shed some lights on various AngularJS aspects, we'd like to share it with you;
+The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
+
+<p>The goal is to transform any <code>ng-repeat</code> directive into a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
+
+<p>Here's a very basic example of a Youtube API call, with the data displayed in a regular Angular template; We just add a <code>rn-carousel</code> attribute to the <code>ul</code> element to ask a carousel :)</p>
+
+<p><iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe><br><br></p>
+
+<p>This <code>rn-carousel</code> directive is responsible of :</p>
+
+<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
+
+<p>We first wrap the original <code>ul</code> block in an outer div using JQlite <code>wraps</code> method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
+
+<p>Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.</p>
+
+<p>The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.</p>
+
+<p><strong>2) watching the ng-repeat expression</strong></p>
+
+<p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
+
+<p>This extraction is done by literally parsing the <code>ng-repeat</code> expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick.</p>
+
+<p><strong>3) binding touch and click events</strong></p>
+
+<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
+
+<p><code>js
+// bind events
+container.bind('mousedown touchstart', swipeStart);
+container.bind('mousemove touchmove', swipe);
+container.bind('mouseup touchend', swipeEnd);
+</code></p>
+
+<p><strong>4) animating the slides smoothly</strong></p>
+
+<p>When we detect a <code>touchstart</code> we just store the initial event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and dynamically add CSS styles and classes to move the slides accordingly, or restore the current position in some cases.</p>
+
+<p>The slide movement is made thanks to the CSS <code>transition</code> and <code>translate3d</code> properties to force CSS 3D transforms and thus animate the slides using the GPU which make the movement much more smooth especially on mobile devices.</p>
+
+<p>```js
+// the offset value is simply : desiredSlideIndex * slideWidth
+carousel.css({</p>
+
+<pre><code>'-webkit-transform': 'translate3d(' + offset + 'px,0,0)',
+'-moz-transform': 'translate3d(' + offset + 'px,0,0)',
+'-ms-transform': 'translate3d(' + offset + 'px,0,0)',
+'-o-transform': 'translate3d(' + offset + 'px,0,0)',
+'transform': 'translate3d(' + offset + 'px,0,0)'
+</code></pre>
+
+<p>});
+```</p>
+
+<p><strong>5) adding an indicator to our carousel</strong></p>
+
+<p>As we already watch the <code>ng-repeat</code> expression, we track the number of slides in the carousel and so its quite easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-indicator="true"</code> attribute on your <code>ul</code>.</p>
+
+<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
+
+<p>It just takes <code>items</code> and <code>index</code> attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
+
+<p>```js
+// enable carousel indicator
+var showIndicator = (iAttrs['rnCarouselIndicator']==='true');
+if (showIndicator) {</p>
+
+<pre><code>// as the HTML contains a directive, we need to $compile it
+// before appending it to our container
+var indicator = $compile("&lt;div id='" + carouselId +"-indicator' " + 
+    " index='carouselIndex' items='carouselItems' rn-carousel-indicators " +
+    " class='rn-carousel-indicator'&gt;&lt;/div&gt;"
+)(scope);
+container.append(indicator);
+</code></pre>
+
+<p>}
+```
+<strong>6) offer a two-way data binding for the active slide index</strong></p>
+
+<p>The carousel current index position can be data-bound to an optional <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls/indicators, initialise to a different slide...</p>
+
+<p>```js</p>
+
+<p>// set initial position at first slide
+scope.carouselIndex = 0;</p>
+
+<p>if (iAttrs.rnCarouselIndex) {</p>
+
+<pre><code>//  if a binding attribute is present, use it.
+var activeModel = $parse(iAttrs['rnCarouselIndex']);
+scope.$watch('carouselIndex', function(newValue) {
+    // when the carousel internal index changes, update the model
+    activeModel.assign(scope.$parent, newValue);
+});
+scope.$parent.$watch($parse(iAttrs.rnCarouselIndex), function(newValue) {
+    // when the model change, update the local position
+    // this is also useful for the initial position
+    scope.carouselIndex = newValue;
+    updateSlidePosition();
+});
+</code></pre>
+
+<p>} else {</p>
+
+<pre><code>// if no index attribute, just watch internal index and update display
+scope.$watch('carouselIndex', function(newValue) {
+    updateSlidePosition();
+});
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The <code>updateSlidePosition()</code> function simply moves the <code>ul</code> block based on the <code>carouselIndex</code> value and the width of the slides. We do this with CSS transition and <code>translate3d</code> so this is animated and hardware accelerated.</p>
+
+<p><strong>7) tests and grunt automation</strong></p>
+
+<p>These subjects will have a dedicated article soon :)</p>
+
+<p><strong>Limitations</strong></p>
+
+<ul>
+<li>Only works with ul/li structure</li>
+<li>Carousel dimensions is based on the first li detected</li>
+<li>We should implement slides buffering so the ng-repeat is rendered progressively so we can implement infinite carousel. WE NEED HELP ON THIS :)</li>
+</ul>
+
+
+<p><strong>Easy isn't it ?</strong></p>
+
+<p>If you have questions, suggestions, issues, pulls requests... just comment below or on Github :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AngularJS tips'n'tricks part 1]]></title>

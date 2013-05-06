@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>revolunet blog</title>
+  <title>Making of the angular-carousel - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.revolunet.com">
+  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -77,15 +77,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/05/02/angular-carousel-making-of/">Making of the Angular-carousel</a></h1>
+      <h1 class="entry-title">Making of the Angular-carousel</h1>
     
     
       <p class="meta">
@@ -103,14 +100,14 @@
 
 <time datetime="2013-05-02T00:00:00+02:00" pubdate data-updated="true">May 2<span>nd</span>, 2013</time>
         
-         | <a href="/blog/2013/05/02/angular-carousel-making-of/#disqus_thread">Comments</a>
+         | <a href="#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
+<div class="entry-content"><p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
 
 <p>As this project shed some lights on various AngularJS aspects, we&#8217;d like to share it with you;
 The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
@@ -284,135 +281,16 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
 <p>If you have questions, suggestions, issues, pulls requests&#8230; just comment below or on Github :)</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/01/angular-tips-n-tricks/">AngularJS Tips&#8217;n&#8217;tricks Part 1</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Julien Bouquillon</span></span>
 
-<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
-        
-         | <a href="/blog/2013/05/01/angular-tips-n-tricks/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
-
-<p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
-
-<h3>Scopes</h3>
-
-<p>You definitely need to read this article : <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs</a></p>
-
-<h3>Directives</h3>
-
-<p>The official documentation is not crystal clear at first approach but it documents most of what you need to understand: <a href="http://docs.angularjs.org/guide/directive">http://docs.angularjs.org/guide/directive</a>. So read it. And again. And again.</p>
-
-<h3>Watch an object or a list</h3>
-
-<p>If you watch a list or an object with the <code>objectEquality</code> parameter not set, then the <code>$watch</code> callback won&#8217;t be triggered if the object is only updated partially. Setting it to <code>true</code> will trigger it on any modification; this has performance impact so use carefully.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the last `true` means compare by value and not by ref, useful for nested objects :)</span>
-</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;myConfig&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;myConfig changed !&#39;</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
-</span><span class='line'><span class="p">},</span> <span class="kc">true</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Two way data binding attribute without explicit scope declaration.</h3>
-
-<p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
-
-<p>If your directive scope is isolated (<code>scope: {}</code>) you have to use <code>scope.$parent</code> instead of <code>scope</code>.</p>
-
-<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
-
-
-<h3>Use a callback function with arguments in your directive</h3>
-
-<p>To call a function defined in one of your attribute, declare it in the scope with <code>&amp;</code>.</p>
-
-<p>If you need to pass arguments, you must execute the callback using an object form for the arguments. AngularJS then call the function with your arguments in the correct order comparing your object and the callback declaration.</p>
-
-<p>The following example also demonstrates how to watch multiples values at once.</p>
-
-<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/HnrV7/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
-
-
-<h3>Custom transclusion</h3>
-
-<p>This example shows how to define a custom transclusion function and modify its scope.</p>
-
-<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
-
-
-<h3>Announcer/Notifier pattern</h3>
-
-<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (<code>link</code> called) and destruction (<code>scope.$destroy</code> called).</p>
-
-<p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
-
-<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/4ULCS/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
-
-
-<p>Many more tricks to come, stay tuned :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/30/angularjs-animations-mobile-applications/">Using AngularJS Views Animations for Mobile Applications</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -424,229 +302,48 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
   
 
 
-<time datetime="2013-04-30T20:20:00+02:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/04/30/angularjs-animations-mobile-applications/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
-
-<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
-
-<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
-
-<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
-
-
-<br><br>
-
-
-<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a &#8216;Back&#8217; button, the user expects the slide animation to be reversed when he touches it. If you don&#8217;t do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
-
-<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
-
-<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
-
-<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
-
-<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
-
-<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
-
-<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
-
-<iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
-
-
-<br><br>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-05-02T00:00:00+02:00" pubdate data-updated="true">May 2<span>nd</span>, 2013</time>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/15/octopress-cheatsheet/">Octopress Cheat Sheet</a></h1>
-    
-    
-      <p class="meta">
-        
 
-
-
-
-
-
-
-
+<span class="categories">
   
+    <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>
+  
+</span>
 
 
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/04/15/octopress-cheatsheet/#disqus_thread">Comments</a>
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><p>When you switch to Octopress for blogging there are a very few things to know :</p>
-
-<h2>Command line</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
-</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># create a new page </span>
-</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># preview your work</span>
-</span><span class='line'>rake preview
-</span><span class='line'>
-</span><span class='line'><span class="c"># publish it</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span><span class='line'>
-</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating a post</h2>
-
-<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
-
-<p>You must add some metas at the top of the file :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
-</span><span class='line'>layout: post
-</span><span class='line'>title: My Awesome article.
-</span><span class='line'>date: 2013-05-1 00:00
-</span><span class='line'>categories: news technology web
-</span><span class='line'>author: Super Man
-</span><span class='line'>comments: <span class="nb">true</span>
-</span><span class='line'>published: <span class="nb">false</span>
-</span><span class='line'>---
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
-
-<h2>Publish</h2>
-
-<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
-
-<p>Here&#8217;s a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c"># push.sh : publish &amp; commit with a single command</span>
-</span><span class='line'>git add <span class="nb">source</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/" data-via="revolunet" data-counturl="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="small"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/11/a-fresh-start/">A Fresh Start</a></h1>
-    
-    
-      <p class="meta">
-        
+        <a class="basic-alignment left" href="/blog/2013/05/01/angular-tips-n-tricks/" title="Previous Post: AngularJS tips'n'tricks part 1">&laquo; AngularJS tips'n'tricks part 1</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-11T01:46:00+02:00" pubdate data-updated="true">Apr 11<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/04/11/a-fresh-start/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we&#8217;ll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
-
-<p>We&#8217;ve got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
-
-<p>140 chars isn&#8217;t long enough.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Welcome :)&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -658,7 +355,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
       </li>
     
       <li class="post">
-        <a href="/blog/2013/05/01/angular-tips-n-tricks/">AngularJS tips&#8217;n&#8217;tricks part 1</a>
+        <a href="/blog/2013/05/01/angular-tips-n-tricks/">AngularJS tips'n'tricks part 1</a>
       </li>
     
       <li class="post">
@@ -681,7 +378,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/revolunet">@revolunet</a> on GitHub
@@ -717,6 +414,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -731,7 +429,10 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
       var disqus_shortname = 'revolunetblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/';
+        var disqus_url = 'http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
