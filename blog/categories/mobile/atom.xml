@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mobile | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/mobile/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-05-06T11:15:32+02:00</updated>
+  <updated>2013-05-08T11:23:32+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -43,7 +43,9 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
 <p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
 
-<p>This extraction is done by literally parsing the <code>ng-repeat</code> expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick.</p>
+<p><del>This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick</del>.</p>
+
+<p><strong>Update :</strong> I ended up with just extracting the li <code>ng-repeat</code> attribute during the <code>compile</code> phase which is much less overhead.</p>
 
 <p><strong>3) binding touch and click events</strong></p>
 
