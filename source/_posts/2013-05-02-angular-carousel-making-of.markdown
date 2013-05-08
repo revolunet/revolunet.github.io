@@ -126,8 +126,8 @@ These subjects will have a dedicated article soon :)
 
  - Only works with ul/li structure
  - Carousel dimensions is based on the first li detected
- - We should implement slides buffering so the ng-repeat is rendered progressively so we can implement infinite carousel. WE NEED HELP ON THIS :)
 
+**UPDATE** : the carousel can now be buffered to improve performance with large datasets !
 
 
 **Easy isn't it ?**
