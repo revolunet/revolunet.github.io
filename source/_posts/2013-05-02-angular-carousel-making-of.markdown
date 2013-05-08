@@ -33,7 +33,9 @@ The CSS makes the ul/li block appears as a single horizontal line composed of ma
 
 Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original `ng-repeat` expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.
 
-This extraction is done by literally parsing the `ng-repeat` expression in a generic way, using the generated normalized comment node. [Credits goes to @bennadel](http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm) for this awesome trick.
+~~This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. [Credits goes to @bennadel](http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm) for this awesome trick~~. 
+
+**Update :** I ended up with just extracting the li `ng-repeat` attribute during the `compile` phase which is much less overhead.
 
 **3) binding touch and click events**
 
