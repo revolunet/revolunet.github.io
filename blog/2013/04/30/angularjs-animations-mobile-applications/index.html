@@ -139,6 +139,17 @@
 <br><br>
 
 
+<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.LR</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.LR</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
 
