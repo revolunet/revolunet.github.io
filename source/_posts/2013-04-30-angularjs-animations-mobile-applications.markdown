@@ -31,3 +31,11 @@ Here's how we've done bi-directionnal animations for the ng-view. Note the usage
 
 {% jsfiddle UvP54 result,js,html,css %}
 
+Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the `ng-view` in another div that have a dynamic class name, which could change when we need to change the animation direction, like `LR` then `RL`. This way we just need to update that classname and the CSS will pick the good one.
+
+```css
+.LR .enter-setup {...}
+.LR .leave-setup {...}
+.RL .enter-setup {...}
+.RL .leave-setup {...}
+```
