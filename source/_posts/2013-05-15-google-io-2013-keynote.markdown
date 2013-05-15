@@ -53,9 +53,9 @@ Here's a little recap of the most important things announced just during the 3 h
  - Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL
 
 ## In other news
- - For some reasons, Google choosed PHP over Javascript as a new AppEngine runtime. **#WTF**
+ - For some reasons (most requested), [Google choosed PHP over Javascript as a new AppEngine runtime](https://gaeforphp.appspot.com). **#WTF**
  - Google Play for education allows teachers/schools to push content directly to students devices
- - You can now send money to your friends right from Gmail with google wallet :)
+ - You can now [send money to your friends right from Gmail with google wallet](http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html) :)
 
 Anything missed ?
 
