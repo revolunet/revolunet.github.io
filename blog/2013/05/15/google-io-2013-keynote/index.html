@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>AngularJS tips'n'tricks part 1 - revolunet blog</title>
+  <title>GoogleIO 2013 keynote recap - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples &hellip;">
+  <meta name="description" content="So today was the opening of the 2013 GoogleIO developer conference in San Francisco and the Googlers announced a insanely crazy amount of new &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks">
+  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -82,7 +82,7 @@
   
   <header>
     
-      <h1 class="entry-title">AngularJS Tips'n'tricks Part 1</h1>
+      <h1 class="entry-title">GoogleIO 2013 Keynote Recap</h1>
     
     
       <p class="meta">
@@ -98,7 +98,7 @@
   
 
 
-<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
+<time datetime="2013-05-15T00:00:00+02:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -107,82 +107,78 @@
   </header>
 
 
-<div class="entry-content"><p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
+<div class="entry-content"><p>So today was the opening of the 2013 GoogleIO developer conference in San Francisco and the Googlers announced a <strong>insanely crazy</strong> amount of new projects/services/features in just the first few hours, which is very exciting for every web/android developer. The next three days will be very busy, with a lot of focus on Chrome, Android and Google+.</p>
 
-<p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
+<p>Though, we don&#8217;t have new Nexus devices, no Android 4.3, and no Javascript AppEngine runtime. So huge fail on my <a href="https://twitter.com/revolunet/status/333620420798472192">previous predictions</a>.</p>
 
-<h3>Scopes</h3>
+<p>The keynote started with a big fail demo effect happened in the very first demo about Android multiplayer gaming when demoing a new Google Cloud Messaging feature, quite embarassing, but then everything ran smoothly.</p>
 
-<p>You definitely need to read this article : <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs</a></p>
+<p>Here&#8217;s a little recap of the most important things announced just during the 3 hours keynote :</p>
 
-<h3>Directives</h3>
+<h2><a href="http://officialandroid.blogspot.fr/2013/05/androidio-just-press-play.html">Android</a></h2>
 
-<p>The official documentation is not crystal clear at first approach but it documents most of what you need to understand: <a href="http://docs.angularjs.org/guide/directive">http://docs.angularjs.org/guide/directive</a>. So read it. And again. And again.</p>
-
-<h3>Watch an object or a list</h3>
-
-<p>If you watch a list or an object with the <code>objectEquality</code> parameter not set, then the <code>$watch</code> callback won&#8217;t be triggered if the object is only updated partially. Setting it to <code>true</code> will trigger it on any modification; this has performance impact so use carefully.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the last `true` means compare by value and not by ref, useful for nested objects :)</span>
-</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;myConfig&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;myConfig changed !&#39;</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
-</span><span class='line'><span class="p">},</span> <span class="kc">true</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<ul>
+<li>Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards&#8230;).</li>
+<li>Google Game Services platform to help game developers with new APIs</li>
+<li>Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.</li>
+<li>Android studio to replace Eclipse nightmare, finally ! good move !</li>
+<li>Unified and synced notifications between devices.</li>
+<li>Translation service for apps, better analytics&#8230;</li>
+<li>Enhanced maps API</li>
+</ul>
 
 
-<h3>Two way data binding attribute without explicit scope declaration.</h3>
+<h2><a href="http://play.google.com/about/music/">Google Music</a></h2>
 
-<p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
-
-<p>If your directive scope is isolated (<code>scope: {}</code>) you have to use <code>scope.$parent</code> instead of <code>scope</code>.</p>
-
-<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
+<ul>
+<li>Access to all the music for 9.99$/month</li>
+<li>Discover to new recommended songs with google suggestions</li>
+<li>Google powered radio feature based on what you like</li>
+</ul>
 
 
-<h3>Use a callback function with arguments in your directive</h3>
+<h2><a href="https://plus.google.com/+chrome/posts">Chrome / Web</a></h2>
 
-<p>To call a function defined in one of your attribute, declare it in the scope with <code>&amp;</code>.</p>
-
-<p>If you need to pass arguments, you must execute the callback using an object form for the arguments. AngularJS then call the function with your arguments in the correct order comparing your object and the callback declaration.</p>
-
-<p>The following example also demonstrates how to watch multiples values at once.</p>
-
-<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/HnrV7/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
+<ul>
+<li>750 millions active chrome users globally</li>
+<li>WebP and VP9 royalty-free compression standards for images and videos to increase speed specially on mobile devices.</li>
+<li>Google provides a free (deactivable) proxy for Android to improve speed based on this codecs.</li>
+<li>New payment autocomplete API will help process payments quickly on websites, specially useful on mobile (2 clicks payments)</li>
+<li>Google will finally release a rock solid UI framework based on web components standards : <a href="http://www.polymer-project.org">polymer-project.org</a> . I wonder how it will fit with AngularJS.</li>
+<li>V8 will integrate asm.js to improve Javascript performance.</li>
+</ul>
 
 
-<h3>Custom transclusion</h3>
+<h2><a href="http://googleplusproject.blogspot.fr/2013/05/new-google-stream-hangouts-and-photos.html">Google +</a></h2>
 
-<p>This example shows how to define a custom transclusion function and modify its scope.</p>
-
-<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
-
-
-<br><br>
-
-
-<h3>Announcer/Notifier pattern</h3>
-
-<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (<code>link</code> called) and destruction (<code>scope.$destroy</code> called).</p>
-
-<p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
-
-<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/4ULCS/embedded/js,html,result/light/"></iframe>
+<ul>
+<li>New interface :)</li>
+<li>Better Hangouts</li>
+<li>Unified notifications across devices</li>
+<li>Better pictures management, event an &#8216;auto awesome&#8217; mode :)</li>
+</ul>
 
 
-<br><br>
+<h2><a href="http://google-latlong.blogspot.fr/2013/05/meet-new-google-maps-map-for-every.html">Maps</a></h2>
+
+<ul>
+<li>iPad version this summer</li>
+<li>Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL</li>
+</ul>
 
 
-<p>Many more tricks to come, stay tuned :)</p>
+<h2>In other news</h2>
+
+<ul>
+<li>For some reasons, Google choosed PHP over Javascript as a new AppEngine runtime. <strong>#WTF</strong></li>
+<li>Google Play for education allows teachers/schools to push content directly to students devices</li>
+<li>You can now send money to your friends right from Gmail with google wallet :)</li>
+</ul>
+
+
+<p>Anything missed ?</p>
+
+<p>You can still watch the full keynote <a href="http://www.youtube.com/watch?v=lLPue2vK3wg">on Youtube</a> of course.</p>
 </div>
 
 
@@ -205,12 +201,12 @@
   
 
 
-<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
+<time datetime="2013-05-15T00:00:00+02:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>
+    <a class='category' href='/blog/categories/google/'>google</a>, <a class='category' href='/blog/categories/news/'>news</a>, <a class='category' href='/blog/categories/tech/'>tech</a>
   
 </span>
 
@@ -219,7 +215,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/" data-via="revolunet" data-counturl="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/" data-via="revolunet" data-counturl="http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="small"></div>
@@ -232,10 +228,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/30/angularjs-animations-mobile-applications/" title="Previous Post: Using AngularJS views animations for mobile applications">&laquo; Using AngularJS views animations for mobile applications</a>
+        <a class="basic-alignment left" href="/blog/2013/05/02/angular-carousel-making-of/" title="Previous Post: Making of the angular-carousel">&laquo; Making of the angular-carousel</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/05/02/angular-carousel-making-of/" title="Next Post: Making of the angular-carousel">Making of the angular-carousel &raquo;</a>
       
     </p>
   </footer>
@@ -335,8 +329,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/';
-        var disqus_url = 'http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/';
+        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/';
+        var disqus_url = 'http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/';
         var disqus_script = 'embed.js';
       
     (function () {

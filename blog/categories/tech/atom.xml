@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: news | revolunet blog]]></title>
-  <link href="http://blog.revolunet.com/blog/categories/news/atom.xml" rel="self"/>
+  <title><![CDATA[Category: tech | revolunet blog]]></title>
+  <link href="http://blog.revolunet.com/blog/categories/tech/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
   <updated>2013-05-16T00:03:23+02:00</updated>
   <id>http://blog.revolunet.com/</id>
@@ -90,23 +90,6 @@
 <p>Anything missed ?</p>
 
 <p>You can still watch the full keynote <a href="http://www.youtube.com/watch?v=lLPue2vK3wg">on Youtube</a> of course.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[A fresh start]]></title>
-    <link href="http://blog.revolunet.com/blog/2013/04/11/a-fresh-start/"/>
-    <updated>2013-04-11T01:46:00+02:00</updated>
-    <id>http://blog.revolunet.com/blog/2013/04/11/a-fresh-start</id>
-    <content type="html"><![CDATA[<p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we'll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
-
-<p>We've got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
-
-<p>140 chars isn't long enough.</p>
-
-<p><code>js
-console.log('Welcome :)');
-</code></p>
 ]]></content>
   </entry>
   
