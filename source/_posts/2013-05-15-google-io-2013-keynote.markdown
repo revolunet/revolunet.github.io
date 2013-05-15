@@ -20,7 +20,7 @@ Here's a little recap of the most important things announced just during the 3 h
  - Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards...).
  - Google Game Services platform to help game developers with new APIs
  - Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.
- - Android studio to replace Eclipse nightmare, finally ! good move !
+ - [Android studio](http://www.youtube.com/watch?v=e0fXuyL0xVU) to replace Eclipse nightmare, finally ! good move !
  - Unified and synced notifications between devices.
  - Translation service for apps, better analytics...
  - Enhanced maps API
