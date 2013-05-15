@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-05-16T00:03:23+02:00</updated>
+  <updated>2013-05-16T00:06:16+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -32,7 +32,7 @@
 <li>Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards&#8230;).</li>
 <li>Google Game Services platform to help game developers with new APIs</li>
 <li>Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.</li>
-<li>Android studio to replace Eclipse nightmare, finally ! good move !</li>
+<li><a href="http://www.youtube.com/watch?v=e0fXuyL0xVU">Android studio</a> to replace Eclipse nightmare, finally ! good move !</li>
 <li>Unified and synced notifications between devices.</li>
 <li>Translation service for apps, better analytics&#8230;</li>
 <li>Enhanced maps API</li>
