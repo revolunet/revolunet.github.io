@@ -52,10 +52,15 @@ Here's a little recap of the most important things announced just during the 3 h
  - iPad version this summer
  - Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL
 
+
+## Gmail
+
+ - You can now [send money to your friends right from Gmail with google wallet](http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html) :)
+ - Developers can now [add actions to their email](http://googleappsdeveloper.blogspot.fr/2013/05/introducing-actions-in-inbox-powered-by.html)
+
 ## In other news
  - For some reasons ([top requested features](https://code.google.com/p/googleappengine/issues/list)), [Google choosed PHP over Javascript as a new AppEngine runtime](https://gaeforphp.appspot.com). **#WTF**
  - Google Play for education allows teachers/schools to push content directly to students devices
- - You can now [send money to your friends right from Gmail with google wallet](http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html) :)
 
 Anything missed ?
 
