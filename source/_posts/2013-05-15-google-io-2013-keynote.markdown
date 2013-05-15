@@ -61,6 +61,7 @@ Here's a little recap of the most important things announced just during the 3 h
 ## In other news
  - For some reasons ([top requested features](https://code.google.com/p/googleappengine/issues/list)), [Google choosed PHP over Javascript as a new AppEngine runtime](https://gaeforphp.appspot.com). **#WTF**
  - Google Play for education allows teachers/schools to push content directly to students devices
+ - Google TVs will be [updated to Android 4.2 and latest chrome](https://plus.google.com/+GoogleTVDevelopers/posts/X5rmq6Yu8xG) !
 
 Anything missed ?
 
