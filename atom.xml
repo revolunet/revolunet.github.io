@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-05-16T00:31:40+02:00</updated>
+  <updated>2013-05-16T00:42:45+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -78,12 +78,19 @@
 </ul>
 
 
+<h2>Gmail</h2>
+
+<ul>
+<li>You can now <a href="http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html">send money to your friends right from Gmail with google wallet</a> :)</li>
+<li>Developers can now <a href="http://googleappsdeveloper.blogspot.fr/2013/05/introducing-actions-in-inbox-powered-by.html">add actions to their email</a></li>
+</ul>
+
+
 <h2>In other news</h2>
 
 <ul>
 <li>For some reasons (<a href="https://code.google.com/p/googleappengine/issues/list">top requested features</a>), <a href="https://gaeforphp.appspot.com">Google choosed PHP over Javascript as a new AppEngine runtime</a>. <strong>#WTF</strong></li>
 <li>Google Play for education allows teachers/schools to push content directly to students devices</li>
-<li>You can now <a href="http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html">send money to your friends right from Gmail with google wallet</a> :)</li>
 </ul>
 
 
