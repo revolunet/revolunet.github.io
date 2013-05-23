@@ -11,6 +11,8 @@ AngularJS team recently added the very expected animation feature to their frame
 
 From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an `ng-animate` attribute and defining the animation CSS class.
 
+**UPDATE** : AngularJS team [fixed the following](https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5) problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)
+
 As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :
 
 {% jsfiddle 8pny4 result,js,html,css light 300px %}
