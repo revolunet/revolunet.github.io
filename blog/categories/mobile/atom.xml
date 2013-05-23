@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mobile | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/mobile/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-05-16T00:46:23+02:00</updated>
+  <updated>2013-05-23T11:29:28+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -168,6 +168,8 @@ scope.$watch('carouselIndex', function(newValue) {
     <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
 
 <p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+
+<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
 
 <p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
 
