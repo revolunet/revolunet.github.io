@@ -37,7 +37,9 @@ If you have a jQuery background, you absolutely need to read this in-depth Stack
 
 Of course, dont just watch/read, you need to experiment every step :)
 
-And feel free to ask your questions below or on IRC, #angularjs channel.
+After that, you should have a pretty good understanding of the framework and be able to **angularize all the things** :)
+
+**Need help ?** Ask your questions in the comments below, or on IRC #angularjs channel, or on [the dedicated google group](https://groups.google.com/forum/?fromgroups#!forum/angular).
 
 BTW, if you read French, great ressources here : [frangular.com](http://www.frangular.com) and [henriquat.re](http://henriquat.re) and [Thierry Lau's introduction slides](http://lauterry.github.io/slides-prez-angular).
 
