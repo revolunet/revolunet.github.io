@@ -22,7 +22,7 @@ If you have a jQuery background, you absolutely need to read this in-depth Stack
  - **Templates** : Your templates lives right in the DOM. Forget mustache, handlebars, hogan...
  - **Two-way data-binding** : Your javascript data automagically updates your DOM and vice-versa.
  - **Routing** : Define routes, associate templates and controller in just a few lines.
- - **Forms** : Many helpers to help dealing with forms, of the worst web dev nightmare ever.
+ - **Forms** : Many helpers to help dealing with forms, one of the worst webdevs nightmare.
  - **Directives** : Encapsulates templates and code in reusable components easily.
  - **Testability** : AngularJS was designed in a way your web app can be fully testable.
  - **Animation** : Easily animate elements and views.
@@ -41,7 +41,7 @@ After that, you should have a pretty good understanding of the framework and be 
 
 **Need help ?** Ask your questions in the comments below, or on IRC #angularjs channel, or on [the dedicated google group](https://groups.google.com/forum/?fromgroups#!forum/angular).
 
-BTW, if you read French, great ressources here : [frangular.com](http://www.frangular.com) and [henriquat.re](http://henriquat.re) and [Thierry Lau's introduction slides](http://lauterry.github.io/slides-prez-angular).
+BTW, if you read French, great ressources here : [frangular.com](http://www.frangular.com) and [Thierry Lau's introduction slides](http://lauterry.github.io/slides-prez-angular).
 
 Need more ressources ?
 
