@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-06-01T03:10:08+02:00</updated>
+  <updated>2013-06-02T22:06:22+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -34,7 +34,7 @@
 <li><strong>Templates</strong> : Your templates lives right in the DOM. Forget mustache, handlebars, hogan&#8230;</li>
 <li><strong>Two-way data-binding</strong> : Your javascript data automagically updates your DOM and vice-versa.</li>
 <li><strong>Routing</strong> : Define routes, associate templates and controller in just a few lines.</li>
-<li><strong>Forms</strong> : Many helpers to help dealing with forms, of the worst web dev nightmare ever.</li>
+<li><strong>Forms</strong> : Many helpers to help dealing with forms, one of the worst webdevs nightmare.</li>
 <li><strong>Directives</strong> : Encapsulates templates and code in reusable components easily.</li>
 <li><strong>Testability</strong> : AngularJS was designed in a way your web app can be fully testable.</li>
 <li><strong>Animation</strong> : Easily animate elements and views.</li>
@@ -58,7 +58,7 @@
 
 <p><strong>Need help ?</strong> Ask your questions in the comments below, or on IRC #angularjs channel, or on <a href="https://groups.google.com/forum/?fromgroups#!forum/angular">the dedicated google group</a>.</p>
 
-<p>BTW, if you read French, great ressources here : <a href="http://www.frangular.com">frangular.com</a> and <a href="http://henriquat.re">henriquat.re</a> and <a href="http://lauterry.github.io/slides-prez-angular">Thierry Lau&#8217;s introduction slides</a>.</p>
+<p>BTW, if you read French, great ressources here : <a href="http://www.frangular.com">frangular.com</a> and <a href="http://lauterry.github.io/slides-prez-angular">Thierry Lau&#8217;s introduction slides</a>.</p>
 
 <p>Need more ressources ?</p>
 
