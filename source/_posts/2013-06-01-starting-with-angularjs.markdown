@@ -46,7 +46,9 @@ BTW, if you read French, great ressources here : [frangular.com](http://www.fran
 Need more ressources ?
 
  - Read the Angular source itself : [github.com/angular/angular.js](https://github.com/angular/angular.js)
+ - [A huge list of good AngularJS ressources](https://github.com/jmcunningham/AngularJS-Learning) maintained by the community
  - [My AngularJS ressources compilation](https://gist.github.com/revolunet/4657146)
+ - [Lots of JSfiddle examples in the AngularJS wiki](https://github.com/angular/angular.js/wiki/JSFiddle-Examples)
  - [Stack overflow answers](http://stackoverflow.com/questions/tagged/angularjs)
  - [Speackerdeck prezos](https://speakerdeck.com/search?q=angularjs)
 
