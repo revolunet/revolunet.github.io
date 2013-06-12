@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-06-02T22:06:22+02:00</updated>
+  <updated>2013-06-12T03:51:15+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -64,7 +64,9 @@
 
 <ul>
 <li>Read the Angular source itself : <a href="https://github.com/angular/angular.js">github.com/angular/angular.js</a></li>
+<li><a href="https://github.com/jmcunningham/AngularJS-Learning">A huge list of good AngularJS ressources</a> maintained by the community</li>
 <li><a href="https://gist.github.com/revolunet/4657146">My AngularJS ressources compilation</a></li>
+<li><a href="https://github.com/angular/angular.js/wiki/JSFiddle-Examples">Lots of JSfiddle examples in the AngularJS wiki</a></li>
 <li><a href="http://stackoverflow.com/questions/tagged/angularjs">Stack overflow answers</a></li>
 <li><a href="https://speakerdeck.com/search?q=angularjs">Speackerdeck prezos</a></li>
 </ul>
