@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-23T03:11:20+02:00</updated>
+  <updated>2013-07-23T03:13:11+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -35,6 +35,8 @@
 </pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;elementId&#39;</span><span class="p">)).</span><span class="nx">scope</span><span class="p">();</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>The <a href="https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon">Batarang Chrome Extension</a> is much powerful and let you inspect any scope, anywhere :)</p>
 
 <h3>Unwatch an expression</h3>
 

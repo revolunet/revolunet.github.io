@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-23T03:11:20+02:00</updated>
+  <updated>2013-07-23T03:13:11+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -31,6 +31,8 @@ or even :
 <code>js
 angular.element(document.getElementById('elementId')).scope();
 </code></p>
+
+<p>The <a href="https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon">Batarang Chrome Extension</a> is much powerful and let you inspect any scope, anywhere :)</p>
 
 <h3>Unwatch an expression</h3>
 
