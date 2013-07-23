@@ -21,6 +21,8 @@ or even :
 angular.element(document.getElementById('elementId')).scope();
 ```
 
+The [Batarang Chrome Extension](https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon) is much powerful and let you inspect any scope, anywhere :)
+
 ### Unwatch an expression
 
 Sometimes you want to watch an expression only a few times, and then forget it. The `$watch` function returns a callback just for that. You just have to execute it back to destruct the watcher.
