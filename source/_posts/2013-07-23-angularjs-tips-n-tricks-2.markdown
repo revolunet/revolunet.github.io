@@ -151,4 +151,26 @@ You can trigger a callback when your `ng-include` partial is loaded :
 For the `ngView`, you need to listen to the `$viewContentLoaded` event.
 
 
+### Express testing
+
+You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using `ddescribe` instead of `describe` and to a single test with `itt` instead of `it`.
+
+### Service decorators
+
+You can easily decorate and modify any existing service or directive. That's how the `ngMobile` overrides the `ngClick` directive to handle transparently the FastClick behaviour.
+
+Here's an exemple that overrides the `$sniffer` service and fix the animation detection for older androids : 
+
+```js
+app.config(['$provide', function ($provide) {
+  $provide.decorator('$sniffer', ['$delegate', function ($delegate) {
+    if (!$delegate.transitions||!$delegate.animations) {
+      $delegate.transitions = (typeof document.body.style.webkitTransition=== 'string'); 
+      $delegate.animations = (typeof document.body.style.webkitAnimation === 'string'); 
+    }
+    return $delegate;
+  }]);
+}]);
+```
+
 That's all for today, feel free to ask and comment below :)
