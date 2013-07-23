@@ -159,7 +159,7 @@ You know you should write huge tests suites and theres everything to help you in
 
 You can easily decorate and modify any existing service or directive. That's how the `ngMobile` overrides the `ngClick` directive to handle transparently the FastClick behaviour.
 
-Here's an exemple that overrides the `$sniffer` service and fix the animation detection for older androids : 
+Here's an exemple that overrides the `$sniffer` service and fix the animation detection for older androids devices (landed in [ef5bc6c](https://github.com/angular/angular.js/commit/ef5bc6c)) : 
 
 ```js
 app.config(['$provide', function ($provide) {
