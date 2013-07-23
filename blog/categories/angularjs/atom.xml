@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-06-12T03:51:15+02:00</updated>
+  <updated>2013-07-23T03:11:20+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,172 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[AngularJS tips'n'tricks part 2]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/"/>
+    <updated>2013-07-23T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2</id>
+    <content type="html"><![CDATA[<p>Here's a new batch of AngularJS tips and gotchas; If you didn't read it yet, you can check the <a href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/">part 1</a> and feel free to comment below :)</p>
+
+<h3>Access an element scope from outside</h3>
+
+<p>This is useful for debugging: in your Chrome console, hightlight a node in the Elements tab, then, in the console, to check its scope :</p>
+
+<p><code>js
+angular.element($0).scope();
+</code>
+or even :
+<code>js
+angular.element(document.getElementById('elementId')).scope();
+</code></p>
+
+<h3>Unwatch an expression</h3>
+
+<p>Sometimes you want to watch an expression only a few times, and then forget it. The <code>$watch</code> function returns a callback just for that. You just have to execute it back to destruct the watcher.</p>
+
+<p>```js
+var watcher = $scope.$watch('data.counter', function(newValue, oldValue) {</p>
+
+<pre><code>iElement.css('width', 50 * newValue + 'px');
+if (newValue &gt;= 10) {
+    // when data.counter reaches 10, destruct the watcher.
+    watcher();
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<h3>Group elements in a select</h3>
+
+<p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
+
+<p>For example you can easily group a model by attribute :</p>
+
+<p><code>html
+&lt;select ng-options="distrib.version group by distrib.name for distrib in distribs"&gt;&lt;/select&gt;
+</code></p>
+
+<p>Of course, just add an <code>ng-model</code> directive to your select to data-bind it to one of the values.</p>
+
+<h3>Filter falsy values</h3>
+
+<p>You can't use the builtin filter for falsy attributes or values :/ I don't know if this is a bug of feature, but a simple workaround is to use a custom filter function that you can expose on the scope. (you can also define your own filter).</p>
+
+<p><code>js
+$scope.testValues = ['a', 'b', 'c', false, true, 0, -1, 5, 42];
+$scope.isFalsy = function(val) {
+  return !val;
+}
+</code>
+
+<code>html
+{{ testValues|filter:true }}        //  [true]
+{{ testValues|filter:5 }}           //  [5]
+{{ testValues|filter:0 }}           //  ['a', 'b', 'c', false, true, 0, -1, 5, 42]
+{{ testValues|filter:false }}       //  ['a', 'b', 'c', false, true, 0, -1, 5, 42]
+{{ testValues|filter:isFalsy }}     //  [false, 0]
+</code>
+</p>
+
+<h3>Filter on objects</h3>
+
+<p>The builtin filter function is <a href="http://code.angularjs.org/1.1.5/docs/api/ng.filter:filter">quite powerful</a> and allows you to filter a list of objects on given properties only, or on everything, exactly or not, negated or not, etc...</p>
+
+<p>
+<code>html
+{{ games|filter:'street' }}                       //  all games containing "street" in any property
+{{ games|filter:'!street' }}                      //  all games NOT containing "street" in any property
+{{ games|filter:{name:'street'} }}                //  all games containing "street" in their name
+{{ games|filter:{name:'street'}:true }}           //  all games named exactly "street"
+{{ games|filter:{name:'street', device:'PS3'} }}  //  all games containing "street" in their name and PS3 in their device
+</code>
+</p>
+
+<h3>ng-repeat with duplicate items</h3>
+
+<p>If for some reason you need to have duplicate items in your <code>ng-repeat</code> you can extend your <code>ng-repeat</code> expression with <code>track by $index</code> and it works :)</p>
+
+<h3>Directive : parse attribute without watching it</h3>
+
+<p>In one of your directive, if you need to have a read-only access to an attribute model, but without the automatic watch/binding, you can simply use <code>&amp;</code> instead of <code>=</code> when declaring the binding in the scope. You'll then be able to access the model value . (this may break in future releases). This is a shortcut for using the <code>$parse</code> service on the current scope.</p>
+
+<p>```js
+app.directive('rnCounter', function() {
+  return {</p>
+
+<pre><code>scope: {
+  count: '&amp;rnCounter'
+},
+link:function(scope, iElement) {
+  iElement.bind('click', function() {
+    console.dir(scope.count());
+  })
+}
+</code></pre>
+
+<p>  }
+})
+```</p>
+
+<h3>Data-binding to a boolean</h3>
+
+<p>You can bind to a boolean value, but you <strong>can't</strong> update that value from your directive.</p>
+
+<p>This won't work :
+```html</p>
+
+<div rn-zippy status="true"></div>
+
+
+<p>```</p>
+
+<p>```js
+app.directive('rnZippy', function() {
+  return {</p>
+
+<pre><code>restrict: 'A',
+scope: {
+  status: '=?'
+},
+link: function(scope, iElement) {
+  function toggle () {
+    scope.$apply(function() {
+      scope.status = !scope.status;  
+    });
+  }
+  iElement.bind('click', toggle);
+}
+</code></pre>
+
+<p>  }
+})
+```</p>
+
+<p>You need to use a real model, OR, initialise a new one and use it as your model instead :
+```html</p>
+
+<div rn-zippy ng-init="status=true" status="status"></div>
+
+
+<p>```</p>
+
+<h3>Includes onload</h3>
+
+<p>You can trigger a callback when your <code>ng-include</code> partial is loaded :
+```html</p>
+
+<div ng-inlude="'partials/' + page + '.html'" onload="callback()"></div>
+
+
+<p>```</p>
+
+<p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
+
+<p>That's all for today, feel free to ask and comment below :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Learn AngularJS in 5 steps]]></title>
