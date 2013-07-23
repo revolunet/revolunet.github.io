@@ -309,6 +309,37 @@
 
 <p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
 
+<h3>Express testing</h3>
+
+<p>You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there&#8217;s a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+
+<h3>Service decorators</h3>
+
+<p>You can easily decorate and modify any existing service or directive. That&#8217;s how the <code>ngMobile</code> overrides the <code>ngClick</code> directive to handle transparently the FastClick behaviour.</p>
+
+<p>Here&#8217;s an exemple that overrides the <code>$sniffer</code> service and fix the animation detection for older androids :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span><span class="s1">&#39;$provide&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$provide</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$provide</span><span class="p">.</span><span class="nx">decorator</span><span class="p">(</span><span class="s1">&#39;$sniffer&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;$delegate&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span><span class="o">||!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitTransition</span><span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitAnimation</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">$delegate</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}]);</span>
+</span><span class='line'><span class="p">}]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
 <p>That&#8217;s all for today, feel free to ask and comment below :)</p>
 </div>
 

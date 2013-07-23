@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-23T03:13:11+02:00</updated>
+  <updated>2013-07-23T03:28:05+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -176,6 +176,31 @@ link: function(scope, iElement) {
 <p>```</p>
 
 <p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
+
+<h3>Express testing</h3>
+
+<p>You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+
+<h3>Service decorators</h3>
+
+<p>You can easily decorate and modify any existing service or directive. That's how the <code>ngMobile</code> overrides the <code>ngClick</code> directive to handle transparently the FastClick behaviour.</p>
+
+<p>Here's an exemple that overrides the <code>$sniffer</code> service and fix the animation detection for older androids :</p>
+
+<p>```js
+app.config(['$provide', function ($provide) {
+  $provide.decorator('$sniffer', ['$delegate', function ($delegate) {</p>
+
+<pre><code>if (!$delegate.transitions||!$delegate.animations) {
+  $delegate.transitions = (typeof document.body.style.webkitTransition=== 'string'); 
+  $delegate.animations = (typeof document.body.style.webkitAnimation === 'string'); 
+}
+return $delegate;
+</code></pre>
+
+<p>  }]);
+}]);
+```</p>
 
 <p>That's all for today, feel free to ask and comment below :)</p>
 ]]></content>
