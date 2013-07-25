@@ -11,7 +11,7 @@ Here's a new batch of AngularJS tips and gotchas; If you didn't read it yet, you
 
 ### Access an element scope from outside
 
-This is useful for debugging: in your Chrome console, hightlight a node in the Elements tab, then, in the console, to check its scope :
+This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :
 
 ```js
 angular.element($0).scope();
@@ -31,7 +31,7 @@ Sometimes you want to watch an expression only a few times, and then forget it. 
 var watcher = $scope.$watch('data.counter', function(newValue, oldValue) {
     iElement.css('width', 50 * newValue + 'px');
     if (newValue >= 10) {
-        // when data.counter reaches 10, destruct the watcher.
+        // autodestruction when data.counter reaches 10
         watcher();
     }
 });
@@ -41,7 +41,7 @@ var watcher = $scope.$watch('data.counter', function(newValue, oldValue) {
 
 If you play with selects, the `ng-options` directive is [quite powerful](http://docs.angularjs.org/api/ng.directive:select) and [has many syntaxes](http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx).
 
-For example you can easily group a model by attribute :
+For example you can easily group a model by attribute to have a nested select menu :
 
 ```html
 <select ng-options="distrib.version group by distrib.name for distrib in distribs"></select>
@@ -153,7 +153,11 @@ For the `ngView`, you need to listen to the `$viewContentLoaded` event.
 
 ### Express testing
 
-You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using `ddescribe` instead of `describe` and to a single test with `itt` instead of `it`.
+You know you should write serious tests suites ? There's everything to help you in AngularJS with Karma test runner + Jasmine.
+
+Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using `ddescribe` instead of `describe` and to a single test with `itt` instead of `it`. 
+
+That's awesome to focus on specific tests for a while.
 
 ### Service decorators
 
