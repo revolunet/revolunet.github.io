@@ -111,7 +111,7 @@
 
 <h3>Access an element scope from outside</h3>
 
-<p>This is useful for debugging: in your Chrome console, hightlight a node in the Elements tab, then, in the console, to check its scope :</p>
+<p>This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nx">$0</span><span class="p">).</span><span class="nx">scope</span><span class="p">();</span>
@@ -141,7 +141,7 @@
 </pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">watcher</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;data.counter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>    <span class="nx">iElement</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="mi">50</span> <span class="o">*</span> <span class="nx">newValue</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
 </span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">newValue</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// when data.counter reaches 10, destruct the watcher.</span>
+</span><span class='line'>        <span class="c1">// autodestruction when data.counter reaches 10</span>
 </span><span class='line'>        <span class="nx">watcher</span><span class="p">();</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">});</span>
@@ -152,7 +152,7 @@
 
 <p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
 
-<p>For example you can easily group a model by attribute :</p>
+<p>For example you can easily group a model by attribute to have a nested select menu :</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;select</span> <span class="na">ng-options=</span><span class="s">&quot;distrib.version group by distrib.name for distrib in distribs&quot;</span><span class="nt">&gt;&lt;/select&gt;</span>
@@ -311,7 +311,11 @@
 
 <h3>Express testing</h3>
 
-<p>You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there&#8217;s a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+<p>You know you should write serious tests suites ? There&#8217;s everything to help you in AngularJS with Karma test runner + Jasmine.</p>
+
+<p>Once you have many tests, they can take some time to execute and there&#8217;s a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+
+<p>That&#8217;s awesome to focus on specific tests for a while.</p>
 
 <h3>Service decorators</h3>
 

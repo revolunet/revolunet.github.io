@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-23T03:33:00+02:00</updated>
+  <updated>2013-07-25T11:38:16+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -22,7 +22,7 @@
 
 <h3>Access an element scope from outside</h3>
 
-<p>This is useful for debugging: in your Chrome console, hightlight a node in the Elements tab, then, in the console, to check its scope :</p>
+<p>This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :</p>
 
 <p><code>js
 angular.element($0).scope();
@@ -43,7 +43,7 @@ var watcher = $scope.$watch('data.counter', function(newValue, oldValue) {</p>
 
 <pre><code>iElement.css('width', 50 * newValue + 'px');
 if (newValue &gt;= 10) {
-    // when data.counter reaches 10, destruct the watcher.
+    // autodestruction when data.counter reaches 10
     watcher();
 }
 </code></pre>
@@ -55,7 +55,7 @@ if (newValue &gt;= 10) {
 
 <p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
 
-<p>For example you can easily group a model by attribute :</p>
+<p>For example you can easily group a model by attribute to have a nested select menu :</p>
 
 <p><code>html
 &lt;select ng-options="distrib.version group by distrib.name for distrib in distribs"&gt;&lt;/select&gt;
@@ -179,7 +179,11 @@ link: function(scope, iElement) {
 
 <h3>Express testing</h3>
 
-<p>You know you should write huge tests suites and theres everything to help you in AngularJS with Karma test runner + Jasmine. Once you have many tests, they take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+<p>You know you should write serious tests suites ? There's everything to help you in AngularJS with Karma test runner + Jasmine.</p>
+
+<p>Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+
+<p>That's awesome to focus on specific tests for a while.</p>
 
 <h3>Service decorators</h3>
 
