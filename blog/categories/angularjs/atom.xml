@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-25T11:38:16+02:00</updated>
+  <updated>2013-07-26T12:40:28+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -181,7 +181,7 @@ link: function(scope, iElement) {
 
 <p>You know you should write serious tests suites ? There's everything to help you in AngularJS with Karma test runner + Jasmine.</p>
 
-<p>Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>itt</code> instead of <code>it</code>.</p>
+<p>Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>iit</code> instead of <code>it</code>.</p>
 
 <p>That's awesome to focus on specific tests for a while.</p>
 
