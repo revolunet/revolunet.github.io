@@ -155,7 +155,7 @@ For the `ngView`, you need to listen to the `$viewContentLoaded` event.
 
 You know you should write serious tests suites ? There's everything to help you in AngularJS with Karma test runner + Jasmine.
 
-Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using `ddescribe` instead of `describe` and to a single test with `itt` instead of `it`. 
+Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using `ddescribe` instead of `describe` and to a single test with `iit` instead of `it`. 
 
 That's awesome to focus on specific tests for a while.
 
