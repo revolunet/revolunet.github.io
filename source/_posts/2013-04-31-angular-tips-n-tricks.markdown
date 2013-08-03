@@ -60,3 +60,4 @@ It can be useful if you want to monitor arbitrary objects lifecycles, for exampl
 
 Many more tricks to come, stay tuned :)
 
+**UPDATE** : checkout <a href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/">PART 2</a> :)
