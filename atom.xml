@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-07-26T12:40:28+02:00</updated>
+  <updated>2013-08-04T00:21:39+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -673,6 +673,8 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
 
 <p>Many more tricks to come, stay tuned :)</p>
+
+<p><strong>UPDATE</strong> : checkout <a href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/">PART 2</a> :)</p>
 ]]></content>
   </entry>
   
