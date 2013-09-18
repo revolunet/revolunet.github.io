@@ -3,7 +3,7 @@ layout: post
 title: npm vs pip
 date: 2013-09-18 00:00
 comments: true
-categories: javascript, python
+categories: javascript python
 author: Julien Bouquillon
 ---
 
