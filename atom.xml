@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-08-04T00:21:39+02:00</updated>
+  <updated>2013-09-18T15:39:32+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,40 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[npm vs pip]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/09/18/npm-vs-pip/"/>
+    <updated>2013-09-18T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/09/18/npm-vs-pip</id>
+    <content type="html"><![CDATA[<p>After my morning <a href="https://twitter.com/revolunet/status/380210846578016256">twitter rant</a> about <code>npm install &gt; pip install</code> i need to add some clarifications and explain why i meant. Basically i meant that npm is much easier to use from a user perspective, which is an essential point to grow a community. Package management and dependencies is an important part of modern application development workflow and thus needs high consideration.</p>
+
+<p><a href="https://npmjs.org/">npm</a> (node packaged modules) was released at end of 2011 and for sure it&#8217;s inspired from many other packages manager while removing their commons hassles. Also, its used both on backend and on frontend projects (eg: AngularJS+grunt).</p>
+
+<p>Some of the <a href="http://www.pip-installer.org/en/latest/">pip</a> hassles are :</p>
+
+<ul>
+<li>you need to install virtualenv separately</li>
+<li>you need to configure it and run cryptic commands to activate virtualenvs</li>
+<li>you can install virtualenvwrapper to make thing easier though</li>
+<li>you still need to configure it though</li>
+<li>a fresh <code>pip install</code> in a project containing the standard requirements.txt does nothing</li>
+</ul>
+
+
+<p>On the other side, npm is a no-brainer to use :</p>
+
+<ul>
+<li><code>npm install</code> installs/upgrades any project dependencies</li>
+<li>there&#8217;s no notion of virtualenv, it just uses what you have in the current <code>node_modules</code> folder or in your global install.</li>
+</ul>
+
+
+<p>Both are for sure very powerful tools that goes far beyond this basic usage but this is daily work for the developer and also the first contact when entering a new project so it should work seamlessly.</p>
+
+<p>Please correct me if i&#8217;m wrong :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AngularJS tips'n'tricks part 2]]></title>
