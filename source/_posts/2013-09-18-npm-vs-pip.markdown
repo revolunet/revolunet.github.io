@@ -1,0 +1,30 @@
+---
+layout: post
+title: npm vs pip
+date: 2013-09-18 00:00
+comments: true
+categories: javascript, python
+author: Julien Bouquillon
+---
+
+
+After my morning [twitter rant](https://twitter.com/revolunet/status/380210846578016256) about `npm install > pip install` i need to add some clarifications and explain why i meant. Basically i meant that npm is much easier to use from a user perspective, which is an essential point to grow a community. Package management and dependencies is an important part of modern application development workflow and thus needs high consideration.
+
+[npm](https://npmjs.org/) (node packaged modules) was released at end of 2011 and for sure it's inspired from many other packages manager while removing their commons hassles. Also, its used both on backend and on frontend projects (eg: AngularJS+grunt).
+
+Some of the [pip](http://www.pip-installer.org/en/latest/) hassles are :
+
+ - you need to install virtualenv separately
+ - you need to configure it and run cryptic commands to activate virtualenvs
+ - you can install virtualenvwrapper to make thing easier though
+ - you still need to configure it though
+ - a fresh `pip install` in a project containing the standard requirements.txt does nothing
+
+On the other side, npm is a no-brainer to use :
+
+ - `npm install` installs/upgrades any project dependencies
+ - there's no notion of virtualenv, it just uses what you have in the current `node_modules` folder or in your global install.
+
+Both are for sure very powerful tools that goes far beyond this basic usage but this is daily work for the developer and also the first contact when entering a new project so it should work seamlessly.
+
+Please correct me if i'm wrong :)
