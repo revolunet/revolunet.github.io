@@ -5,25 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Octopress Cheat Sheet - revolunet blog</title>
+  <title>Category: phonegap - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="When you switch to Octopress for blogging there are a very few things to know : Command line 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-# create a new post &hellip;">
+  <meta name="description" content="Category: phonegap">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -32,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet">
+  <link rel="canonical" href="http://blog.revolunet.comblog/categories/phonegap">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -92,182 +78,36 @@
   <div id="main">
     <div id="content">
       <div>
-<article class="hentry" role="article">
+<article role="article">
   
   <header>
-    
-      <h1 class="entry-title">Octopress Cheat Sheet</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
+    <h1 class="entry-title">Category: Phonegap</h1>
     
   </header>
-
-
-<div class="entry-content"><p>When you switch to Octopress for blogging there are a very few things to know :</p>
-
-<h2>Command line</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
-</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># create a new page </span>
-</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># preview your work</span>
-</span><span class='line'>rake preview
-</span><span class='line'>
-</span><span class='line'><span class="c"># publish it</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span><span class='line'>
-</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating a post</h2>
-
-<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
-
-<p>You must add some metas at the top of the file :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
-</span><span class='line'>layout: post
-</span><span class='line'>title: My Awesome article.
-</span><span class='line'>date: 2013-05-1 00:00
-</span><span class='line'>categories: news technology web
-</span><span class='line'>author: Super Man
-</span><span class='line'>comments: <span class="nb">true</span>
-</span><span class='line'>published: <span class="nb">false</span>
-</span><span class='line'>---
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
-
-<h2>Publish</h2>
-
-<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
-
-<p>Here&#8217;s a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c"># push.sh : publish &amp; commit with a single command</span>
-</span><span class='line'>git add <span class="nb">source</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
   
-
-<span class="byline author vcard">Posted by <span class="fn">Julien Bouquillon</span></span>
-
-      
-
-
-
-
-
+  <div id="blog-archives" class="category">
 
 
 
   
+  <h2>2013</h2>
+
+<article>
+  
+<h1><a href="/blog/2013/09/24/phonegap-day-amsterdam/">Phonegap day Amsterdam 2013</a></h1>
+<time datetime="2013-09-24T00:00:00+02:00" pubdate><span class='month'>Sep</span> <span class='day'>24</span> <span class='year'>2013</span></time>
+
+<footer>
+  <span class="categories">posted in <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a></span>
+</footer>
 
 
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
-  
-</span>
-
-
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/" data-via="revolunet" data-counturl="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/" >Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="small"></div>
-  
-  
-    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
-  
-</div>
-
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2013/04/11/a-fresh-start/" title="Previous Post: A fresh start">&laquo; A fresh start</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2013/04/30/angularjs-animations-mobile-applications/" title="Next Post: Using AngularJS views animations for mobile applications">Using AngularJS views animations for mobile applications &raquo;</a>
-      
-    </p>
-  </footer>
 </article>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
+
+  
+</article>
 
 </div>
 
@@ -356,10 +196,7 @@
       var disqus_shortname = 'revolunetblog';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/';
-        var disqus_url = 'http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
