@@ -98,7 +98,7 @@ Basically, this means that you can code a Chrome Packaged App using only chrome 
 
 This is very early stage but Google puts some efforts to stabilize and extend capabilities quickly.
 
-All Chrome javascript APIs : [http://developer.chrome.com/extensions/api_index.html](http://developer.chrome.com/extensions/api_index.html)
+All Chrome javascript APIs : [http://developer.chrome.com/apps/api_index.html](http://developer.chrome.com/apps/api_index.html)
 
 Cordova implemented APIs can be found at : [http://plugins.cordova.io](http://plugins.cordova.io)
 
