@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-30T11:57:14+02:00</updated>
+  <updated>2013-09-30T12:10:24+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -20,7 +20,7 @@
     <id>http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework</id>
     <content type="html"><![CDATA[<h2>Introduction</h2>
 
-<p><a href="http://topcoat.io">Topcoat.io</a> is the new kid on the block of the CSS frameworks. It&#8217;s the first one that&#8217;s built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI. Its also pure CSS, so its easy to integrate with any Javascript framework.</p>
+<p><a href="http://topcoat.io">Topcoat.io</a> is the new kid on the block of the CSS-only frameworks. It&#8217;s the first one that&#8217;s built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI.It is also easy to theme and customize thanks to a smart CSS organisation and a powerful toolchain.</p>
 
 <p>Topcoat has been built for the future, thanks to solid conventions and a cutting-edge javascript architecture, and more goodness :</p>
 
