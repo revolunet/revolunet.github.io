@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-30T11:54:42+02:00</updated>
+  <updated>2013-09-30T11:57:14+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -44,7 +44,7 @@
 
 <p>All of this make it a powerful framework made to be extensible and performant.</p>
 
-<h2>Install topcoat</h2>
+<h2>Install Topcoat</h2>
 
 <p>Just <a href="https://github.com/topcoat/topcoat/releases">download the latest release</a> from github and extract it. The release contains the final CSS with dark and light themes for desktop and mobile, so you can use then directly; just add a link to the <code>topcoat-mobile-light.min.css</code> file in your app for example.</p>
 
@@ -55,7 +55,7 @@
 <ul>
 <li>Each component (button, list, checkbox...) has its own folder in the <code>node_modules</code> subfolder (so each one has its own npm repo). Each one also has its own gruntfile in case you want to build its css separately.</li>
 <li>Most of components have a <code>topcoat-[COMPONENT]-base</code> folder with just enough CSS to completely reset the styling of the element, so other components can override it entirely. For example the default button hasn't any default border or background and looks like a simple text block;</li>
-<li>The <code>topcoat-theme</code> folder defines the 4 builtin topcoat themes which are just a combination of variables that defines some variations of the components.</li>
+<li>The <code>topcoat-theme</code> folder defines the 4 builtin Topcoat themes which are just a combination of variables that defines some variations of the components.</li>
 <li>The main Gruntfile list the available themes and associated widgets using pattern globbing and this is from where the final CSS are built, including the given widgets.</li>
 </ul>
 
@@ -189,7 +189,7 @@ box-shadow: var-box-shadow--down;
 
 <h2>Creating new Topcoat components</h2>
 
-<p>Now you know how to add custom components and integrate them in the topcoat workflow properly.</p>
+<p>Now you know how to add custom components and integrate them in the Topcoat workflow properly.</p>
 
 <p>If you're willing to share new components with the community (and you should), here's the workflow :</p>
 
