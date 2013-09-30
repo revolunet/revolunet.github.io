@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-30T11:53:41+02:00</updated>
+  <updated>2013-09-30T11:54:42+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,261 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extending the Topcoat CSS framework]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework/"/>
+    <updated>2013-09-30T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework</id>
+    <content type="html"><![CDATA[<h2>Introduction</h2>
+
+<p><a href="http://topcoat.io">Topcoat.io</a> is the new kid on the block of the CSS frameworks. It&#8217;s the first one that&#8217;s built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI. Its also pure CSS, so its easy to integrate with any Javascript framework.</p>
+
+<p>Topcoat has been built for the future, thanks to solid conventions and a cutting-edge javascript architecture, and more goodness :</p>
+
+<ul>
+<li><a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> convention</li>
+<li><a href="http://learnboost.github.io/stylus/">stylus</a> CSS preprocessor</li>
+<li><a href="http://gruntjs.com">grunt</a> task automation</li>
+<li><a href="https://github.com/topcoat/topdoc">TopDoc</a> CSS documentation generator</li>
+<li><a href="http://npmjs.org">npm</a> for dependencies</li>
+</ul>
+
+
+<p>It&#8217;s fully open source, not &#8220;fauxpen source&#8221;, and the contributors uses various online tools to run the project :</p>
+
+<ul>
+<li><a href="http://github.com/topcoat">Github</a> of course for code and issues</li>
+<li><a href="http://codepen.io/Topcoat">codepen.io</a> to prototype and host widgets demos</li>
+<li><a href="http://huboard.com/topcoat/topcoat">huboard</a> to manage milestones on top of Github issues</li>
+</ul>
+
+
+<p>All of this make it a powerful framework made to be extensible and performant.</p>
+
+<h2>Install topcoat</h2>
+
+<p>Just <a href="https://github.com/topcoat/topcoat/releases">download the latest release</a> from github and extract it. The release contains the final CSS with dark and light themes for desktop and mobile, so you can use then directly; just add a link to the <code>topcoat-mobile-light.min.css</code> file in your app for example.</p>
+
+<p>If you want to customize the themes or add new components, you need to run <code>npm install</code> from the topcoat folder. This will download all the widgets sources and local dependencies to your <code>node_modules</code> folder.</p>
+
+<p>Some important things to notice :</p>
+
+<ul>
+<li>Each component (button, list, checkbox&#8230;) has its own folder in the <code>node_modules</code> subfolder (so each one has its own npm repo). Each one also has its own gruntfile in case you want to build its css separately.</li>
+<li>Most of components have a <code>topcoat-[COMPONENT]-base</code> folder with just enough CSS to completely reset the styling of the element, so other components can override it entirely. For example the default button hasn&#8217;t any default border or background and looks like a simple text block;</li>
+<li>The <code>topcoat-theme</code> folder defines the 4 builtin topcoat themes which are just a combination of variables that defines some variations of the components.</li>
+<li>The main Gruntfile list the available themes and associated widgets using pattern globbing and this is from where the final CSS are built, including the given widgets.</li>
+</ul>
+
+
+<h2>Adding a custom theme</h2>
+
+<p>You can easily tweak the builtin themes by modifying the variables inside the <code>topcoat-theme</code> folder then run <code>grunt</code> to rebuild the final CSS. But its much better to add your own theme and left the others untouched.</p>
+
+<p>Let&#8217;s add a simple green theme :</p>
+
+<ul>
+<li>copy the <code>topcoat-theme/src/theme-topcoat-*</code> file from the theme that matches the most your design, eg copy <code>theme-topcoat-mobile-light.styl</code> to <code>theme-green.styl</code>.</li>
+<li>create a <code>variables-green.styl</code> with a bunch of variables that override the default ones (see the list of variables in the other variables-* files). For example :</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// base colors</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">color</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span> <span class="o">=</span> <span class="err">#</span><span class="nx">e2ffe2</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">placeholder</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">input</span> <span class="o">=</span> <span class="err">#</span><span class="mi">4</span><span class="nx">eff4e</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">down</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">hover</span> <span class="o">=</span> <span class="err">#</span><span class="mi">02</span><span class="nx">ff01</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">border</span><span class="o">--</span><span class="nx">focus</span> <span class="o">=</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">box</span><span class="o">-</span><span class="nx">shadow</span><span class="o">--</span><span class="nx">focus</span> <span class="o">=</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">2</span><span class="nx">px</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// cta button colors</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b300</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">border</span><span class="o">--</span><span class="nx">cta</span> <span class="o">=</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="err">#</span><span class="mi">006700</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span><span class="o">--</span><span class="nx">down</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span><span class="o">--</span><span class="nx">hover</span> <span class="o">=</span> <span class="err">#</span><span class="mi">02</span><span class="nx">ff01</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>add <code>@import variables-green</code> to your <code>theme-green.styl</code>. (This allows you later to combine some variables files)</li>
+<li>add the theme link in the main gruntfile, &#8216;stylus&#8217; section:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">stylus</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">green</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">import</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;theme-green&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">files</span><span class="o">:</span> <span class="p">[{</span>
+</span><span class='line'>            <span class="nx">src</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>                <span class="c1">// here you can eventually add/remove some components from the output</span>
+</span><span class='line'>                <span class="s1">&#39;node_modules/topcoat-*/src/**/*.styl&#39;</span>
+</span><span class='line'>                <span class="p">],</span>
+</span><span class='line'>            <span class="nx">dest</span><span class="o">:</span> <span class="s1">&#39;css/topcoat-green.css&#39;</span>
+</span><span class='line'>        <span class="p">}]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Now run <code>grunt</code> and you&#8217;ll see your final <code>topcoat-green.css</code> and  <code>topcoat-green.min.css</code> appear magically in the CSS folder :)</li>
+<li>You also have a <code>demo/topcoat-green.html</code> file for free that show you the final result, generated via TopDoc.</li>
+</ul>
+
+
+<h2>Add a custom component</h2>
+
+<p>Now, let&#8217;s say you want to add a custom button to the generated theme, for example <code>button-round</code>.</p>
+
+<p>Add a <code>node_modules/topcoat-button-round</code> folder and create <code>src/topcoat-button-round.styl</code> file. Inside, add your round button definition, with the documentation to generate the demo :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="o">//</span> <span class="nt">import</span> <span class="nt">anything</span> <span class="nt">you</span> <span class="nt">need</span> <span class="nt">to</span> <span class="nt">extend</span>
+</span><span class='line'><span class="k">@import</span> <span class="nt">topcoat-button</span>
+</span><span class='line'><span class="c">/* topdoc</span>
+</span><span class='line'><span class="c">  name: Round Button</span>
+</span><span class='line'><span class="c">  description: A simple, yet round button</span>
+</span><span class='line'><span class="c">  modifiers:</span>
+</span><span class='line'><span class="c">    :active: Round button active state</span>
+</span><span class='line'><span class="c">    :disabled: Disabled state</span>
+</span><span class='line'><span class="c">    :hover: Hover state</span>
+</span><span class='line'><span class="c">    :focus: Focused</span>
+</span><span class='line'><span class="c">  markup:</span>
+</span><span class='line'><span class="c">    &lt;button class=&quot;topcoat-button--round&quot;&gt;Button&lt;/button&gt;</span>
+</span><span class='line'><span class="c">    &lt;button class=&quot;topcoat-button--round&quot; disabled&gt;Button&lt;/button&gt;</span>
+</span><span class='line'><span class="c">  tags:</span>
+</span><span class='line'><span class="c">    - desktop</span>
+</span><span class='line'><span class="c">    - light</span>
+</span><span class='line'><span class="c">    - mobile</span>
+</span><span class='line'><span class="c">    - button</span>
+</span><span class='line'><span class="c">    - round</span>
+</span><span class='line'><span class="c">*/</span>
+</span><span class='line'><span class="nc">.topcoat-button--round</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">@extend</span> <span class="nc">.topcoat-button</span>
+</span><span class='line'>    <span class="nt">border-radius</span><span class="o">:</span> <span class="nt">999px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:disabled</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">disabled</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:hover</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">hover</span>
+</span><span class='line'>  <span class="k">text-shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">text-shadow</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:focus</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">focus</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:active</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">color</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">color</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">text-shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">text-shadow</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">background-color</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">background-color</span><span class="o">--</span><span class="n">down</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">--</span><span class="n">down</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, when you&#8217;ll run <code>grunt</code> again, the final CSS will include your button definition and the <code>demo/topcoat-green.html</code> demo page will present your new button with related documentation.</p>
+
+<h2>Creating new Topcoat components</h2>
+
+<p>Now you know how to add custom components and integrate them in the topcoat workflow properly.</p>
+
+<p>If you&#8217;re willing to share new components with the community (and you should), here&#8217;s the workflow :</p>
+
+<ul>
+<li>demo your component markup and css on <a href="http://codepen.io">codepen.io</a></li>
+<li>create a github repo for your component, using the same structure as any of the <code>node_modules/topcoat-*</code> folder.</li>
+<li>if accepted, your component will be added to the main Topcoat <code>package.json</code> then auto-installed with <code>npm install</code>.</li>
+</ul>
+
+
+<h2>Need help ?</h2>
+
+<p>Comment below, use Github issues or join the #topcoat irc channel to discuss :)</p>
+
+<p><strong>I hope this quick intro will help you choose Topcoat as your next CSS framework and you will contribute to the project so we can build together a better CSS framework.</strong></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Phonegap day Amsterdam 2013]]></title>
