@@ -5,7 +5,7 @@ date: 2013-09-30 00:00
 comments: true
 categories: css javascript phonegap
 author: Julien Bouquillon
-preview: true
+published: false
 ---
 
 ## Introduction
