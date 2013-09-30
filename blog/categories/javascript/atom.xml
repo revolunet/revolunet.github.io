@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-29T15:37:09+02:00</updated>
+  <updated>2013-09-30T11:52:42+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,201 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extending the Topcoat CSS framework]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework/"/>
+    <updated>2013-09-30T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework</id>
+    <content type="html"><![CDATA[<h2>Introduction</h2>
+
+<p><a href="http://topcoat.io">Topcoat.io</a> is the new kid on the block of the CSS frameworks. It's the first one that's built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI. Its also pure CSS, so its easy to integrate with any Javascript framework.</p>
+
+<p>Topcoat has been built for the future, thanks to solid conventions and a cutting-edge javascript architecture, and more goodness :</p>
+
+<ul>
+<li><a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> convention</li>
+<li><a href="http://learnboost.github.io/stylus/">stylus</a> CSS preprocessor</li>
+<li><a href="http://gruntjs.com">grunt</a> task automation</li>
+<li><a href="https://github.com/topcoat/topdoc">TopDoc</a> CSS documentation generator</li>
+<li><a href="http://npmjs.org">npm</a> for dependencies</li>
+</ul>
+
+
+<p>It's fully open source, not "fauxpen source", and the contributors uses various online tools to run the project :</p>
+
+<ul>
+<li><a href="http://github.com/topcoat">Github</a> of course for code and issues</li>
+<li><a href="http://codepen.io/Topcoat">codepen.io</a> to prototype and host widgets demos</li>
+<li><a href="http://huboard.com/topcoat/topcoat">huboard</a> to manage milestones on top of Github issues</li>
+</ul>
+
+
+<p>All of this make it a powerful framework made to be extensible and performant.</p>
+
+<h2>Install topcoat</h2>
+
+<p>Just <a href="https://github.com/topcoat/topcoat/releases">download the latest release</a> from github and extract it. The release contains the final CSS with dark and light themes for desktop and mobile, so you can use then directly; just add a link to the <code>topcoat-mobile-light.min.css</code> file in your app for example.</p>
+
+<p>If you want to customize the themes or add new components, you need to run <code>npm install</code> from the topcoat folder. This will download all the widgets sources and local dependencies to your <code>node_modules</code> folder.</p>
+
+<p>Some important things to notice :</p>
+
+<ul>
+<li>Each component (button, list, checkbox...) has its own folder in the <code>node_modules</code> subfolder (so each one has its own npm repo). Each one also has its own gruntfile in case you want to build its css separately.</li>
+<li>Most of components have a <code>topcoat-[COMPONENT]-base</code> folder with just enough CSS to completely reset the styling of the element, so other components can override it entirely. For example the default button hasn't any default border or background and looks like a simple text block;</li>
+<li>The <code>topcoat-theme</code> folder defines the 4 builtin topcoat themes which are just a combination of variables that defines some variations of the components.</li>
+<li>The main Gruntfile list the available themes and associated widgets using pattern globbing and this is from where the final CSS are built, including the given widgets.</li>
+</ul>
+
+
+<h2>Adding a custom theme</h2>
+
+<p>You can easily tweak the builtin themes by modifying the variables inside the <code>topcoat-theme</code> folder then run <code>grunt</code> to rebuild the final CSS. But its much better to add your own theme and left the others untouched.</p>
+
+<p>Let's add a simple green theme :</p>
+
+<ul>
+<li>copy the <code>topcoat-theme/src/theme-topcoat-*</code> file from the theme that matches the most your design, eg copy <code>theme-topcoat-mobile-light.styl</code> to <code>theme-green.styl</code>.</li>
+<li>create a <code>variables-green.styl</code> with a bunch of variables that override the default ones (see the list of variables in the other variables-* files). For example :</li>
+</ul>
+
+
+<p>```js
+// base colors
+var-color = #00b400
+var-background-color = #e2ffe2
+var-placeholder-color--input = #4eff4e
+var-background-color--down = #00b400
+var-background-color--hover = #02ff01
+var-border--focus = 1px solid #00b400
+var-box-shadow--focus = 0 0 0 2px #00b400</p>
+
+<p>// cta button colors
+var-background-color--cta = #00b300
+var-border--cta = 1px solid #006700
+var-background-color--cta--down = #00b400
+var-background-color--cta--hover = #02ff01
+```</p>
+
+<ul>
+<li>add <code>@import variables-green</code> to your <code>theme-green.styl</code>. (This allows you later to combine some variables files)</li>
+<li><p>add the theme link in the main gruntfile, 'stylus' section:
+```js
+stylus: {
+ green: {</p>
+
+<pre><code> options: {
+     import: ['theme-green', 'utils']
+ },
+ files: [{
+     src: [
+         // here you can eventually add/remove some components from the output
+         'node_modules/topcoat-*/src/**/*.styl'
+         ],
+     dest: 'css/topcoat-green.css'
+ }]
+</code></pre>
+
+<p> }
+}
+```</p></li>
+<li><p>Now run <code>grunt</code> and you'll see your final <code>topcoat-green.css</code> and  <code>topcoat-green.min.css</code> appear magically in the CSS folder :)</p></li>
+<li>You also have a <code>demo/topcoat-green.html</code> file for free that show you the final result, generated via TopDoc.</li>
+</ul>
+
+
+<h2>Add a custom component</h2>
+
+<p>Now, let's say you want to add a custom button to the generated theme, for example <code>button-round</code>.</p>
+
+<p>Add a <code>node_modules/topcoat-button-round</code> folder and create <code>src/topcoat-button-round.styl</code> file. Inside, add your round button definition, with the documentation to generate the demo :</p>
+
+<p>```css
+// import anything you need to extend
+@import topcoat-button
+/* topdoc
+  name: Round Button
+  description: A simple, yet round button
+  modifiers:</p>
+
+<pre><code>:active: Round button active state
+:disabled: Disabled state
+:hover: Hover state
+:focus: Focused
+</code></pre>
+
+<p>  markup:</p>
+
+<pre><code>&lt;button class="topcoat-button--round"&gt;Button&lt;/button&gt;
+&lt;button class="topcoat-button--round" disabled&gt;Button&lt;/button&gt;
+</code></pre>
+
+<p>  tags:</p>
+
+<pre><code>- desktop
+- light
+- mobile
+- button
+- round
+</code></pre>
+
+<p>*/
+.topcoat-button--round {</p>
+
+<pre><code>@extend .topcoat-button
+border-radius: 999px;
+</code></pre>
+
+<p>}</p>
+
+<p>.topcoat-button--round:disabled {
+  @extend .topcoat-button:disabled
+}</p>
+
+<p>.topcoat-button--round:hover {
+  @extend .topcoat-button:hover
+  text-shadow: var-text-shadow;
+  box-shadow: var-box-shadow;
+}</p>
+
+<p>.topcoat-button--round:focus {
+  @extend .topcoat-button:focus
+}</p>
+
+<p>.topcoat-button--round:active {</p>
+
+<pre><code>color: var-color;
+text-shadow: var-text-shadow;
+background-color: var-background-color--down;
+box-shadow: var-box-shadow--down;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now, when you'll run <code>grunt</code> again, the final CSS will include your button definition and the <code>demo/topcoat-green.html</code> demo page will present your new button with related documentation.</p>
+
+<h2>Creating new Topcoat components</h2>
+
+<p>Now you know how to add custom components and integrate them in the topcoat workflow properly.</p>
+
+<p>If you're willing to share new components with the community (and you should), here's the workflow :</p>
+
+<ul>
+<li>demo your component markup and css on <a href="http://codepen.io">codepen.io</a></li>
+<li>create a github repo for your component, using the same structure as any of the <code>node_modules/topcoat-*</code> folder.</li>
+<li>if accepted, your component will be added to the main Topcoat <code>package.json</code> then auto-installed with <code>npm install</code>.</li>
+</ul>
+
+
+<h2>Need help ?</h2>
+
+<p>Comment below, use Github issues or join the #topcoat irc channel to discuss :)</p>
+
+<p><strong>I hope this quick intro will help you choose Topcoat as your next CSS framework and you will contribute to the project so we can build together a better CSS framework.</strong></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Phonegap day Amsterdam 2013]]></title>
