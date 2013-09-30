@@ -27,7 +27,7 @@ It's fully open source, not "fauxpen source", and the contributors uses various 
 
 All of this make it a powerful framework made to be extensible and performant.
 
-## Install topcoat
+## Install Topcoat
 
 Just [download the latest release](https://github.com/topcoat/topcoat/releases) from github and extract it. The release contains the final CSS with dark and light themes for desktop and mobile, so you can use then directly; just add a link to the `topcoat-mobile-light.min.css` file in your app for example.
 
@@ -37,7 +37,7 @@ Some important things to notice :
 
  - Each component (button, list, checkbox...) has its own folder in the `node_modules` subfolder (so each one has its own npm repo). Each one also has its own gruntfile in case you want to build its css separately.
  - Most of components have a `topcoat-[COMPONENT]-base` folder with just enough CSS to completely reset the styling of the element, so other components can override it entirely. For example the default button hasn't any default border or background and looks like a simple text block; 
- - The `topcoat-theme` folder defines the 4 builtin topcoat themes which are just a combination of variables that defines some variations of the components.
+ - The `topcoat-theme` folder defines the 4 builtin Topcoat themes which are just a combination of variables that defines some variations of the components.
  - The main Gruntfile list the available themes and associated widgets using pattern globbing and this is from where the final CSS are built, including the given widgets.
 
 ## Adding a custom theme
@@ -146,7 +146,7 @@ Now, when you'll run `grunt` again, the final CSS will include your button defin
 
 ## Creating new Topcoat components
 
-Now you know how to add custom components and integrate them in the topcoat workflow properly.
+Now you know how to add custom components and integrate them in the Topcoat workflow properly.
 
 If you're willing to share new components with the community (and you should), here's the workflow :
 
