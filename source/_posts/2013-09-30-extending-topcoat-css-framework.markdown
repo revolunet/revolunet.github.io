@@ -42,7 +42,7 @@ Some important things to notice :
 
 ## Adding a custom theme
 
-You can easily tweak the builtin themes by modifying the variables inside the `topcoat-theme` folder then run `grunt` to rebuild the final CSS. But its much better to add your own theme and left the others untouched.
+You can easily tweak the builtin themes by modifying the variables inside the `topcoat-theme` folder then run `grunt` to rebuild the final CSS. But its much better to add your own theme and leave the others untouched.
 
 Let's add a simple green theme :
 
