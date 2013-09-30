@@ -9,7 +9,7 @@ author: Julien Bouquillon
 
 ## Introduction
 
-[Topcoat.io](http://topcoat.io) is the new kid on the block of the CSS frameworks. It's the first one that's built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI. Its also pure CSS, so its easy to integrate with any Javascript framework.
+[Topcoat.io](http://topcoat.io) is the new kid on the block of the CSS-only frameworks. It's the first one that's built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI.It is also easy to theme and customize thanks to a smart CSS organisation and a powerful toolchain.
 
 Topcoat has been built for the future, thanks to solid conventions and a cutting-edge javascript architecture, and more goodness :
 
