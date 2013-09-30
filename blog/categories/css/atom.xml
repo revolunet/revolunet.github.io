@@ -4,7 +4,7 @@
   <title><![CDATA[Category: css | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/css/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-30T12:10:24+02:00</updated>
+  <updated>2013-09-30T17:46:08+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -62,7 +62,7 @@
 
 <h2>Adding a custom theme</h2>
 
-<p>You can easily tweak the builtin themes by modifying the variables inside the <code>topcoat-theme</code> folder then run <code>grunt</code> to rebuild the final CSS. But its much better to add your own theme and left the others untouched.</p>
+<p>You can easily tweak the builtin themes by modifying the variables inside the <code>topcoat-theme</code> folder then run <code>grunt</code> to rebuild the final CSS. But its much better to add your own theme and leave the others untouched.</p>
 
 <p>Let's add a simple green theme :</p>
 
