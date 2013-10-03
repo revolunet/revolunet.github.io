@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-09-30T17:46:08+02:00</updated>
+  <updated>2013-10-03T16:39:32+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,56 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Universal .htaccess CORS support]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess/"/>
+    <updated>2013-10-03T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess</id>
+    <content type="html"><![CDATA[<h2>What is CORS</h2>
+
+<p>In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented javascript on a given page to communicate with third party domains. Many workarounds have been implemented since, like JSONP, which is only a 'hack' allowing cross-domain communication using javascirpt callbacks; Handy, but this prevents any other method than GET and forces the use of querystring to pass parameters.</p>
+
+<p>With the RISE of internet APIs and decentralised services, having a way to communicate with 3rd party domain became critical; thus, the <a href="http://www.w3.org/TR/cors/">W3C defined the CORS</a> protocol, acronym which stands for "Cross-Origin Resource Sharing" and allows different domains to communicate together, the same way Adobe Flash did it a long time before with the crossdomain.xml policy (remember?).</p>
+
+<p>Now with CORS, the server defines which domains (applications) can communicate with him (or anyone). When CORS is enabled on the server, your javascript can communicate transparently using any HTTP method; For non-GET requests, the browser transparently make an initial OPTIONS request to check if the request is allowed or not, and then makes the real request.</p>
+
+<h2>CORS-enable your API</h2>
+
+<p>You can find the whole specs and various implementations at <a href="http://enable-cors.org/">enable-cors.org</a>.</p>
+
+<h2>Pain-free CORS for Apache servers</h2>
+
+<p>If you don't want to change your code, we've crafted a small .htaccess for you that will force CORS on your API, without even touching your code. Just drop one of the implementations in your .htaccess and your API is magically CORS-enabled :)</p>
+
+<p><div><script src='https://gist.github.com/revolunet/6295643.js'></script>
+<noscript><pre><code># with AJAX withCredentials=false (cookies NOT sent)
+Header always set Access-Control-Allow-Origin &quot;*&quot;                   
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On                  
+RewriteCond %{REQUEST_METHOD} OPTIONS 
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]]
+
+# with AJAX withCredentials=true (cookies sent, SSL allowed...)
+SetEnvIfNoCase ORIGIN (.*) ORIGIN=$1
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Origin &quot;%{ORIGIN}e&quot;
+Header always set Access-Control-Allow-Credentials &quot;true&quot;
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
+</code></pre></noscript></div>
+</p>
+
+<p>Note: If you use the withCredentials version, be sure to add <code>withCredentials: true</code> in your AJAX requests.</p>
+
+<p>You can validate your API CORS support using this demo : <a href="http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview">http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview</a></p>
+
+<p>Hope this helps !</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Extending the Topcoat CSS framework]]></title>

@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="Introduction Topcoat.io is the new kid on the block of the CSS-only frameworks. It&#8217;s the first one that&#8217;s built for performance from the &hellip;">
+  <meta name="description" content="What is CORS In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,85 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS Support</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-03T00:00:00+02:00" pubdate data-updated="true">Oct 3<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/03/universal-CORS-htaccess/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>What is CORS</h2>
+
+<p>In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented javascript on a given page to communicate with third party domains. Many workarounds have been implemented since, like JSONP, which is only a &#8216;hack&#8217; allowing cross-domain communication using javascirpt callbacks; Handy, but this prevents any other method than GET and forces the use of querystring to pass parameters.</p>
+
+<p>With the RISE of internet APIs and decentralised services, having a way to communicate with 3rd party domain became critical; thus, the <a href="http://www.w3.org/TR/cors/">W3C defined the CORS</a> protocol, acronym which stands for &#8220;Cross-Origin Resource Sharing&#8221; and allows different domains to communicate together, the same way Adobe Flash did it a long time before with the crossdomain.xml policy (remember?).</p>
+
+<p>Now with CORS, the server defines which domains (applications) can communicate with him (or anyone). When CORS is enabled on the server, your javascript can communicate transparently using any HTTP method; For non-GET requests, the browser transparently make an initial OPTIONS request to check if the request is allowed or not, and then makes the real request.</p>
+
+<h2>CORS-enable your API</h2>
+
+<p>You can find the whole specs and various implementations at <a href="http://enable-cors.org/">enable-cors.org</a>.</p>
+
+<h2>Pain-free CORS for Apache servers</h2>
+
+<p>If you don&#8217;t want to change your code, we&#8217;ve crafted a small .htaccess for you that will force CORS on your API, without even touching your code. Just drop one of the implementations in your .htaccess and your API is magically CORS-enabled :)</p>
+
+<div><script src='https://gist.github.com/revolunet/6295643.js'></script>
+<noscript><pre><code># with AJAX withCredentials=false (cookies NOT sent)
+Header always set Access-Control-Allow-Origin &quot;*&quot;                   
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On                  
+RewriteCond %{REQUEST_METHOD} OPTIONS 
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]]
+
+# with AJAX withCredentials=true (cookies sent, SSL allowed...)
+SetEnvIfNoCase ORIGIN (.*) ORIGIN=$1
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Origin &quot;%{ORIGIN}e&quot;
+Header always set Access-Control-Allow-Credentials &quot;true&quot;
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
+</code></pre></noscript></div>
+
+
+<p>Note: If you use the withCredentials version, be sure to add <code>withCredentials: true</code> in your AJAX requests.</p>
+
+<p>You can validate your API CORS support using this demo : <a href="http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview">http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview</a></p>
+
+<p>Hope this helps !</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1476,127 +1555,6 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/15/octopress-cheatsheet/">Octopress Cheat Sheet</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/04/15/octopress-cheatsheet/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>When you switch to Octopress for blogging there are a very few things to know :</p>
-
-<h2>Command line</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
-</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># create a new page </span>
-</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># preview your work</span>
-</span><span class='line'>rake preview
-</span><span class='line'>
-</span><span class='line'><span class="c"># publish it</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span><span class='line'>
-</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating a post</h2>
-
-<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
-
-<p>You must add some metas at the top of the file :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
-</span><span class='line'>layout: post
-</span><span class='line'>title: My Awesome article.
-</span><span class='line'>date: 2013-05-1 00:00
-</span><span class='line'>categories: news technology web
-</span><span class='line'>author: Super Man
-</span><span class='line'>comments: <span class="nb">true</span>
-</span><span class='line'>published: <span class="nb">false</span>
-</span><span class='line'>---
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
-
-<h2>Publish</h2>
-
-<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
-
-<p>Here&#8217;s a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c"># push.sh : publish &amp; commit with a single command</span>
-</span><span class='line'>git add <span class="nb">source</span>
-</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
-</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1612,6 +1570,10 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
       </li>
     
@@ -1625,10 +1587,6 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
     
       <li class="post">
         <a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/">AngularJS tips&#8217;n&#8217;tricks part 2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/01/starting-with-angularjs/">Learn AngularJS in 5 steps</a>
       </li>
     
   </ul>
@@ -1669,7 +1627,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (5)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (3)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (5)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
 </section>
 
   
