@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-10-03T16:39:32+02:00</updated>
+  <updated>2013-11-27T12:06:08+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,259 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Create a reusable AngularJS input form component]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/"/>
+    <updated>2013-11-28T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component</id>
+    <content type="html"><![CDATA[<p>One of the beauty of the AngularJS framework is its ability to isolate complexity with services and directives; This is perfect for segmenting our code, create very testable components, and make them reusable. A directive, which is an anticipation of the future <a href="http://css-tricks.com/modular-future-web-components/">web components</a>, is a piece of isolated javascript, HTML and CSS that encapsulate a specific behaviour and that you can easily reuse in various apps. Once created, a directive is simply invoked by adding it to the DOM via a HTML tag (<code>&lt;accordion&gt;&lt;/accordion&gt;</code>, or a custom attribute <code>&lt;div accordion&gt;&lt;/div&gt;</code>, or a CSS class <code>&lt;div class="accordion"&gt;&lt;/div&gt;</code> (and even as HTML comment).</p>
+
+<p>In this tutorial we&#8217;ll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We&#8217;ll cover the classic directive creation but also the input validation, and the use of the <a href="http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController">ngModelController</a>, that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The next part will cover the use of grunt, the test suites with Jasmine and KarmaJS, and the publication and distribution of our widget with GitHub and bower.</p>
+
+<p>For this example we&#8217;ll build a custom numeric input widget, named &#8220;rn-stepper&#8221;. We&#8217;ll use the last AngularJS 1.2 that brings some important fixes to the private scopes management (capital point for reusable components). The full widget code is <a href="https://github.com/revolunet/angular-stepper">available on github</a> as a reusable component and you can see the final result here :</p>
+
+<iframe style="width: 100%; height: 250px" src="http://jsfiddle.net/26ghx/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Markup generation</h3>
+
+<p>The first step is to create a naïve directive that build our markup, and renders correctly. We just declare the directive name, and template to use.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// we declare a module name for our projet, and its dependencies (none)</span>
+</span><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;revolunet.stepper&#39;</span><span class="p">,</span> <span class="p">[])</span>
+</span><span class='line'><span class="c1">// declare our naïve directive</span>
+</span><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// can be used as attribute or element</span>
+</span><span class='line'>        <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;AE&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// which markup this directive generates</span>
+</span><span class='line'>        <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;button&gt;-&lt;/button&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;div&gt;0&lt;/div&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;button&gt;+&lt;/button&gt;&#39;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, to use our directive, its quite straightforward :</p>
+
+<ul>
+<li>declare our <code>revolunet.stepper</code> module as one of our app dependencies</li>
+<li>use <code>&lt;div rn-stepper&gt;&lt;/div&gt;</code> (attribute form) or simply <code>&lt;rn-stepper&gt;&lt;/rn-stepper&gt;</code> (element form). to integrate the directive somewhere.</li>
+</ul>
+
+
+<p>The attribute form is better if you want to support IE8 as it works out-of-the-box.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/n4JHg">http://jsfiddle.net/revolunet/n4JHg/</a></p>
+
+<h3>Add internal behaviour</h3>
+
+<p>Now we need to add behaviour and internal variables to our custom component. We&#8217;ll declare a &#8220;private scope&#8221; that will hold internal variables and functions, and add the <code>link</code> function to our directive, which is responsible of initialising the component behaviour just after the markup has been inserted in the final page.</p>
+
+<p>Here&#8217;s the updated directive code :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;AE&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// declare the directive scope as private (and empty)</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="o">:</span> <span class="p">{},</span>
+</span><span class='line'>        <span class="c1">// add behaviour to our buttons and use a variable value</span>
+</span><span class='line'>        <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;button ng-click=&quot;decrement()&quot;&gt;-&lt;/button&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;button ng-click=&quot;increment()&quot;&gt;+&lt;/button&gt;&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// this function is called on each rn-stepper instance initialisation</span>
+</span><span class='line'>        <span class="c1">// we just declare what we need in the above template</span>
+</span><span class='line'>        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">,</span> <span class="nx">iAttrs</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">increment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">decrement</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">--</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We now have a functionnal component with an isolated code and template.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/A92Aw/">http://jsfiddle.net/revolunet/A92Aw/</a></p>
+
+<h3>Communicate with the external world</h3>
+
+<p>Our component works great but it would be more useful if it could control a real public variable, known as a <code>ngModel</code> in AngularJS.</p>
+
+<p>Let&#8217;s add a databinding between our component internal <code>value</code> and the outer world (our application).</p>
+
+<p>We just need to update our scope declaration like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;=ngModel&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will automagically bind our internal <code>value</code> variable to the external one declared in the <code>ngModel</code> attribute. The <code>=</code> means &#8220;double data-binding&#8221; which means if ngModel is updated externally then the internal <code>value</code> will be updated, and vice-versa.</p>
+
+<p>Say my app expose a <code>rating</code> variable, we could now bind it to our component simply like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-stepper</span> <span class="na">ng-model=</span><span class="s">&quot;rating&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/9e7Hy/">http://jsfiddle.net/revolunet/9e7Hy/</a></p>
+
+<h3>Make our component form-friendly</h3>
+
+<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to add some code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$setViewValue</code> API method, which is available as soon as you &#8220;require&#8221; a ngModel on your directive.</p>
+
+<p>How it works ? The ngModelController <code>$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline (the <code>$viewValue</code> of a model may not necessarly has the same<code>$modelValue</code>; example: the <code>$viewValue</code> could be a dd/mm/YY string but the internal <code>$modelValue</code> be a real Date object). Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here&#8217;s the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a></p>
+
+<p>Here&#8217;s how we update the directive declaration :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// restrict, template and scope attributes are the same as before.</span>
+</span><span class='line'>        <span class="c1">// the &#39;require&#39; property says we need a ngModel attribute in the declaration.</span>
+</span><span class='line'>        <span class="c1">// this require makes a 4th argument available in the link function below</span>
+</span><span class='line'>        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;ngModel&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// the ngModelController attribute is an instance of an ngModelController</span>
+</span><span class='line'>        <span class="c1">// for our current ngModel.</span>
+</span><span class='line'>        <span class="c1">// if we had required multiple directives in the require attribute, this 4th</span>
+</span><span class='line'>        <span class="c1">// argument would give us an array of controllers.</span>
+</span><span class='line'>        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">,</span> <span class="nx">iAttrs</span><span class="p">,</span> <span class="nx">ngModelController</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// we can now use our ngModelController builtin methods</span>
+</span><span class='line'>            <span class="c1">// that do the heavy-lifting for us</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">increment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$setViewValue</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">decrement</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$setViewValue</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">--</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/s4gm6/">http://jsfiddle.net/revolunet/s4gm6/</a></p>
+
+<h3>Add min/max attributes</h3>
+
+<p>Now our component is form-friendly, so let&#8217;s as some builtin validation rules.</p>
+
+<p>We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).</p>
+
+<p>The <code>ngModelController</code> API gives us a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
+
+<p>We just need to call <code>ngModelController.$setValidity('outOfBounds', false)</code> to make our input, and thus parent forms invalids, and have <code>ng-invalid</code> and <code>ng-invalid-out-of-bound</code> CSS classes added to our forms and to our component.</p>
+
+<p>Our stepper component is now full functionnal and integrates seamlessly in any form.</p>
+
+<p>demo: <a href="http://jsfiddle.net/revolunet/HCUNC/">http://jsfiddle.net/revolunet/HCUNC/</a></p>
+
+<h3>Prevent invalid input</h3>
+
+<p>Another nice-to-have feature would be to prevent the user from entering invalid data, which means disabling the buttons when the internal value reach the min/max limits. This could be achieved in two ways :</p>
+
+<ul>
+<li>BAD :  manually in our link function, toggling our buttons states on each click.</li>
+<li>GOOD : automagically, using a builtin <code>ng-disabled</code> directive in our template, that will disable the buttons under some conditions.</li>
+</ul>
+
+
+<p>The second option is much more Angular-ish and there are several ways to achieve this so let&#8217;s see how we can do.</p>
+
+<p>We can add <code>ng-disabled="isOverMin()"</code> to our first button template and add a <code>scope.isOverMin</code> function that returns a boolean indicating if we should disable or not the given button. same with <code>overMax</code> that would check if the max has been reached or not.</p>
+
+<p>Our template is now :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;button</span> <span class="na">ng-disabled=</span><span class="s">&quot;isOverMin()&quot;</span> <span class="na">ng-click=</span><span class="s">&quot;decrement()&quot;</span><span class="nt">&gt;</span>-<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'><span class="nt">&lt;div&gt;</span>{{ value }}<span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;button</span> <span class="na">ng-disabled=</span><span class="s">&quot;isOverMax()&quot;</span> <span class="na">ng-click=</span><span class="s">&quot;increment()&quot;</span><span class="nt">&gt;</span>+<span class="nt">&lt;/button&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/26ghx/">http://jsfiddle.net/revolunet/26ghx/</a></p>
+
+<p>Another way would be to alter the template dynamically on creation, adding the simple <code>ng-disabled="value &lt;= min"</code> expression. in that case, we&#8217;d use the directive <code>compile</code> function to modify the template just before its rendered in the page.</p>
+
+<p>The next part will detail the tests suite and distribution subjects over github and bower.</p>
+
+<p>Stay tuned :) and feel free to comment/ask below !</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Universal .htaccess CORS support]]></title>

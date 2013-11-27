@@ -9,21 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="When you switch to Octopress for blogging there are a very few things to know : Command line 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-# create a new post &hellip;">
+  <meta name="description" content="AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the Miško Hevery &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -93,6 +79,89 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/30/angularjs-animations-mobile-applications/">Using AngularJS Views Animations for Mobile Applications</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-30T20:20:00+02:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/30/angularjs-animations-mobile-applications/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
+
+<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+
+<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
+
+<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
+
+<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a &#8216;Back&#8217; button, the user expects the slide animation to be reversed when he touches it. If you don&#8217;t do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+
+<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
+
+<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
+
+<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
+
+<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
+
+<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
+
+<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
+
+<iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.LR</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.LR</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -277,6 +346,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a reusable AngularJS input form component</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
       </li>
     
@@ -290,10 +363,6 @@
     
       <li class="post">
         <a href="/blog/2013/09/18/npm-vs-pip/">npm vs pip</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/">AngularJS tips&#8217;n&#8217;tricks part 2</a>
       </li>
     
   </ul>
@@ -334,7 +403,7 @@
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (5)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (6)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
 </section>
 
   

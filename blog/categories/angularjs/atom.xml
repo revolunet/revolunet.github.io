@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-10-03T16:39:32+02:00</updated>
+  <updated>2013-11-27T12:06:08+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,208 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Create a reusable AngularJS input form component]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/"/>
+    <updated>2013-11-28T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component</id>
+    <content type="html"><![CDATA[<p>One of the beauty of the AngularJS framework is its ability to isolate complexity with services and directives; This is perfect for segmenting our code, create very testable components, and make them reusable. A directive, which is an anticipation of the future <a href="http://css-tricks.com/modular-future-web-components/">web components</a>, is a piece of isolated javascript, HTML and CSS that encapsulate a specific behaviour and that you can easily reuse in various apps. Once created, a directive is simply invoked by adding it to the DOM via a HTML tag (<code>&lt;accordion&gt;&lt;/accordion&gt;</code>, or a custom attribute <code>&lt;div accordion&gt;&lt;/div&gt;</code>, or a CSS class <code>&lt;div class="accordion"&gt;&lt;/div&gt;</code> (and even as HTML comment).</p>
+
+<p>In this tutorial we'll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We'll cover the classic directive creation but also the input validation, and the use of the <a href="http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController">ngModelController</a>, that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The next part will cover the use of grunt, the test suites with Jasmine and KarmaJS, and the publication and distribution of our widget with GitHub and bower.</p>
+
+<p>For this example we'll build a custom numeric input widget, named "rn-stepper". We'll use the last AngularJS 1.2 that brings some important fixes to the private scopes management (capital point for reusable components). The full widget code is <a href="https://github.com/revolunet/angular-stepper">available on github</a> as a reusable component and you can see the final result here :</p>
+
+<p><iframe style="width: 100%; height: 250px" src="http://jsfiddle.net/26ghx/embedded/result,js,html,css/light/"></iframe><br><br></p>
+
+<h3>Markup generation</h3>
+
+<p>The first step is to create a naïve directive that build our markup, and renders correctly. We just declare the directive name, and template to use.</p>
+
+<p>```javascript
+// we declare a module name for our projet, and its dependencies (none)
+angular.module('revolunet.stepper', [])
+// declare our naïve directive
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    // can be used as attribute or element
+    restrict: 'AE',
+    // which markup this directive generates
+    template: '&lt;button&gt;-&lt;/button&gt;' +
+              '&lt;div&gt;0&lt;/div&gt;' +
+              '&lt;button&gt;+&lt;/button&gt;'
+};
+</code></pre>
+
+<p>});
+```
+Now, to use our directive, its quite straightforward :</p>
+
+<ul>
+<li>declare our <code>revolunet.stepper</code> module as one of our app dependencies</li>
+<li>use <code>&lt;div rn-stepper&gt;&lt;/div&gt;</code> (attribute form) or simply <code>&lt;rn-stepper&gt;&lt;/rn-stepper&gt;</code> (element form). to integrate the directive somewhere.</li>
+</ul>
+
+
+<p>The attribute form is better if you want to support IE8 as it works out-of-the-box.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/n4JHg">http://jsfiddle.net/revolunet/n4JHg/</a></p>
+
+<h3>Add internal behaviour</h3>
+
+<p>Now we need to add behaviour and internal variables to our custom component. We'll declare a "private scope" that will hold internal variables and functions, and add the <code>link</code> function to our directive, which is responsible of initialising the component behaviour just after the markup has been inserted in the final page.</p>
+
+<p>Here's the updated directive code :</p>
+
+<p>```javascript
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    restrict: 'AE',
+    // declare the directive scope as private (and empty)
+    scope: {},
+    // add behaviour to our buttons and use a variable value
+    template: '&lt;button ng-click="decrement()"&gt;-&lt;/button&gt;' +
+              '&lt;div&gt;&lt;/div&gt;' +
+              '&lt;button ng-click="increment()"&gt;+&lt;/button&gt;',
+    // this function is called on each rn-stepper instance initialisation
+    // we just declare what we need in the above template
+    link: function(scope, iElement, iAttrs) {
+        scope.value = 0;
+        scope.increment = function() {
+            scope.value++;
+        }
+        scope.decrement = function() {
+            scope.value--;
+        }
+    }
+};
+</code></pre>
+
+<p>});
+```</p>
+
+<p>We now have a functionnal component with an isolated code and template.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/A92Aw/">http://jsfiddle.net/revolunet/A92Aw/</a></p>
+
+<h3>Communicate with the external world</h3>
+
+<p>Our component works great but it would be more useful if it could control a real public variable, known as a <code>ngModel</code> in AngularJS.</p>
+
+<p>Let's add a databinding between our component internal <code>value</code> and the outer world (our application).</p>
+
+<p>We just need to update our scope declaration like this :</p>
+
+<p>```javascript
+scope: {</p>
+
+<pre><code>value: '=ngModel'
+</code></pre>
+
+<p>}
+<code>``
+This will automagically bind our internal</code>value<code>variable to the external one declared in the</code>ngModel<code>attribute. The</code>=<code>means "double data-binding" which means if ngModel is updated externally then the internal</code>value` will be updated, and vice-versa.</p>
+
+<p>Say my app expose a <code>rating</code> variable, we could now bind it to our component simply like this :</p>
+
+<p>```html</p>
+
+<div rn-stepper ng-model="rating"></div>
+
+
+<p>```</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/9e7Hy/">http://jsfiddle.net/revolunet/9e7Hy/</a></p>
+
+<h3>Make our component form-friendly</h3>
+
+<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to add some code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$setViewValue</code> API method, which is available as soon as you "require" a ngModel on your directive.</p>
+
+<p>How it works ? The ngModelController <code>$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline (the <code>$viewValue</code> of a model may not necessarly has the same<code>$modelValue</code>; example: the <code>$viewValue</code> could be a dd/mm/YY string but the internal <code>$modelValue</code> be a real Date object). Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here's the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a></p>
+
+<p>Here's how we update the directive declaration :</p>
+
+<p>```javascript
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    // restrict, template and scope attributes are the same as before.
+    // the 'require' property says we need a ngModel attribute in the declaration.
+    // this require makes a 4th argument available in the link function below
+    require: 'ngModel',
+    // the ngModelController attribute is an instance of an ngModelController
+    // for our current ngModel.
+    // if we had required multiple directives in the require attribute, this 4th
+    // argument would give us an array of controllers.
+    link: function(scope, iElement, iAttrs, ngModelController) {
+        // we can now use our ngModelController builtin methods
+        // that do the heavy-lifting for us
+        scope.increment = function() {
+            ngModelController.$setViewValue(scope.value++);
+        }
+        scope.decrement = function() {
+            ngModelController.$setViewValue(scope.value--);
+        }
+    }
+};
+</code></pre>
+
+<p>});
+```</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/s4gm6/">http://jsfiddle.net/revolunet/s4gm6/</a></p>
+
+<h3>Add min/max attributes</h3>
+
+<p>Now our component is form-friendly, so let's as some builtin validation rules.</p>
+
+<p>We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).</p>
+
+<p>The <code>ngModelController</code> API gives us a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
+
+<p>We just need to call <code>ngModelController.$setValidity('outOfBounds', false)</code> to make our input, and thus parent forms invalids, and have <code>ng-invalid</code> and <code>ng-invalid-out-of-bound</code> CSS classes added to our forms and to our component.</p>
+
+<p>Our stepper component is now full functionnal and integrates seamlessly in any form.</p>
+
+<p>demo: <a href="http://jsfiddle.net/revolunet/HCUNC/">http://jsfiddle.net/revolunet/HCUNC/</a></p>
+
+<h3>Prevent invalid input</h3>
+
+<p>Another nice-to-have feature would be to prevent the user from entering invalid data, which means disabling the buttons when the internal value reach the min/max limits. This could be achieved in two ways :</p>
+
+<ul>
+<li>BAD :  manually in our link function, toggling our buttons states on each click.</li>
+<li>GOOD : automagically, using a builtin <code>ng-disabled</code> directive in our template, that will disable the buttons under some conditions.</li>
+</ul>
+
+
+<p>The second option is much more Angular-ish and there are several ways to achieve this so let's see how we can do.</p>
+
+<p>We can add <code>ng-disabled="isOverMin()"</code> to our first button template and add a <code>scope.isOverMin</code> function that returns a boolean indicating if we should disable or not the given button. same with <code>overMax</code> that would check if the max has been reached or not.</p>
+
+<p>Our template is now :
+
+```html
+<button ng-disabled="isOverMin()" ng-click="decrement()">-</button></p>
+
+<div>{{ value }}</div>
+
+
+<p><button ng-disabled="isOverMax()" ng-click="increment()">+</button>
+```
+</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/26ghx/">http://jsfiddle.net/revolunet/26ghx/</a></p>
+
+<p>Another way would be to alter the template dynamically on creation, adding the simple <code>ng-disabled="value &lt;= min"</code> expression. in that case, we'd use the directive <code>compile</code> function to modify the template just before its rendered in the page.</p>
+
+<p>The next part will detail the tests suite and distribution subjects over github and bower.</p>
+
+<p>Stay tuned :) and feel free to comment/ask below !</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AngularJS tips'n'tricks part 2]]></title>
@@ -483,48 +685,6 @@ $scope.$watch('myConfig', function(newValue, oldValue) {</p>
 <p>Many more tricks to come, stay tuned :)</p>
 
 <p><strong>UPDATE</strong> : checkout <a href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/">PART 2</a> :)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
-    <link href="http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
-    <updated>2013-04-30T20:20:00+02:00</updated>
-    <id>http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications</id>
-    <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
-
-<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
-
-<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
-
-<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
-
-<p><iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe><br><br></p>
-
-<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a 'Back' button, the user expects the slide animation to be reversed when he touches it. If you don't do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
-
-<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn't handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
-
-<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
-
-<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
-
-<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn't be very efficient due to multiple downloads of the ressource.</p>
-
-<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
-
-<p>Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
-
-<p><iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe><br><br></p>
-
-<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
-
-<p><code>css
-.LR .enter-setup {...}
-.LR .leave-setup {...}
-.RL .enter-setup {...}
-.RL .leave-setup {...}
-</code></p>
 ]]></content>
   </entry>
   
