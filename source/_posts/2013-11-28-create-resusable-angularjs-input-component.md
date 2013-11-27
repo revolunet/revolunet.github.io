@@ -112,7 +112,7 @@ For example, if your model is a real Date object, you'd want your input to displ
 
 The `ngModelController.$setViewValue` method should always be called when you want update a model from your directive (view). It takes care of calling the eventual `$parsers` pipeline. Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered `$viewChangeListeners`. Here's the [full code for this function](https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166).
 
-As pointed by a comment below, we don't need anymore to have a scope `value` variable, as we now have a reference to the original `ngModelController` which holds a reference to the viewValue.
+As pointed by a comment from [@ThomasBelin4](http://twitter.com/@ThomasBelin4) below, we don't need anymore to have a scope `value` variable, as we now have a reference to the original `ngModelController` which holds a reference to the viewValue.
 
 Here's how we update the directive declaration :
 
