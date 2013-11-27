@@ -104,16 +104,25 @@ demo : [http://jsfiddle.net/revolunet/9e7Hy/](http://jsfiddle.net/revolunet/9e7H
 
 ### Make our component form-friendly
 
-We now have a dynamic input that can manipulate arbitrary ngModel data. We need to add some code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a `$pristine` and `$dirty` state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the `ngModelController.$setViewValue` API method, which is available as soon as you "require" a ngModel on your directive.
+We now have a dynamic input that can manipulate arbitrary ngModel data. We need to modify a bit the code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a `$pristine` and `$dirty` state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the `ngModelController.$render` and `ngModelController.$setViewValue` API methods, which are available **as soon as you "require" a ngModel** on your directive.
 
-How it works ? The ngModelController `$setViewValue` method should always be called when you want update a model from your directive (view). It takes care of calling the eventual `$parsers` pipeline (the `$viewValue` of a model may not necessarly has the same`$modelValue`; example: the `$viewValue` could be a dd/mm/YY string but the internal `$modelValue` be a real Date object). Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered `$viewChangeListeners`. Here's the [full code for this function](https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166)
+The `ngModelController.$render` method is a method which you should override yourself in the directive and is responsible of updating the view; it will be called by the framework when the external ngModel changes. When the model changes, the framework executes the `$formatters` pipeline which is responsible of eventually converting the `$modelValue` raw value to a usable `$viewValue`.
+
+For example, if your model is a real Date object, you'd want your input to display it as dd/mm/YY. The model-to-view conversion is made by the `$formatters` pipeline and the view-to-model by the `$parsers` pipeline. Once you get a ngModelController instance, you can easily insert new items in these pipelines.
+
+The `ngModelController.$setViewValue` method should always be called when you want update a model from your directive (view). It takes care of calling the eventual `$parsers` pipeline. Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered `$viewChangeListeners`. Here's the [full code for this function](https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166).
+
+As pointed by a comment below, we don't need anymore to have a scope `value` variable, as we now have a reference to the original `ngModelController` which holds a reference to the viewValue.
 
 Here's how we update the directive declaration :
 
 ```javascript
 .directive('rnStepper', function() {
     return {
-        // restrict, template and scope attributes are the same as before.
+        // restrict and template attributes are the same as before.
+        // we don't need anymore to bind the value to the external ngModel
+        // as we require its controller and thus can access it directly
+        scope: {},
         // the 'require' property says we need a ngModel attribute in the declaration.
         // this require makes a 4th argument available in the link function below
         require: 'ngModel',
@@ -124,12 +133,27 @@ Here's how we update the directive declaration :
         link: function(scope, iElement, iAttrs, ngModelController) {
             // we can now use our ngModelController builtin methods
             // that do the heavy-lifting for us
-            scope.increment = function() {
-                ngModelController.$setViewValue(scope.value++);
+
+            // when model change, update our view (just update the div content)
+            ngModelController.$render = function() {
+                iElement.find('div').text(ngModelController.$viewValue);
+            };
+
+            // update the model then the view
+            function updateModel(offset) {
+                // call $parsers pipeline then update $modelValue
+                ngModelController.$setViewValue(ngModelController.$viewValue + offset);
+                // update the local view
+                ngModelController.$render();
             }
+
+            // update the value when user clicks the buttons
             scope.decrement = function() {
-                ngModelController.$setViewValue(scope.value--);
-            }
+                updateModel(-1);
+            };
+            scope.increment = function() {
+                updateModel(+1);
+            };
         }
     };
 });
@@ -143,7 +167,7 @@ Now our component is form-friendly, so let's as some builtin validation rules.
 
 We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).
 
-The `ngModelController` API gives us a `$setValidity` method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.
+The `ngModelController` API gives us also a `$setValidity` method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.
 
 We just need to call `ngModelController.$setValidity('outOfBounds', false)` to make our input, and thus parent forms invalids, and have `ng-invalid` and `ng-invalid-out-of-bound` CSS classes added to our forms and to our component.
 
@@ -173,7 +197,6 @@ Our template is now :
 
 demo : [http://jsfiddle.net/revolunet/26ghx/](http://jsfiddle.net/revolunet/26ghx/)
 
-Another way would be to alter the template dynamically on creation, adding the simple `ng-disabled="value <= min"` expression. in that case, we'd use the directive `compile` function to modify the template just before its rendered in the page.
 
 The next part will detail the tests suite and distribution subjects over github and bower.
 
