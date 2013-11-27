@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-11-27T12:06:08+01:00</updated>
+  <updated>2013-11-27T19:04:18+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -129,9 +129,15 @@ This will automagically bind our internal</code>value<code>variable to the exter
 
 <h3>Make our component form-friendly</h3>
 
-<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to add some code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$setViewValue</code> API method, which is available as soon as you "require" a ngModel on your directive.</p>
+<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to modify a bit the code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$render</code> and <code>ngModelController.$setViewValue</code> API methods, which are available <strong>as soon as you "require" a ngModel</strong> on your directive.</p>
 
-<p>How it works ? The ngModelController <code>$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline (the <code>$viewValue</code> of a model may not necessarly has the same<code>$modelValue</code>; example: the <code>$viewValue</code> could be a dd/mm/YY string but the internal <code>$modelValue</code> be a real Date object). Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here's the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a></p>
+<p>The <code>ngModelController.$render</code> method is a method which you should override yourself in the directive and is responsible of updating the view; it will be called by the framework when the external ngModel changes. When the model changes, the framework executes the <code>$formatters</code> pipeline which is responsible of eventually converting the <code>$modelValue</code> raw value to a usable <code>$viewValue</code>.</p>
+
+<p>For example, if your model is a real Date object, you'd want your input to display it as dd/mm/YY. The model-to-view conversion is made by the <code>$formatters</code> pipeline and the view-to-model by the <code>$parsers</code> pipeline. Once you get a ngModelController instance, you can easily insert new items in these pipelines.</p>
+
+<p>The <code>ngModelController.$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline. Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here's the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a>.</p>
+
+<p>As pointed by a comment below, we don't need anymore to have a scope <code>value</code> variable, as we now have a reference to the original <code>ngModelController</code> which holds a reference to the viewValue.</p>
 
 <p>Here's how we update the directive declaration :</p>
 
@@ -139,7 +145,10 @@ This will automagically bind our internal</code>value<code>variable to the exter
 .directive('rnStepper', function() {</p>
 
 <pre><code>return {
-    // restrict, template and scope attributes are the same as before.
+    // restrict and template attributes are the same as before.
+    // we don't need anymore to bind the value to the external ngModel
+    // as we require its controller and thus can access it directly
+    scope: {},
     // the 'require' property says we need a ngModel attribute in the declaration.
     // this require makes a 4th argument available in the link function below
     require: 'ngModel',
@@ -150,12 +159,27 @@ This will automagically bind our internal</code>value<code>variable to the exter
     link: function(scope, iElement, iAttrs, ngModelController) {
         // we can now use our ngModelController builtin methods
         // that do the heavy-lifting for us
-        scope.increment = function() {
-            ngModelController.$setViewValue(scope.value++);
+
+        // when model change, update our view (just update the div content)
+        ngModelController.$render = function() {
+            iElement.find('div').text(ngModelController.$viewValue);
+        };
+
+        // update the model then the view
+        function updateModel(offset) {
+            // call $parsers pipeline then update $modelValue
+            ngModelController.$setViewValue(ngModelController.$viewValue + offset);
+            // update the local view
+            ngModelController.$render();
         }
+
+        // update the value when user clicks the buttons
         scope.decrement = function() {
-            ngModelController.$setViewValue(scope.value--);
-        }
+            updateModel(-1);
+        };
+        scope.increment = function() {
+            updateModel(+1);
+        };
     }
 };
 </code></pre>
@@ -171,7 +195,7 @@ This will automagically bind our internal</code>value<code>variable to the exter
 
 <p>We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).</p>
 
-<p>The <code>ngModelController</code> API gives us a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
+<p>The <code>ngModelController</code> API gives us also a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
 
 <p>We just need to call <code>ngModelController.$setValidity('outOfBounds', false)</code> to make our input, and thus parent forms invalids, and have <code>ng-invalid</code> and <code>ng-invalid-out-of-bound</code> CSS classes added to our forms and to our component.</p>
 
@@ -206,8 +230,6 @@ This will automagically bind our internal</code>value<code>variable to the exter
 </p>
 
 <p>demo : <a href="http://jsfiddle.net/revolunet/26ghx/">http://jsfiddle.net/revolunet/26ghx/</a></p>
-
-<p>Another way would be to alter the template dynamically on creation, adding the simple <code>ng-disabled="value &lt;= min"</code> expression. in that case, we'd use the directive <code>compile</code> function to modify the template just before its rendered in the page.</p>
 
 <p>The next part will detail the tests suite and distribution subjects over github and bower.</p>
 
