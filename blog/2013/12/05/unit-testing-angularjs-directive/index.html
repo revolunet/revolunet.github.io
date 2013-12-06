@@ -1,0 +1,713 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Unit testing an AngularJS directive - revolunet blog</title>
+  <meta name="author" content="revolunet team">
+
+  
+  <meta name="description" content="In this article, i&#8217;ll detail the process to unit test the stepper directive we&#8217;ve created in the last week custom component creation &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-294393-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+    <img class="basic-alignment left" src="/images/carre-75.jpg">
+  <h1><a href="/">revolunet blog</a></h1>
+  
+    <h2>web technologies for desktop and mobile</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.revolunet.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Unit Testing an AngularJS Directive</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-05T00:00:00+01:00" pubdate data-updated="true">Dec 5<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In this article, i&#8217;ll detail the process to unit test the stepper directive we&#8217;ve created in the last week <a href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/">custom component creation article</a>. Next week, i&#8217;ll cover how to distribute your component via GitHub and Bower.</p>
+
+<p>Unit testing is the art of testing individually every smallest part of your code, which are the foundations of your apps sanity. Once correctly tested, these parts assembled together will also play nicely, as their behaviour has already been validated independently.</p>
+
+<p>Unit testing helps you <strong>prevent regressions, increase quality, maintenability, and trust in your codebase</strong>, thus better team collaboration, easier refactoring&#8230; and WIN :)</p>
+
+<p>Another usage is, when you get a new bug report, you add the revelant test that demo the bug, fix it in your code so the test will pass, then keep it there as a proof of reliability.</p>
+
+<p>Among AngularJS best friends there is the <a href="http://karma-runner.github.io">KarmaJS test runner</a> (A nodeJS server to launch the tests in browsers and reports the results) and the <a href="http://pivotal.github.io/jasmine/">Jasmine behaviour-driven testing framework</a> (the language to define your tests and expectations). We&#8217;ll use the grunt-karma task to integrate karma in our classic yet awesome grunt workflow and launch the tests in our browsers. Note that karma can run the tests in remote cloud browsers, for example via <a href="http://saucelabs.com/">SauceLabs</a> or <a href="http://www.browserstack.com/">BrowserStack</a>.</p>
+
+<p><strong>AngularJS is made from ground-up for testing, so make yourself a favor, start NOW :)</strong></p>
+
+<h2>Glossary</h2>
+
+<p>There are some terms that may need clarification before we go further :</p>
+
+<ul>
+<li><code>spec</code> : the specifications of something you want to test, consisting one or many tests suites. should cover all the expected behaviour.</li>
+<li><code>test suite</code> : This is a group of tests; defined within a <code>describe</code> block in Jasmine. blocks can be nested as much as needed.</li>
+<li><code>test</code> : Test instructions, that ends with one or more expectations; defined within a <code>it</code> block in Jasmine.</li>
+<li><code>actual</code> : this is the value you test in your expectation.</li>
+<li><code>expected value</code> : this is the value you test the actual value against.</li>
+<li><code>matcher</code> : A function that compares the <code>actual</code> and the <code>expected</code> values and returns a boolean success result to Jasmine. eg : <code>toEqual</code>, <code>toBeGreatherThan</code>, <code>toHaveBeenCalledWith</code>&#8230; you can even define your owns.</li>
+<li><code>expectation</code> : Use the expect function to test a value, called the actual. It is chained with a matcher function, which takes the expected value.</li>
+<li><code>mock</code> : a stubbed service that replace a real one at runtime with fake data/methods that you can control during your tests.</li>
+</ul>
+
+
+<p>Here&#8217;s an example spec file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// a test suite (group of tests)</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;sample component test&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// a single test</span>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ensure addition is correct&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// sample expectation</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//                  `--- the expected value (2)</span>
+</span><span class='line'>        <span class="c1">//             `--- the matcher method (equality)</span>
+</span><span class='line'>        <span class="c1">//       `-- the actual value (2)</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="c1">// another test</span>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ensure substraction is correct&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Setup the test environnement</h2>
+
+<h4>Add grunt-karma to your project dependencies</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>npm install grunt-karma --save-dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Create karma-unit.js file</h4>
+
+<p><a href="https://github.com/revolunet/angular-stepper/blob/master/karma-unit.js">Here is our full example</a>. This file defines :</p>
+
+<ul>
+<li>the javascript files to be loaded in the browsers for the tests. Typically, this is the libraries you use, your application files, but also the files for your tests and the eventuals mocks.</li>
+<li>which browsers to run the tests against.</li>
+<li>how to reports the results : console, browser&#8230; ?</li>
+<li>optional plugins.</li>
+</ul>
+
+
+<p>Here&#8217;s our example &#8220;files&#8221; section :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">files</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>  <span class="s2">&quot;http://code.angularjs.org/1.2.1/angular.js&quot;</span><span class="p">,</span>       <span class="o">&lt;--</span> <span class="nx">angular</span> <span class="nx">source</span>
+</span><span class='line'>  <span class="s2">&quot;http://code.angularjs.org/1.2.1/angular-mocks.js&quot;</span><span class="p">,</span> <span class="o">&lt;--</span> <span class="nx">angular</span> <span class="nx">mocks</span> <span class="o">&amp;</span> <span class="nx">test</span> <span class="nx">utils</span>
+</span><span class='line'>  <span class="s2">&quot;src/angular-stepper.js&quot;</span><span class="p">,</span>                           <span class="o">&lt;--</span> <span class="nx">our</span> <span class="nx">component</span> <span class="nx">source</span> <span class="nx">code</span>
+</span><span class='line'>  <span class="s2">&quot;src/angular-stepper.spec.js&quot;</span>                       <span class="o">&lt;--</span> <span class="nx">our</span> <span class="nx">component</span> <span class="nx">test</span> <span class="nx">suite</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>NB: One could add jquery here if it helps you write your test code (more powerful selectors, CSS tests, size computation&#8230;)</p>
+
+<h4>Add the karma grunt tasks to your Gruntfile.js</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">karma</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">unit</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">configFile</span><span class="o">:</span> <span class="s1">&#39;karma-unit.js&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// run karma in the background</span>
+</span><span class='line'>        <span class="nx">background</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// which browsers to run the tests on</span>
+</span><span class='line'>        <span class="nx">browsers</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;Chrome&#39;</span><span class="p">,</span> <span class="s1">&#39;Firefox&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Create <code>angular-stepper.spec.js</code> and paste the content of the sample test above. You can now simply run <code>grunt karma</code> and see your tests executing in the browsers and reporting the results in the console.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>....
+</span><span class='line'>Chrome 33.0.1712 <span class="o">(</span>Mac OS X 10.9.0<span class="o">)</span>: Executed 2 of 2 SUCCESS <span class="o">(</span>1.65 secs / 0.004 secs<span class="o">)</span>
+</span><span class='line'>Firefox 25.0.0 <span class="o">(</span>Mac OS X 10.9<span class="o">)</span>: Executed 2 of 2 SUCCESS <span class="o">(</span>2.085 secs / 0.006 secs<span class="o">)</span>
+</span><span class='line'>TOTAL: 4 SUCCESS
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Each dot represent a successfull test and you can see our two tests runs in the two browsers we&#8217;ve configured before in our karma-unit.js file. woot !</p>
+
+<p>Now let&#8217;s code the real tests :)</p>
+
+<h2>Code our directive unit tests</h2>
+
+<p>Our component unit test suite, aka the <em>spec</em> should cover all the expected behaviour of our component, but also test the edge cases (eg : invalid input, unexpected server behaviours&#8230;)</p>
+
+<p>Below you can see an extract of our angular-stepper component test suite (angular-stepper.spec.js), and <a href="https://github.com/revolunet/angular-stepper/blob/master/src/angular-stepper.spec.js">here&#8217;s the full spec</a>. Our tests for such a component are quite simple, no need for mocks here. The only tricky thing is that we wrap our directive inside a form to be able to test that it plays well with ngModelController and updates form validity correctly.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// the describe keyword is used to define a test suite (group of tests)</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;rnStepper directive&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// we declare some global vars to be used in the tests</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">elm</span><span class="p">,</span>        <span class="c1">// our directive jqLite element</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">;</span>      <span class="c1">// the scope where our directive is inserted</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// load the modules we want to test</span>
+</span><span class='line'>    <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;revolunet.stepper&#39;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// before each test, creates a new fresh scope</span>
+</span><span class='line'>    <span class="c1">// the inject function interest is to make use of the angularJS</span>
+</span><span class='line'>    <span class="c1">// dependency injection to get some other services in our test</span>
+</span><span class='line'>    <span class="c1">// here we need $rootScope to create a new scope</span>
+</span><span class='line'>    <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">inject</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$rootScope</span><span class="p">,</span> <span class="nx">$compile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">scope</span> <span class="o">=</span> <span class="nx">$rootScope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testModel</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">compileDirective</span><span class="p">(</span><span class="nx">tpl</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// function to compile a fresh directive with the given template, or a default one</span>
+</span><span class='line'>        <span class="c1">// compile the tpl with the $rootScope created above</span>
+</span><span class='line'>        <span class="c1">// wrap our directive inside a form to be able to test</span>
+</span><span class='line'>        <span class="c1">// that our form integration works well (via ngModelController)</span>
+</span><span class='line'>        <span class="c1">// our directive instance is then put in the global &#39;elm&#39; variable for further tests</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tpl</span><span class="p">)</span> <span class="nx">tpl</span> <span class="o">=</span> <span class="s1">&#39;&lt;div rn-stepper ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&lt;/form&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">tpl</span> <span class="o">=</span> <span class="s1">&#39;&lt;form name=&quot;form&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">tpl</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tpl&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// inject allows you to use AngularJS dependency injection</span>
+</span><span class='line'>        <span class="c1">// to retrieve and use other services</span>
+</span><span class='line'>        <span class="nx">inject</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$compile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">$compile</span><span class="p">(</span><span class="nx">tpl</span><span class="p">)(</span><span class="nx">scope</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">elm</span> <span class="o">=</span> <span class="nx">form</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="c1">// $digest is necessary to finalize the directive generation</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$digest</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;initialisation&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// before each test in this block, generates a fresh directive</span>
+</span><span class='line'>        <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">compileDirective</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="c1">// a single test example, check the produced DOM</span>
+</span><span class='line'>        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should produce 2 buttons and a div&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should check validity on init&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">$valid</span><span class="p">).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update form validity initialy&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// test with a min attribute that is out of bounds</span>
+</span><span class='line'>        <span class="c1">// first set the min value</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testMin</span> <span class="o">=</span> <span class="mi">45</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// then produce our directive using it</span>
+</span><span class='line'>        <span class="nx">compileDirective</span><span class="p">(</span><span class="s1">&#39;&lt;div rn-stepper min=&quot;testMin&quot; ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// this should impact the form validity</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">$valid</span><span class="p">).</span><span class="nx">toBeFalsy</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;decrease button should be disabled when min reached&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// test the initial button status</span>
+</span><span class='line'>        <span class="nx">compileDirective</span><span class="p">(</span><span class="s1">&#39;&lt;div rn-stepper min=&quot;40&quot; ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">)).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+</span><span class='line'>        <span class="c1">// update the scope model value</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testModel</span> <span class="o">=</span> <span class="mi">40</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// force model change propagation</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$digest</span><span class="p">();</span>
+</span><span class='line'>        <span class="c1">// validate it has updated the button status</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="c1">// and many others...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Some notes :</strong></p>
+
+<ul>
+<li>A directive needs to be compiled in a given scope to be tested</li>
+<li>A non-isolated scope can be acceded via element.scope()</li>
+<li>An isolated scope can be acceded via element.isolatedscope()</li>
+</ul>
+
+
+<p><strong>Why to we have to call <code>scope.$digest()</code> when we change a model value in the tests ?</strong></p>
+
+<p>In a real angular app, the <code>$digest</code> is automatically triggered by the framework in reaction to various events (clicks, inputs, requests&#8230;). There&#8217;s no such user-based events during the automated tests so we just need to force the <code>$digest</code>. (the <code>$digest</code> is what update all the bindings).</p>
+
+<h2>Bonus #1: real time tests</h2>
+
+<p>Thanks to grunt, we can make the tests run when the source changes and be alerted in real time.</p>
+
+<p>If you want the tests to be run on each code change, just add a section to your <code>watch</code> task :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">js</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">files</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;src/*.js&#39;</span><span class="p">],</span>
+</span><span class='line'>    <span class="nx">tasks</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;karma:unit:run&#39;</span><span class="p">,</span> <span class="s1">&#39;build&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You could update your default grunt task like this</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;karma:unit&#39;</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="s1">&#39;watch&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, just run <code>grunt</code> and you&#8217;ll get real-time tests and a builtin webserver :)</p>
+
+<h2>Bonus #2: add code coverage reporting</h2>
+
+<p>As developers, we love solid metrics; and we also love continous improvements. &#8220;coverage&#8221; refers to the code coverage of your test suite; It gives you metrics and detailed info to increase your code coverage without pain.</p>
+
+<p>Here&#8217;s a sample coverage HTML report :</p>
+
+<p><img class="center" src="/images/coverage-example.png" width="600" height="283" title="AngularJS test coverage report example" ></p>
+
+<p>We can see, for each folder and file, how much code is covered by our test suite. And this is updated in real-time thanks to grunt+karma integration. For each file, we can see line by line which blocks stays untested, which makes writing the remaining tests more straightforward.</p>
+
+<p><strong>100% test coverage doesnt mean your code is bug-free, but it increase quality for sure !</strong></p>
+
+<p>Its really easy to integrate this in our karma+grunt setup. Karma has a &#8220;plugin&#8221; system that allows you to plug the fantastic <a href="https://github.com/gotwarlost/istanbul">Istanbul code coverage tool</a> so we just need to configure the karma-unit.js file and we&#8217;re done :)</p>
+
+<h4>Add coverage to karma</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># add the necessary node_modules</span>
+</span><span class='line'>npm install karma-coverage --save-dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>now update the karma config file with these new settings :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// here we specify which of the files we want to appear in the coverage report</span>
+</span><span class='line'><span class="nx">preprocessors</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s1">&#39;src/angular-stepper.js&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">// add the coverage plugin</span>
+</span><span class='line'><span class="nx">plugins</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;karma-jasmine&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-firefox-launcher&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-chrome-launcher&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-coverage&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="c1">// add coverage to reporters</span>
+</span><span class='line'><span class="nx">reporters</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;dots&#39;</span><span class="p">,</span> <span class="s1">&#39;coverage&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="c1">// tell karma how you want the coverage results</span>
+</span><span class='line'><span class="nx">coverageReporter</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">// where to store the report</span>
+</span><span class='line'>  <span class="nx">dir</span> <span class="o">:</span> <span class="s1">&#39;coverage/&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>More coverage config options here : <a href="https://github.com/karma-runner/karma-coverage">https://github.com/karma-runner/karma-coverage</a></p>
+
+<p>You now need to run your tests again to generate your first report. It should be located in the project root &#8220;coverage&#8221; folder.</p>
+
+<p><strong>Feel free to comment/ask below :)</strong></p>
+
+<p>Next week, we&#8217;ll talk about distributing our now well tested directive on Github and Bower :)</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Julien Bouquillon</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-05T00:00:00+01:00" pubdate data-updated="true">Dec 5<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/" data-via="revolunet" data-counturl="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="small"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/11/28/create-resusable-angularjs-input-component/" title="Previous Post: Create a reusable AngularJS input form component">&laquo; Create a reusable AngularJS input form component</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a reusable AngularJS input form component</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/24/phonegap-day-amsterdam/">Phonegap day Amsterdam 2013</a>
+      </li>
+    
+  </ul>
+</section>
+<a class="twitter-timeline" href="https://twitter.com/revolunet" data-widget-id="329159054884737024">Tweets de @revolunet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/revolunet">@revolunet</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'revolunet',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (7)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - revolunet team -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'revolunetblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/';
+        var disqus_url = 'http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
