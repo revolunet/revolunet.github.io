@@ -9,7 +9,7 @@ author: Julien Bouquillon
 
 One of the beauty of the AngularJS framework is its ability to isolate complexity with services and directives; This is perfect for segmenting our code, create very testable components, and make them reusable. A directive, which is an anticipation of the future [web components](http://css-tricks.com/modular-future-web-components/), is a piece of isolated javascript, HTML and CSS that encapsulate a specific behaviour and that you can easily reuse in various apps. Once created, a directive is simply invoked by adding it to the DOM via a HTML tag (`<accordion></accordion>`, or a custom attribute `<div accordion></div>`, or a CSS class `<div class="accordion"></div>` (and even as HTML comment).
 
-In this tutorial we'll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We'll cover the classic directive creation but also the input validation, and the use of the [ngModelController](http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController), that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The next part will cover the use of grunt, the test suites with Jasmine and KarmaJS, and the publication and distribution of our widget with GitHub and bower.
+In this tutorial we'll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We'll cover the classic directive creation but also the input validation, and the use of the [ngModelController](http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController), that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The [next part will cover the test suites with Jasmine and KarmaJS](http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive), and the publication and distribution of our widget with GitHub and bower.
 
 For this example we'll build a custom numeric input widget, named "rn-stepper". We'll use the last AngularJS 1.2 that brings some important fixes to the private scopes management (capital point for reusable components). The full widget code is [available on github](https://github.com/revolunet/angular-stepper) as a reusable component and you can see the final result here : 
 
@@ -198,7 +198,7 @@ Our template is now :
 demo : [http://jsfiddle.net/revolunet/26ghx/](http://jsfiddle.net/revolunet/26ghx/)
 
 
-The next part will detail the tests suite and distribution subjects over github and bower.
+The [next part will detail the tests suite](http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive) and distribution subjects over github and bower.
 
 Stay tuned :) and feel free to comment/ask below !
 
