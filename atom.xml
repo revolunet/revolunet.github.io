@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-12-06T01:26:34+01:00</updated>
+  <updated>2013-12-09T23:35:29+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -1859,6 +1859,8 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 <p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
 
 <p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
+
+<p><strong>UPDATE</strong> : Just created an much more simpler example based on AngularJS 1.2; check it out : <a href="http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/">http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/</a></p>
 
 <p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
 
