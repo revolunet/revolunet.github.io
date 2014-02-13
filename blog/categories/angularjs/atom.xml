@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2014-02-13T02:26:55+01:00</updated>
+  <updated>2014-02-13T09:10:35+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Object-oriented AngularJS factories]]></title>
+    <title type="html"><![CDATA[Object-oriented AngularJS services]]></title>
     <link href="http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance/"/>
     <updated>2014-02-14T00:00:00+01:00</updated>
     <id>http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance</id>
@@ -26,7 +26,7 @@
 
 <p>In this post, i'll show how to create a base AngularJS service, based on the Github API, that we'll be able to extend and reuse in different scenarios. We'll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.</p>
 
-<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times (with the <code>new</code> keyword), while <code>services</code> always create singletons.</p>
+<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times using the <code>new</code> keyword, while <code>services</code> always create singletons.</p>
 
 <h3>Create our base service</h3>
 
