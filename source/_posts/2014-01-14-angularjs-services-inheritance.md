@@ -155,7 +155,7 @@ app.service('MyUserProfile', function(AdvancedGithubUser) {
 ```
 And use it like this :
 ```js
-app.controller('MyCtrl', function(UserProfile) {
+app.controller('MyCtrl', function(MyUserProfile) {
     $scope.user = MyUserProfile;
     alert(MyUserProfile.location);
 })
