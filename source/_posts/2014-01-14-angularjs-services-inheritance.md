@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Object-oriented AngularJS factories
+title: Object-oriented AngularJS services
 date: 2014-02-14 00:00
 comments: true
 categories: AngularJS
@@ -15,7 +15,7 @@ Once your app grow and your services multiply, you'll quickly feel the need to *
 
 In this post, i'll show how to create a base AngularJS service, based on the Github API, that we'll be able to extend and reuse in different scenarios. We'll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.
 
-Something important to note here is that `factories` are useful to define our classes that you can instantiate many times (with the `new` keyword), while `services` always create singletons.
+Something important to note here is that `factories` are useful to define our classes that you can instantiate many times using the `new` keyword, while `services` always create singletons.
 
 
 ### Create our base service
