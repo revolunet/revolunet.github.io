@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2014-02-13T09:19:37+01:00</updated>
+  <updated>2014-02-13T09:37:13+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -178,7 +178,7 @@ return user;
 <p><code>
 And use it like this :
 </code>js
-app.controller('MyCtrl', function(UserProfile) {</p>
+app.controller('MyCtrl', function(MyUserProfile) {</p>
 
 <pre><code>$scope.user = MyUserProfile;
 alert(MyUserProfile.location);
