@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="In this article, i&#8217;ll detail the process to unit test the stepper directive we&#8217;ve created in the last week custom component creation &hellip;">
+  <meta name="description" content="Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the variety &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,308 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS Factories</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-14T00:00:00+01:00" pubdate data-updated="true">Feb 14<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/02/14/angularjs-services-inheritance/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the <a href="http://shichuan.github.io/javascript-patterns/#code-reuse-patterns">variety</a> of <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#prototypepatternjavascript">Javascript</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">OOP</a> <a href="http://howtonode.org/prototypical-inheritance">patterns</a> <a href="http://javascript.info/tutorial/oop">available</a>. Combined with the new service and factory concepts introduced in AngularJS, implementing OOP in your applications can lead to serious headaches, so i&#8217;ll try to show you some solutions here.</p>
+
+<p>If you need a step-by-step explanation of the Javascript prototypal inheritance, you can read the great <a href="http://www.2ality.com/2012/01/js-inheritance-by-example.html">Dr. Axel Rauschmayer JavaScript inheritance by example</a> article.</p>
+
+<p>Once your app grow and your services multiply, you&#8217;ll quickly feel the need to <strong>reuse your code</strong>, and to split it in small modules to be able to separate concerns and setup some serious unit testing.</p>
+
+<p>In this post, i&#8217;ll show how to create a base AngularJS service, based on the Github API, that we&#8217;ll be able to extend and reuse in different scenarios. We&#8217;ll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.</p>
+
+<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times (with the <code>new</code> keyword), while <code>services</code> always create singletons.</p>
+
+<h3>Create our base service</h3>
+
+<p>Our first service will be responsible of fetching Github basic user data and return the result. We&#8217;ll use a <code>factory</code> instead of a <code>service</code>, which will make it easier to instantiate many versions of the service in our application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;SimpleGithubUser&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// instantiate our initial object</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">SimpleGithubUser</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">profile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// define the getProfile method which will fetch data</span>
+</span><span class='line'>    <span class="c1">// from GH API and *returns* a promise</span>
+</span><span class='line'>    <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Generally, javascript callbacks, like here the $http.get callback,</span>
+</span><span class='line'>        <span class="c1">// change the value of the &quot;this&quot; variable inside it</span>
+</span><span class='line'>        <span class="c1">// so we need to keep a reference to the current instance &quot;this&quot; :</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">&#39;users/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">username</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// when we get the results we store the data in user.profile</span>
+</span><span class='line'>            <span class="nx">self</span><span class="p">.</span><span class="nx">profile</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// promises success should always return something in order to allow chaining</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">SimpleGithubUser</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So we can now easily inject our factory anywhere and use it like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we first inject our factory</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">SimpleGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// instantiate a new user</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SimpleGithubUser</span><span class="p">(</span><span class="s1">&#39;substack&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// fetch data and publish on scope</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$scope</span><span class="p">.</span><span class="nx">userLogin</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">login</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Extending the base service</h3>
+
+<p>Now we&#8217;d like to attach some additional data to our users. Instead of modiying the original factory, or even worse, duplicate it, we can create another factory that extends the original one, just by using the regular javascript prototypal inheritance. We&#8217;ll override some methods and use promises chaining to deliver the final data only when all the subsequent requests have been completed.</p>
+
+<p>This has the advantage of encapsulating the logic inside the new service, making it easily testable while keeping your controllers light.</p>
+
+<p>In this example we&#8217;ll add some data from the Github events API and attach it to the user profile before returning the final result.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we define a new factory and inject our original service so we can extend it properly</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;AdvancedGithubUser&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$http</span><span class="p">,</span> <span class="nx">SimpleGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// create our new custom object that reuse the original object constructor</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">AdvancedGithubUser</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// reuse the original object prototype</span>
+</span><span class='line'>    <span class="nx">AdvancedGithubUser</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SimpleGithubUser</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// define a new internal private method for this object</span>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">getUserEvents</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">&#39;users/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;/events&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// attach the events API result to our user profile</span>
+</span><span class='line'>            <span class="nx">self</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// promises should always return a result</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Now let&#39;s override our original getProfile method</span>
+</span><span class='line'>    <span class="nx">AdvancedGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// we first call the original getProfile method (aka super method)</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">originalGetProfile</span> <span class="o">=</span> <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// we use promises chaining to add additional data</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">originalGetProfile</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// before returning the result,</span>
+</span><span class='line'>            <span class="c1">// call our new private method and bind &quot;this&quot; to &quot;self&quot;</span>
+</span><span class='line'>            <span class="c1">// we need to do this because the method is not part of the prototype</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">getUserEvents</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">AdvancedGithubUser</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Usage is exactly the same, except the service added the events data for us :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we first inject our factory</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">AdvancedGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// instantiate a new user</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AdvancedGithubUser</span><span class="p">(</span><span class="s1">&#39;substack&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// fetch data and publish on scope</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$scope</span><span class="p">.</span><span class="nx">userEvents</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Create a service instance</h3>
+
+<p>Now that you have some solid factories, you can also instantiate some app-wide services that expose pre-configured instances.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">&#39;MyUserProfile&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">AdvancedGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AdvancedGithubUser</span><span class="p">(</span><span class="s1">&#39;revolunet&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">user</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And use it like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">UserProfile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="nx">MyUserProfile</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="nx">MyUserProfile</span><span class="p">.</span><span class="nx">location</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Final result</h2>
+
+<iframe style="width: 100%; height: 600px" src="http://jsfiddle.net/YLs26/embedded/result,html,js,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Hope this has been useful to you, please ask below or on twitter <a href="http://twitter.com/revolunet">@revolunet</a> for any question/suggestion :)</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1907,219 +2209,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/02/angular-carousel-making-of/">Making of the Angular-carousel</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-02T00:00:00+02:00" pubdate data-updated="true">May 2<span>nd</span>, 2013</time>
-        
-         | <a href="/blog/2013/05/02/angular-carousel-making-of/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
-
-<p>As this project shed some lights on various AngularJS aspects, we&#8217;d like to share it with you;
-The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
-
-<p>The goal is to transform any <code>ng-repeat</code> directive into a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
-
-<p>Here&#8217;s a very basic example of a Youtube API call, with the data displayed in a regular Angular template; We just add a <code>rn-carousel</code> attribute to the <code>ul</code> element to ask a carousel :)</p>
-
-<iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe>
-
-
-<br><br>
-
-
-<p>This <code>rn-carousel</code> directive is responsible of :</p>
-
-<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
-
-<p>We first wrap the original <code>ul</code> block in an outer div using JQlite <code>wraps</code> method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
-
-<p>Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.</p>
-
-<p>The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.</p>
-
-<p><strong>2) watching the ng-repeat expression</strong></p>
-
-<p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
-
-<p><del>This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick</del>.</p>
-
-<p><strong>Update :</strong> I ended up with just extracting the li <code>ng-repeat</code> attribute during the <code>compile</code> phase which is much less overhead.</p>
-
-<p><strong>3) binding touch and click events</strong></p>
-
-<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// bind events</span>
-</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mousedown touchstart&#39;</span><span class="p">,</span> <span class="nx">swipeStart</span><span class="p">);</span>
-</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mousemove touchmove&#39;</span><span class="p">,</span> <span class="nx">swipe</span><span class="p">);</span>
-</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mouseup touchend&#39;</span><span class="p">,</span> <span class="nx">swipeEnd</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>4) animating the slides smoothly</strong></p>
-
-<p>When we detect a <code>touchstart</code> we just store the initial event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and dynamically add CSS styles and classes to move the slides accordingly, or restore the current position in some cases.</p>
-
-<p>The slide movement is made thanks to the CSS <code>transition</code> and <code>translate3d</code> properties to force CSS 3D transforms and thus animate the slides using the GPU which make the movement much more smooth especially on mobile devices.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the offset value is simply : desiredSlideIndex * slideWidth</span>
-</span><span class='line'><span class="nx">carousel</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
-</span><span class='line'>    <span class="s1">&#39;-webkit-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-moz-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-ms-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;-o-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>5) adding an indicator to our carousel</strong></p>
-
-<p>As we already watch the <code>ng-repeat</code> expression, we track the number of slides in the carousel and so its quite easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-indicator="true"</code> attribute on your <code>ul</code>.</p>
-
-<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
-
-<p>It just takes <code>items</code> and <code>index</code> attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// enable carousel indicator</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">showIndicator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">iAttrs</span><span class="p">[</span><span class="s1">&#39;rnCarouselIndicator&#39;</span><span class="p">]</span><span class="o">===</span><span class="s1">&#39;true&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">showIndicator</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// as the HTML contains a directive, we need to $compile it</span>
-</span><span class='line'>    <span class="c1">// before appending it to our container</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">indicator</span> <span class="o">=</span> <span class="nx">$compile</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;&quot;</span> <span class="o">+</span> <span class="nx">carouselId</span> <span class="o">+</span><span class="s2">&quot;-indicator&#39; &quot;</span> <span class="o">+</span>
-</span><span class='line'>        <span class="s2">&quot; index=&#39;carouselIndex&#39; items=&#39;carouselItems&#39; rn-carousel-indicators &quot;</span> <span class="o">+</span>
-</span><span class='line'>        <span class="s2">&quot; class=&#39;rn-carousel-indicator&#39;&gt;&lt;/div&gt;&quot;</span>
-</span><span class='line'>    <span class="p">)(</span><span class="nx">scope</span><span class="p">);</span>
-</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">indicator</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>6) offer a two-way data binding for the active slide index</strong></p>
-
-<p>The carousel current index position can be data-bound to an optional <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls/indicators, initialise to a different slide&#8230;</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// set initial position at first slide</span>
-</span><span class='line'><span class="nx">scope</span><span class="p">.</span><span class="nx">carouselIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">iAttrs</span><span class="p">.</span><span class="nx">rnCarouselIndex</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">//  if a binding attribute is present, use it.</span>
-</span><span class='line'>    <span class="kd">var</span> <span class="nx">activeModel</span> <span class="o">=</span> <span class="nx">$parse</span><span class="p">(</span><span class="nx">iAttrs</span><span class="p">[</span><span class="s1">&#39;rnCarouselIndex&#39;</span><span class="p">]);</span>
-</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;carouselIndex&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// when the carousel internal index changes, update the model</span>
-</span><span class='line'>        <span class="nx">activeModel</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">$parent</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$parent</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="nx">$parse</span><span class="p">(</span><span class="nx">iAttrs</span><span class="p">.</span><span class="nx">rnCarouselIndex</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// when the model change, update the local position</span>
-</span><span class='line'>        <span class="c1">// this is also useful for the initial position</span>
-</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">carouselIndex</span> <span class="o">=</span> <span class="nx">newValue</span><span class="p">;</span>
-</span><span class='line'>        <span class="nx">updateSlidePosition</span><span class="p">();</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// if no index attribute, just watch internal index and update display</span>
-</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;carouselIndex&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">updateSlidePosition</span><span class="p">();</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The <code>updateSlidePosition()</code> function simply moves the <code>ul</code> block based on the <code>carouselIndex</code> value and the width of the slides. We do this with CSS transition and <code>translate3d</code> so this is animated and hardware accelerated.</p>
-
-<p><strong>7) tests and grunt automation</strong></p>
-
-<p>These subjects will have a dedicated article soon :)</p>
-
-<p><strong>Limitations</strong></p>
-
-<ul>
-<li>Only works with ul/li structure</li>
-<li>Carousel dimensions is based on the first li detected</li>
-</ul>
-
-
-<p><strong>UPDATE</strong> : the carousel can now be buffered to improve performance with large datasets !</p>
-
-<p><strong>Easy isn&#8217;t it ?</strong></p>
-
-<p>If you have questions, suggestions, issues, pulls requests&#8230; just comment below or on Github :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2135,6 +2224,10 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS factories</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
       </li>
     
@@ -2148,10 +2241,6 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
     
       <li class="post">
         <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/24/phonegap-day-amsterdam/">Phonegap day Amsterdam 2013</a>
       </li>
     
   </ul>
@@ -2192,7 +2281,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (7)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
 </section>
 
   
@@ -2201,7 +2290,7 @@ The full demo+code is available here : <a href="http://blog.revolunet.com/angula
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - revolunet team -
+  Copyright &copy; 2014 - revolunet team -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

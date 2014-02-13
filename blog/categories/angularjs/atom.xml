@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2013-12-09T23:35:29+01:00</updated>
+  <updated>2014-02-13T02:26:55+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,188 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Object-oriented AngularJS factories]]></title>
+    <link href="http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance/"/>
+    <updated>2014-02-14T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance</id>
+    <content type="html"><![CDATA[<p>Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the <a href="http://shichuan.github.io/javascript-patterns/#code-reuse-patterns">variety</a> of <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#prototypepatternjavascript">Javascript</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">OOP</a> <a href="http://howtonode.org/prototypical-inheritance">patterns</a> <a href="http://javascript.info/tutorial/oop">available</a>. Combined with the new service and factory concepts introduced in AngularJS, implementing OOP in your applications can lead to serious headaches, so i'll try to show you some solutions here.</p>
+
+<p>If you need a step-by-step explanation of the Javascript prototypal inheritance, you can read the great <a href="http://www.2ality.com/2012/01/js-inheritance-by-example.html">Dr. Axel Rauschmayer JavaScript inheritance by example</a> article.</p>
+
+<p>Once your app grow and your services multiply, you'll quickly feel the need to <strong>reuse your code</strong>, and to split it in small modules to be able to separate concerns and setup some serious unit testing.</p>
+
+<p>In this post, i'll show how to create a base AngularJS service, based on the Github API, that we'll be able to extend and reuse in different scenarios. We'll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.</p>
+
+<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times (with the <code>new</code> keyword), while <code>services</code> always create singletons.</p>
+
+<h3>Create our base service</h3>
+
+<p>Our first service will be responsible of fetching Github basic user data and return the result. We'll use a <code>factory</code> instead of a <code>service</code>, which will make it easier to instantiate many versions of the service in our application.</p>
+
+<p>```js
+app.factory('SimpleGithubUser', function($http) {</p>
+
+<pre><code>var apiUrl = 'https://api.github.com/';
+
+// instantiate our initial object
+var SimpleGithubUser = function(username) {
+    this.username = username;
+    this.profile = null;
+};
+
+// define the getProfile method which will fetch data
+// from GH API and *returns* a promise
+SimpleGithubUser.prototype.getProfile = function() {
+
+    // Generally, javascript callbacks, like here the $http.get callback,
+    // change the value of the "this" variable inside it
+    // so we need to keep a reference to the current instance "this" :
+    var self = this;
+
+    return $http.get(apiUrl + 'users/' + this.username).then(function(response) {
+
+        // when we get the results we store the data in user.profile
+        self.profile = response.data
+
+        // promises success should always return something in order to allow chaining
+        return response;
+
+    });
+};
+return SimpleGithubUser;
+</code></pre>
+
+<p>})
+```</p>
+
+<p>So we can now easily inject our factory anywhere and use it like this :
+```js
+// we first inject our factory
+app.controller('MyCtrl', function(SimpleGithubUser) {</p>
+
+<pre><code>// instantiate a new user
+var user = new SimpleGithubUser('substack');
+// fetch data and publish on scope
+user.getProfile().then(function() {
+    $scope.userLogin = user.profile.login;
+})
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h3>Extending the base service</h3>
+
+<p>Now we'd like to attach some additional data to our users. Instead of modiying the original factory, or even worse, duplicate it, we can create another factory that extends the original one, just by using the regular javascript prototypal inheritance. We'll override some methods and use promises chaining to deliver the final data only when all the subsequent requests have been completed.</p>
+
+<p>This has the advantage of encapsulating the logic inside the new service, making it easily testable while keeping your controllers light.</p>
+
+<p>In this example we'll add some data from the Github events API and attach it to the user profile before returning the final result.</p>
+
+<p>```js</p>
+
+<p>// we define a new factory and inject our original service so we can extend it properly
+app.factory('AdvancedGithubUser', function($http, SimpleGithubUser) {</p>
+
+<pre><code>var apiUrl = 'https://api.github.com/';
+
+// create our new custom object that reuse the original object constructor
+var AdvancedGithubUser = function() {
+    SimpleGithubUser.apply(this, arguments);
+};
+
+// reuse the original object prototype
+AdvancedGithubUser.prototype = new SimpleGithubUser();
+
+// define a new internal private method for this object
+function getUserEvents() {
+    var self = this;
+    return $http.get(apiUrl + 'users/' + this.username + '/events').then(function(response) {
+
+        // attach the events API result to our user profile
+        self.profile.events = response.data;
+
+        // promises should always return a result
+        return response;
+    });
+}
+
+// Now let's override our original getProfile method
+AdvancedGithubUser.prototype.getProfile = function() {
+
+    var self = this;
+
+    // we first call the original getProfile method (aka super method)
+    var originalGetProfile = SimpleGithubUser.prototype.getProfile.apply(this, arguments);
+
+    // we use promises chaining to add additional data
+    return originalGetProfile.then(function() {
+
+        // before returning the result,
+        // call our new private method and bind "this" to "self"
+        // we need to do this because the method is not part of the prototype
+        return getUserEvents.call(self);
+    });
+};
+return AdvancedGithubUser;
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Usage is exactly the same, except the service added the events data for us :
+```js
+// we first inject our factory
+app.controller('MyCtrl', function(AdvancedGithubUser) {</p>
+
+<pre><code>// instantiate a new user
+var user = new AdvancedGithubUser('substack');
+// fetch data and publish on scope
+user.getProfile().then(function() {
+    $scope.userEvents = user.profile.events;
+})
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h3>Create a service instance</h3>
+
+<p>Now that you have some solid factories, you can also instantiate some app-wide services that expose pre-configured instances.</p>
+
+<p>```js
+app.service('MyUserProfile', function(AdvancedGithubUser) {</p>
+
+<pre><code>var user = new AdvancedGithubUser('revolunet');
+user.getProfile();
+return user;
+</code></pre>
+
+<p>});</p>
+
+<p><code>
+And use it like this :
+</code>js
+app.controller('MyCtrl', function(UserProfile) {</p>
+
+<pre><code>$scope.user = MyUserProfile;
+alert(MyUserProfile.location);
+</code></pre>
+
+<p>})
+```</p>
+
+<h2>Final result</h2>
+
+<p><iframe style="width: 100%; height: 600px" src="http://jsfiddle.net/YLs26/embedded/result,html,js,css/light/"></iframe><br><br></p>
+
+<p>Hope this has been useful to you, please ask below or on twitter <a href="http://twitter.com/revolunet">@revolunet</a> for any question/suggestion :)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Unit testing an AngularJS directive]]></title>
@@ -786,153 +968,6 @@ return $delegate;
 <li><a href="https://speakerdeck.com/search?q=angularjs">Speackerdeck prezos</a></li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Making of the angular-carousel]]></title>
-    <link href="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/"/>
-    <updated>2013-05-02T00:00:00+02:00</updated>
-    <id>http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of</id>
-    <content type="html"><![CDATA[<p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
-
-<p>As this project shed some lights on various AngularJS aspects, we'd like to share it with you;
-The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
-
-<p>The goal is to transform any <code>ng-repeat</code> directive into a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
-
-<p>Here's a very basic example of a Youtube API call, with the data displayed in a regular Angular template; We just add a <code>rn-carousel</code> attribute to the <code>ul</code> element to ask a carousel :)</p>
-
-<p><iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe><br><br></p>
-
-<p>This <code>rn-carousel</code> directive is responsible of :</p>
-
-<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
-
-<p>We first wrap the original <code>ul</code> block in an outer div using JQlite <code>wraps</code> method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
-
-<p>Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.</p>
-
-<p>The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.</p>
-
-<p><strong>2) watching the ng-repeat expression</strong></p>
-
-<p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
-
-<p><del>This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick</del>.</p>
-
-<p><strong>Update :</strong> I ended up with just extracting the li <code>ng-repeat</code> attribute during the <code>compile</code> phase which is much less overhead.</p>
-
-<p><strong>3) binding touch and click events</strong></p>
-
-<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
-
-<p><code>js
-// bind events
-container.bind('mousedown touchstart', swipeStart);
-container.bind('mousemove touchmove', swipe);
-container.bind('mouseup touchend', swipeEnd);
-</code></p>
-
-<p><strong>4) animating the slides smoothly</strong></p>
-
-<p>When we detect a <code>touchstart</code> we just store the initial event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and dynamically add CSS styles and classes to move the slides accordingly, or restore the current position in some cases.</p>
-
-<p>The slide movement is made thanks to the CSS <code>transition</code> and <code>translate3d</code> properties to force CSS 3D transforms and thus animate the slides using the GPU which make the movement much more smooth especially on mobile devices.</p>
-
-<p>```js
-// the offset value is simply : desiredSlideIndex * slideWidth
-carousel.css({</p>
-
-<pre><code>'-webkit-transform': 'translate3d(' + offset + 'px,0,0)',
-'-moz-transform': 'translate3d(' + offset + 'px,0,0)',
-'-ms-transform': 'translate3d(' + offset + 'px,0,0)',
-'-o-transform': 'translate3d(' + offset + 'px,0,0)',
-'transform': 'translate3d(' + offset + 'px,0,0)'
-</code></pre>
-
-<p>});
-```</p>
-
-<p><strong>5) adding an indicator to our carousel</strong></p>
-
-<p>As we already watch the <code>ng-repeat</code> expression, we track the number of slides in the carousel and so its quite easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-indicator="true"</code> attribute on your <code>ul</code>.</p>
-
-<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
-
-<p>It just takes <code>items</code> and <code>index</code> attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
-
-<p>```js
-// enable carousel indicator
-var showIndicator = (iAttrs['rnCarouselIndicator']==='true');
-if (showIndicator) {</p>
-
-<pre><code>// as the HTML contains a directive, we need to $compile it
-// before appending it to our container
-var indicator = $compile("&lt;div id='" + carouselId +"-indicator' " + 
-    " index='carouselIndex' items='carouselItems' rn-carousel-indicators " +
-    " class='rn-carousel-indicator'&gt;&lt;/div&gt;"
-)(scope);
-container.append(indicator);
-</code></pre>
-
-<p>}
-```
-<strong>6) offer a two-way data binding for the active slide index</strong></p>
-
-<p>The carousel current index position can be data-bound to an optional <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls/indicators, initialise to a different slide...</p>
-
-<p>```js</p>
-
-<p>// set initial position at first slide
-scope.carouselIndex = 0;</p>
-
-<p>if (iAttrs.rnCarouselIndex) {</p>
-
-<pre><code>//  if a binding attribute is present, use it.
-var activeModel = $parse(iAttrs['rnCarouselIndex']);
-scope.$watch('carouselIndex', function(newValue) {
-    // when the carousel internal index changes, update the model
-    activeModel.assign(scope.$parent, newValue);
-});
-scope.$parent.$watch($parse(iAttrs.rnCarouselIndex), function(newValue) {
-    // when the model change, update the local position
-    // this is also useful for the initial position
-    scope.carouselIndex = newValue;
-    updateSlidePosition();
-});
-</code></pre>
-
-<p>} else {</p>
-
-<pre><code>// if no index attribute, just watch internal index and update display
-scope.$watch('carouselIndex', function(newValue) {
-    updateSlidePosition();
-});
-</code></pre>
-
-<p>}
-```</p>
-
-<p>The <code>updateSlidePosition()</code> function simply moves the <code>ul</code> block based on the <code>carouselIndex</code> value and the width of the slides. We do this with CSS transition and <code>translate3d</code> so this is animated and hardware accelerated.</p>
-
-<p><strong>7) tests and grunt automation</strong></p>
-
-<p>These subjects will have a dedicated article soon :)</p>
-
-<p><strong>Limitations</strong></p>
-
-<ul>
-<li>Only works with ul/li structure</li>
-<li>Carousel dimensions is based on the first li detected</li>
-</ul>
-
-
-<p><strong>UPDATE</strong> : the carousel can now be buffered to improve performance with large datasets !</p>
-
-<p><strong>Easy isn't it ?</strong></p>
-
-<p>If you have questions, suggestions, issues, pulls requests... just comment below or on Github :)</p>
 ]]></content>
   </entry>
   
