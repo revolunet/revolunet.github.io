@@ -195,7 +195,7 @@ describe('rnStepper directive', function() {
 
  - A directive needs to be compiled in a given scope to be tested
  - A non-isolated scope can be acceded via element.scope()
- - An isolated scope can be acceded via element.isolatedscope()
+ - An isolated scope can be acceded via element.isolateScope()
  
 **Why to we have to call `scope.$digest()` when we change a model value in the tests ?**
 
