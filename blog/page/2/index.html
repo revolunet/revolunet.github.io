@@ -1,0 +1,803 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>revolunet blog</title>
+  <meta name="author" content="revolunet team">
+
+  
+  <meta name="description" content="Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive. As this project shed some lights on various &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.revolunet.com/blog/page/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-294393-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+    <img class="basic-alignment left" src="/images/carre-75.jpg">
+  <h1><a href="/">revolunet blog</a></h1>
+  
+    <h2>web technologies for desktop and mobile</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.revolunet.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/02/angular-carousel-making-of/">Making of the Angular-carousel</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-02T00:00:00+02:00" pubdate data-updated="true">May 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/05/02/angular-carousel-making-of/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
+
+<p>As this project shed some lights on various AngularJS aspects, we&#8217;d like to share it with you;
+The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
+
+<p>The goal is to transform any <code>ng-repeat</code> directive into a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
+
+<p>Here&#8217;s a very basic example of a Youtube API call, with the data displayed in a regular Angular template; We just add a <code>rn-carousel</code> attribute to the <code>ul</code> element to ask a carousel :)</p>
+
+<iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>This <code>rn-carousel</code> directive is responsible of :</p>
+
+<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
+
+<p>We first wrap the original <code>ul</code> block in an outer div using JQlite <code>wraps</code> method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
+
+<p>Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.</p>
+
+<p>The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.</p>
+
+<p><strong>2) watching the ng-repeat expression</strong></p>
+
+<p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
+
+<p><del>This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick</del>.</p>
+
+<p><strong>Update :</strong> I ended up with just extracting the li <code>ng-repeat</code> attribute during the <code>compile</code> phase which is much less overhead.</p>
+
+<p><strong>3) binding touch and click events</strong></p>
+
+<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// bind events</span>
+</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mousedown touchstart&#39;</span><span class="p">,</span> <span class="nx">swipeStart</span><span class="p">);</span>
+</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mousemove touchmove&#39;</span><span class="p">,</span> <span class="nx">swipe</span><span class="p">);</span>
+</span><span class='line'><span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;mouseup touchend&#39;</span><span class="p">,</span> <span class="nx">swipeEnd</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>4) animating the slides smoothly</strong></p>
+
+<p>When we detect a <code>touchstart</code> we just store the initial event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and dynamically add CSS styles and classes to move the slides accordingly, or restore the current position in some cases.</p>
+
+<p>The slide movement is made thanks to the CSS <code>transition</code> and <code>translate3d</code> properties to force CSS 3D transforms and thus animate the slides using the GPU which make the movement much more smooth especially on mobile devices.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the offset value is simply : desiredSlideIndex * slideWidth</span>
+</span><span class='line'><span class="nx">carousel</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
+</span><span class='line'>    <span class="s1">&#39;-webkit-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;-moz-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;-ms-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;-o-transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;transform&#39;</span><span class="o">:</span> <span class="s1">&#39;translate3d(&#39;</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">+</span> <span class="s1">&#39;px,0,0)&#39;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>5) adding an indicator to our carousel</strong></p>
+
+<p>As we already watch the <code>ng-repeat</code> expression, we track the number of slides in the carousel and so its quite easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-indicator="true"</code> attribute on your <code>ul</code>.</p>
+
+<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
+
+<p>It just takes <code>items</code> and <code>index</code> attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// enable carousel indicator</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">showIndicator</span> <span class="o">=</span> <span class="p">(</span><span class="nx">iAttrs</span><span class="p">[</span><span class="s1">&#39;rnCarouselIndicator&#39;</span><span class="p">]</span><span class="o">===</span><span class="s1">&#39;true&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">showIndicator</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// as the HTML contains a directive, we need to $compile it</span>
+</span><span class='line'>    <span class="c1">// before appending it to our container</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">indicator</span> <span class="o">=</span> <span class="nx">$compile</span><span class="p">(</span><span class="s2">&quot;&lt;div id=&#39;&quot;</span> <span class="o">+</span> <span class="nx">carouselId</span> <span class="o">+</span><span class="s2">&quot;-indicator&#39; &quot;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s2">&quot; index=&#39;carouselIndex&#39; items=&#39;carouselItems&#39; rn-carousel-indicators &quot;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s2">&quot; class=&#39;rn-carousel-indicator&#39;&gt;&lt;/div&gt;&quot;</span>
+</span><span class='line'>    <span class="p">)(</span><span class="nx">scope</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">container</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">indicator</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>6) offer a two-way data binding for the active slide index</strong></p>
+
+<p>The carousel current index position can be data-bound to an optional <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls/indicators, initialise to a different slide&#8230;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// set initial position at first slide</span>
+</span><span class='line'><span class="nx">scope</span><span class="p">.</span><span class="nx">carouselIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">iAttrs</span><span class="p">.</span><span class="nx">rnCarouselIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//  if a binding attribute is present, use it.</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">activeModel</span> <span class="o">=</span> <span class="nx">$parse</span><span class="p">(</span><span class="nx">iAttrs</span><span class="p">[</span><span class="s1">&#39;rnCarouselIndex&#39;</span><span class="p">]);</span>
+</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;carouselIndex&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// when the carousel internal index changes, update the model</span>
+</span><span class='line'>        <span class="nx">activeModel</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">$parent</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$parent</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="nx">$parse</span><span class="p">(</span><span class="nx">iAttrs</span><span class="p">.</span><span class="nx">rnCarouselIndex</span><span class="p">),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// when the model change, update the local position</span>
+</span><span class='line'>        <span class="c1">// this is also useful for the initial position</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">carouselIndex</span> <span class="o">=</span> <span class="nx">newValue</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">updateSlidePosition</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// if no index attribute, just watch internal index and update display</span>
+</span><span class='line'>    <span class="nx">scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;carouselIndex&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">updateSlidePosition</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>updateSlidePosition()</code> function simply moves the <code>ul</code> block based on the <code>carouselIndex</code> value and the width of the slides. We do this with CSS transition and <code>translate3d</code> so this is animated and hardware accelerated.</p>
+
+<p><strong>7) tests and grunt automation</strong></p>
+
+<p>These subjects will have a dedicated article soon :)</p>
+
+<p><strong>Limitations</strong></p>
+
+<ul>
+<li>Only works with ul/li structure</li>
+<li>Carousel dimensions is based on the first li detected</li>
+</ul>
+
+
+<p><strong>UPDATE</strong> : the carousel can now be buffered to improve performance with large datasets !</p>
+
+<p><strong>Easy isn&#8217;t it ?</strong></p>
+
+<p>If you have questions, suggestions, issues, pulls requests&#8230; just comment below or on Github :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/01/angular-tips-n-tricks/">AngularJS Tips&#8217;n&#8217;tricks Part 1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-01T00:00:00+02:00" pubdate data-updated="true">May 1<span>st</span>, 2013</time>
+        
+         | <a href="/blog/2013/05/01/angular-tips-n-tricks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In the past few months we learned a lot of new AngularJS stuff. Here is a first bunch of tricks, please comment and help us improve theses exemples if your tricks are even more awesome :)</p>
+
+<p>We compiled most of our <a href="https://gist.github.com/revolunet/4657146">best AngularJS ressources in a gist</a> and we maintain a list of related  twitter accounts here : <a href="https://twitter.com/revolunet/angularjs">https://twitter.com/revolunet/angularjs</a>.</p>
+
+<h3>Scopes</h3>
+
+<p>You definitely need to read this article : <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs</a></p>
+
+<h3>Directives</h3>
+
+<p>The official documentation is not crystal clear at first approach but it documents most of what you need to understand: <a href="http://docs.angularjs.org/guide/directive">http://docs.angularjs.org/guide/directive</a>. So read it. And again. And again.</p>
+
+<h3>Watch an object or a list</h3>
+
+<p>If you watch a list or an object with the <code>objectEquality</code> parameter not set, then the <code>$watch</code> callback won&#8217;t be triggered if the object is only updated partially. Setting it to <code>true</code> will trigger it on any modification; this has performance impact so use carefully.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// the last `true` means compare by value and not by ref, useful for nested objects :)</span>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;myConfig&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;myConfig changed !&#39;</span><span class="p">,</span> <span class="nx">newValue</span><span class="p">);</span>
+</span><span class='line'><span class="p">},</span> <span class="kc">true</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Two way data binding attribute without explicit scope declaration.</h3>
+
+<p>Sometimes you need to access a directive attribute with a two-way data binding without declaring it explicitely in the directive scope configuration. You can do this using the <code>$parse</code> service.</p>
+
+<p>If your directive scope is isolated (<code>scope: {}</code>) you have to use <code>scope.$parent</code> instead of <code>scope</code>.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/p2cjt/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Use a callback function with arguments in your directive</h3>
+
+<p>To call a function defined in one of your attribute, declare it in the scope with <code>&amp;</code>.</p>
+
+<p>If you need to pass arguments, you must execute the callback using an object form for the arguments. AngularJS then call the function with your arguments in the correct order comparing your object and the callback declaration.</p>
+
+<p>The following example also demonstrates how to watch multiples values at once.</p>
+
+<iframe style="width: 100%; height: 500px" src="http://jsfiddle.net/HnrV7/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Custom transclusion</h3>
+
+<p>This example shows how to define a custom transclusion function and modify its scope.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/pHZNY/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Announcer/Notifier pattern</h3>
+
+<p>If you need to listen to DOM objects creation/deletion, you can simply create a &#8216;notifier&#8217; directive and an &#8216;announcer&#8217; directive that you&#8217;ll add to the objects you want to monitor. That directive will announce new instances creation (<code>link</code> called) and destruction (<code>scope.$destroy</code> called).</p>
+
+<p>It can be useful if you want to monitor arbitrary objects lifecycles, for example a <code>ng-repeat</code>. The &#8216;announcement&#8217; can be made via events, or better, using a custom notifier controller. All credits goes to @garanajpr for the ideas.</p>
+
+<iframe style="width: 100%; height: 400px" src="http://jsfiddle.net/4ULCS/embedded/js,html,result/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Many more tricks to come, stay tuned :)</p>
+
+<p><strong>UPDATE</strong> : checkout <a href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/">PART 2</a> :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/30/angularjs-animations-mobile-applications/">Using AngularJS Views Animations for Mobile Applications</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-30T20:20:00+02:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/30/angularjs-animations-mobile-applications/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
+
+<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+
+<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
+
+<p><strong>UPDATE</strong> : Just created an much more simpler example based on AngularJS 1.2; check it out : <a href="http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/">http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/</a></p>
+
+<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
+
+<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a &#8216;Back&#8217; button, the user expects the slide animation to be reversed when he touches it. If you don&#8217;t do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+
+<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
+
+<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
+
+<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
+
+<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
+
+<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
+
+<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
+
+<iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.LR</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.LR</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span><span class='line'><span class="nc">.RL</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/15/octopress-cheatsheet/">Octopress Cheat Sheet</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-15T01:46:00+02:00" pubdate data-updated="true">Apr 15<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/15/octopress-cheatsheet/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When you switch to Octopress for blogging there are a very few things to know :</p>
+
+<h2>Command line</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># create a new post</span>
+</span><span class='line'>rake new_post<span class="o">[</span><span class="s1">&#39;Title of the post&#39;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># create a new page </span>
+</span><span class='line'>rake new_page<span class="o">[</span><span class="s1">&#39;Title of the page&#39;</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># preview your work</span>
+</span><span class='line'>rake preview
+</span><span class='line'>
+</span><span class='line'><span class="c"># publish it</span>
+</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
+</span><span class='line'>
+</span><span class='line'><span class="c"># commit and backup(automatic message)</span>
+</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Creating a post</h2>
+
+<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
+
+<p>You must add some metas at the top of the file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>---
+</span><span class='line'>layout: post
+</span><span class='line'>title: My Awesome article.
+</span><span class='line'>date: 2013-05-1 00:00
+</span><span class='line'>categories: news technology web
+</span><span class='line'>author: Super Man
+</span><span class='line'>comments: <span class="nb">true</span>
+</span><span class='line'>published: <span class="nb">false</span>
+</span><span class='line'>---
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
+
+<h2>Publish</h2>
+
+<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
+
+<p>Here&#8217;s a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># push.sh : publish &amp; commit with a single command</span>
+</span><span class='line'>git add <span class="nb">source</span>
+</span><span class='line'>git commit -am <span class="s2">&quot;`date`&quot;</span> <span class="o">&amp;&amp;</span> git push origin <span class="nb">source</span>
+</span><span class='line'>rake generate <span class="o">&amp;&amp;</span> rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/11/a-fresh-start/">A Fresh Start</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-11T01:46:00+02:00" pubdate data-updated="true">Apr 11<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/04/11/a-fresh-start/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we&#8217;ll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
+
+<p>We&#8217;ve got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
+
+<p>140 chars isn&#8217;t long enough.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Welcome :)&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS services</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a reusable AngularJS input form component</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
+      </li>
+    
+  </ul>
+</section>
+<a class="twitter-timeline" href="https://twitter.com/revolunet" data-widget-id="329159054884737024">Tweets de @revolunet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/revolunet">@revolunet</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'revolunet',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+</section>
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - revolunet team -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'revolunetblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,974 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
+  <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2014-02-13T09:37:13+01:00</updated>
+  <id>http://blog.revolunet.com/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Object-oriented AngularJS services]]></title>
+    <link href="http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance/"/>
+    <updated>2014-02-14T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance</id>
+    <content type="html"><![CDATA[<p>Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the <a href="http://shichuan.github.io/javascript-patterns/#code-reuse-patterns">variety</a> of <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#prototypepatternjavascript">Javascript</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">OOP</a> <a href="http://howtonode.org/prototypical-inheritance">patterns</a> <a href="http://javascript.info/tutorial/oop">available</a>. Combined with the new service and factory concepts introduced in AngularJS, implementing OOP in your applications can lead to serious headaches, so i'll try to show you some solutions here.</p>
+
+<p>If you need a step-by-step explanation of the Javascript prototypal inheritance, you can read the great <a href="http://www.2ality.com/2012/01/js-inheritance-by-example.html">Dr. Axel Rauschmayer JavaScript inheritance by example</a> article.</p>
+
+<p>Once your app grow and your services multiply, you'll quickly feel the need to <strong>reuse your code</strong>, and to split it in small modules to be able to separate concerns and setup some serious unit testing.</p>
+
+<p>In this post, i'll show how to create a base AngularJS service, based on the Github API, that we'll be able to extend and reuse in different scenarios. We'll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.</p>
+
+<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times using the <code>new</code> keyword, while <code>services</code> always create singletons.</p>
+
+<h3>Create our base service</h3>
+
+<p>Our first service will be responsible of fetching Github basic user data and return the result. We'll use a <code>factory</code> instead of a <code>service</code>, which will make it easier to instantiate many versions of the service in our application.</p>
+
+<p>```js
+app.factory('SimpleGithubUser', function($http) {</p>
+
+<pre><code>var apiUrl = 'https://api.github.com/';
+
+// instantiate our initial object
+var SimpleGithubUser = function(username) {
+    this.username = username;
+    this.profile = null;
+};
+
+// define the getProfile method which will fetch data
+// from GH API and *returns* a promise
+SimpleGithubUser.prototype.getProfile = function() {
+
+    // Generally, javascript callbacks, like here the $http.get callback,
+    // change the value of the "this" variable inside it
+    // so we need to keep a reference to the current instance "this" :
+    var self = this;
+
+    return $http.get(apiUrl + 'users/' + this.username).then(function(response) {
+
+        // when we get the results we store the data in user.profile
+        self.profile = response.data
+
+        // promises success should always return something in order to allow chaining
+        return response;
+
+    });
+};
+return SimpleGithubUser;
+</code></pre>
+
+<p>})
+```</p>
+
+<p>So we can now easily inject our factory anywhere and use it like this :
+```js
+// we first inject our factory
+app.controller('MyCtrl', function(SimpleGithubUser) {</p>
+
+<pre><code>// instantiate a new user
+var user = new SimpleGithubUser('substack');
+// fetch data and publish on scope
+user.getProfile().then(function() {
+    $scope.userLogin = user.profile.login;
+})
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h3>Extending the base service</h3>
+
+<p>Now we'd like to attach some additional data to our users. Instead of modiying the original factory, or even worse, duplicate it, we can create another factory that extends the original one, just by using the regular javascript prototypal inheritance. We'll override some methods and use promises chaining to deliver the final data only when all the subsequent requests have been completed.</p>
+
+<p>This has the advantage of encapsulating the logic inside the new service, making it easily testable while keeping your controllers light.</p>
+
+<p>In this example we'll add some data from the Github events API and attach it to the user profile before returning the final result.</p>
+
+<p>```js</p>
+
+<p>// we define a new factory and inject our original service so we can extend it properly
+app.factory('AdvancedGithubUser', function($http, SimpleGithubUser) {</p>
+
+<pre><code>var apiUrl = 'https://api.github.com/';
+
+// create our new custom object that reuse the original object constructor
+var AdvancedGithubUser = function() {
+    SimpleGithubUser.apply(this, arguments);
+};
+
+// reuse the original object prototype
+AdvancedGithubUser.prototype = new SimpleGithubUser();
+
+// define a new internal private method for this object
+function getUserEvents() {
+    var self = this;
+    return $http.get(apiUrl + 'users/' + this.username + '/events').then(function(response) {
+
+        // attach the events API result to our user profile
+        self.profile.events = response.data;
+
+        // promises should always return a result
+        return response;
+    });
+}
+
+// Now let's override our original getProfile method
+AdvancedGithubUser.prototype.getProfile = function() {
+
+    var self = this;
+
+    // we first call the original getProfile method (aka super method)
+    var originalGetProfile = SimpleGithubUser.prototype.getProfile.apply(this, arguments);
+
+    // we use promises chaining to add additional data
+    return originalGetProfile.then(function() {
+
+        // before returning the result,
+        // call our new private method and bind "this" to "self"
+        // we need to do this because the method is not part of the prototype
+        return getUserEvents.call(self);
+    });
+};
+return AdvancedGithubUser;
+</code></pre>
+
+<p>});
+```</p>
+
+<p>Usage is exactly the same, except the service added the events data for us :
+```js
+// we first inject our factory
+app.controller('MyCtrl', function(AdvancedGithubUser) {</p>
+
+<pre><code>// instantiate a new user
+var user = new AdvancedGithubUser('substack');
+// fetch data and publish on scope
+user.getProfile().then(function() {
+    $scope.userEvents = user.profile.events;
+})
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<h3>Create a service instance</h3>
+
+<p>Now that you have some solid factories, you can also instantiate some app-wide services that expose pre-configured instances.</p>
+
+<p>```js
+app.service('MyUserProfile', function(AdvancedGithubUser) {</p>
+
+<pre><code>var user = new AdvancedGithubUser('revolunet');
+user.getProfile();
+return user;
+</code></pre>
+
+<p>});</p>
+
+<p><code>
+And use it like this :
+</code>js
+app.controller('MyCtrl', function(MyUserProfile) {</p>
+
+<pre><code>$scope.user = MyUserProfile;
+alert(MyUserProfile.location);
+</code></pre>
+
+<p>})
+```</p>
+
+<h2>Final result</h2>
+
+<p><iframe style="width: 100%; height: 600px" src="http://jsfiddle.net/YLs26/embedded/result,html,js,css/light/"></iframe><br><br></p>
+
+<p>Hope this has been useful to you, please ask below or on twitter <a href="http://twitter.com/revolunet">@revolunet</a> for any question/suggestion :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit testing an AngularJS directive]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/"/>
+    <updated>2013-12-05T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive</id>
+    <content type="html"><![CDATA[<p>In this article, i'll detail the process to unit test the stepper directive we've created in the last week <a href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/">custom component creation article</a>. Next week, i'll cover how to distribute your component via GitHub and Bower.</p>
+
+<p>Unit testing is the art of testing individually every smallest part of your code, which are the foundations of your apps sanity. Once correctly tested, these parts assembled together will also play nicely, as their behaviour has already been validated independently.</p>
+
+<p>Unit testing helps you <strong>prevent regressions, increase quality, maintenability, and trust in your codebase</strong>, thus better team collaboration, easier refactoring... and WIN :)</p>
+
+<p>Another usage is, when you get a new bug report, you add the revelant test that demo the bug, fix it in your code so the test will pass, then keep it there as a proof of reliability.</p>
+
+<p>Among AngularJS best friends there is the <a href="http://karma-runner.github.io">KarmaJS test runner</a> (A nodeJS server to launch the tests in browsers and reports the results) and the <a href="http://pivotal.github.io/jasmine/">Jasmine behaviour-driven testing framework</a> (the language to define your tests and expectations). We'll use the grunt-karma task to integrate karma in our classic yet awesome grunt workflow and launch the tests in our browsers. Note that karma can run the tests in remote cloud browsers, for example via <a href="http://saucelabs.com/">SauceLabs</a> or <a href="http://www.browserstack.com/">BrowserStack</a>.</p>
+
+<p><strong>AngularJS is made from ground-up for testing, so make yourself a favor, start NOW :)</strong></p>
+
+<h2>Glossary</h2>
+
+<p>There are some terms that may need clarification before we go further :</p>
+
+<ul>
+<li><code>spec</code> : the specifications of something you want to test, consisting one or many tests suites. should cover all the expected behaviour.</li>
+<li><code>test suite</code> : This is a group of tests; defined within a <code>describe</code> block in Jasmine. blocks can be nested as much as needed.</li>
+<li><code>test</code> : Test instructions, that ends with one or more expectations; defined within a <code>it</code> block in Jasmine.</li>
+<li><code>actual</code> : this is the value you test in your expectation.</li>
+<li><code>expected value</code> : this is the value you test the actual value against.</li>
+<li><code>matcher</code> : A function that compares the <code>actual</code> and the <code>expected</code> values and returns a boolean success result to Jasmine. eg : <code>toEqual</code>, <code>toBeGreatherThan</code>, <code>toHaveBeenCalledWith</code>... you can even define your owns.</li>
+<li><code>expectation</code> : Use the expect function to test a value, called the actual. It is chained with a matcher function, which takes the expected value.</li>
+<li><code>mock</code> : a stubbed service that replace a real one at runtime with fake data/methods that you can control during your tests.</li>
+</ul>
+
+
+<p>Here's an example spec file :</p>
+
+<p>```javascript
+// a test suite (group of tests)
+describe('sample component test', function() {</p>
+
+<pre><code>// a single test
+it('ensure addition is correct', function() {
+    // sample expectation
+    expect(1+1).toEqual(2);
+    //                  `--- the expected value (2)
+    //             `--- the matcher method (equality)
+    //       `-- the actual value (2)
+});
+// another test
+it('ensure substraction is correct', function() {
+    expect(1-1).toEqual(0);
+});
+</code></pre>
+
+<p>});
+```</p>
+
+<h2>Setup the test environnement</h2>
+
+<h4>Add grunt-karma to your project dependencies</h4>
+
+<p><code>bash
+npm install grunt-karma --save-dev
+</code></p>
+
+<h4>Create karma-unit.js file</h4>
+
+<p><a href="https://github.com/revolunet/angular-stepper/blob/master/karma-unit.js">Here is our full example</a>. This file defines :</p>
+
+<ul>
+<li>the javascript files to be loaded in the browsers for the tests. Typically, this is the libraries you use, your application files, but also the files for your tests and the eventuals mocks.</li>
+<li>which browsers to run the tests against.</li>
+<li>how to reports the results : console, browser... ?</li>
+<li>optional plugins.</li>
+</ul>
+
+
+<p>Here's our example "files" section :</p>
+
+<p><code>javascript
+files: [
+  "http://code.angularjs.org/1.2.1/angular.js",       &lt;-- angular source
+  "http://code.angularjs.org/1.2.1/angular-mocks.js", &lt;-- angular mocks &amp; test utils
+  "src/angular-stepper.js",                           &lt;-- our component source code
+  "src/angular-stepper.spec.js"                       &lt;-- our component test suite
+]
+</code></p>
+
+<p>NB: One could add jquery here if it helps you write your test code (more powerful selectors, CSS tests, size computation...)</p>
+
+<h4>Add the karma grunt tasks to your Gruntfile.js</h4>
+
+<p>```javascript
+karma: {</p>
+
+<pre><code>unit: {
+    configFile: 'karma-unit.js',
+    // run karma in the background
+    background: true,
+    // which browsers to run the tests on
+    browsers: ['Chrome', 'Firefox']
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Create <code>angular-stepper.spec.js</code> and paste the content of the sample test above. You can now simply run <code>grunt karma</code> and see your tests executing in the browsers and reporting the results in the console.</p>
+
+<p><code>bash
+....
+Chrome 33.0.1712 (Mac OS X 10.9.0): Executed 2 of 2 SUCCESS (1.65 secs / 0.004 secs)
+Firefox 25.0.0 (Mac OS X 10.9): Executed 2 of 2 SUCCESS (2.085 secs / 0.006 secs)
+TOTAL: 4 SUCCESS
+</code></p>
+
+<p>Each dot represent a successfull test and you can see our two tests runs in the two browsers we've configured before in our karma-unit.js file. woot !</p>
+
+<p>Now let's code the real tests :)</p>
+
+<h2>Code our directive unit tests</h2>
+
+<p>Our component unit test suite, aka the <em>spec</em> should cover all the expected behaviour of our component, but also test the edge cases (eg : invalid input, unexpected server behaviours...)</p>
+
+<p>Below you can see an extract of our angular-stepper component test suite (angular-stepper.spec.js), and <a href="https://github.com/revolunet/angular-stepper/blob/master/src/angular-stepper.spec.js">here's the full spec</a>. Our tests for such a component are quite simple, no need for mocks here. The only tricky thing is that we wrap our directive inside a form to be able to test that it plays well with ngModelController and updates form validity correctly.</p>
+
+<p>```javascript
+// the describe keyword is used to define a test suite (group of tests)
+describe('rnStepper directive', function() {</p>
+
+<pre><code>// we declare some global vars to be used in the tests
+var elm,        // our directive jqLite element
+    scope;      // the scope where our directive is inserted
+
+// load the modules we want to test
+beforeEach(module('revolunet.stepper'));
+
+// before each test, creates a new fresh scope
+// the inject function interest is to make use of the angularJS
+// dependency injection to get some other services in our test
+// here we need $rootScope to create a new scope
+beforeEach(inject(function($rootScope, $compile) {
+    scope = $rootScope.$new();
+    scope.testModel = 42;
+}));
+
+function compileDirective(tpl) {
+    // function to compile a fresh directive with the given template, or a default one
+    // compile the tpl with the $rootScope created above
+    // wrap our directive inside a form to be able to test
+    // that our form integration works well (via ngModelController)
+    // our directive instance is then put in the global 'elm' variable for further tests
+    if (!tpl) tpl = '&lt;div rn-stepper ng-model="testModel"&gt;&lt;/div&gt;&lt;/form&gt;';
+    tpl = '&lt;form name="form"&gt;' + tpl + '&lt;/tpl&gt;';
+    // inject allows you to use AngularJS dependency injection
+    // to retrieve and use other services
+    inject(function($compile) {
+        var form = $compile(tpl)(scope);
+        elm = form.find('div');
+    });
+    // $digest is necessary to finalize the directive generation
+    scope.$digest();
+}
+
+describe('initialisation', function() {
+    // before each test in this block, generates a fresh directive
+    beforeEach(function() {
+        compileDirective();
+    });
+    // a single test example, check the produced DOM
+    it('should produce 2 buttons and a div', function() {
+        expect(elm.find('button').length).toEqual(2);
+        expect(elm.find('div').length).toEqual(1);
+    });
+    it('should check validity on init', function() {
+        expect(scope.form.$valid).toBeTruthy();
+    });
+});
+
+it('should update form validity initialy', function() {
+    // test with a min attribute that is out of bounds
+    // first set the min value
+    scope.testMin = 45;
+    // then produce our directive using it
+    compileDirective('&lt;div rn-stepper min="testMin" ng-model="testModel"&gt;&lt;/div&gt;');
+    // this should impact the form validity
+    expect(scope.form.$valid).toBeFalsy();
+});
+
+it('decrease button should be disabled when min reached', function() {
+    // test the initial button status
+    compileDirective('&lt;div rn-stepper min="40" ng-model="testModel"&gt;&lt;/div&gt;');
+    expect(elm.find('button').attr('disabled')).not.toBeDefined();
+    // update the scope model value
+    scope.testModel = 40;
+    // force model change propagation
+    scope.$digest();
+    // validate it has updated the button status
+    expect(elm.find('button').attr('disabled')).toEqual('disabled');
+});
+// and many others...
+</code></pre>
+
+<p>});
+```</p>
+
+<p><strong>Some notes :</strong></p>
+
+<ul>
+<li>A directive needs to be compiled in a given scope to be tested</li>
+<li>A non-isolated scope can be acceded via element.scope()</li>
+<li>An isolated scope can be acceded via element.isolatedscope()</li>
+</ul>
+
+
+<p><strong>Why to we have to call <code>scope.$digest()</code> when we change a model value in the tests ?</strong></p>
+
+<p>In a real angular app, the <code>$digest</code> is automatically triggered by the framework in reaction to various events (clicks, inputs, requests...). There's no such user-based events during the automated tests so we just need to force the <code>$digest</code>. (the <code>$digest</code> is what update all the bindings).</p>
+
+<h2>Bonus #1: real time tests</h2>
+
+<p>Thanks to grunt, we can make the tests run when the source changes and be alerted in real time.</p>
+
+<p>If you want the tests to be run on each code change, just add a section to your <code>watch</code> task :</p>
+
+<p>```javascript
+js: {</p>
+
+<pre><code>files: ['src/*.js'],
+tasks: ['karma:unit:run', 'build']
+</code></pre>
+
+<p>},
+```</p>
+
+<p>You could update your default grunt task like this
+<code>javascript
+grunt.registerTask('default', ['karma:unit', 'connect', 'watch']);
+</code>
+Now, just run <code>grunt</code> and you'll get real-time tests and a builtin webserver :)</p>
+
+<h2>Bonus #2: add code coverage reporting</h2>
+
+<p>As developers, we love solid metrics; and we also love continous improvements. "coverage" refers to the code coverage of your test suite; It gives you metrics and detailed info to increase your code coverage without pain.</p>
+
+<p>Here's a sample coverage HTML report :</p>
+
+<p><img class="center" src="/images/coverage-example.png" width="600" height="283" title="AngularJS test coverage report example" ></p>
+
+<p>We can see, for each folder and file, how much code is covered by our test suite. And this is updated in real-time thanks to grunt+karma integration. For each file, we can see line by line which blocks stays untested, which makes writing the remaining tests more straightforward.</p>
+
+<p><strong>100% test coverage doesnt mean your code is bug-free, but it increase quality for sure !</strong></p>
+
+<p>Its really easy to integrate this in our karma+grunt setup. Karma has a "plugin" system that allows you to plug the fantastic <a href="https://github.com/gotwarlost/istanbul">Istanbul code coverage tool</a> so we just need to configure the karma-unit.js file and we're done :)</p>
+
+<h4>Add coverage to karma</h4>
+
+<p>```bash</p>
+
+<h1>add the necessary node_modules</h1>
+
+<p>npm install karma-coverage --save-dev
+```</p>
+
+<p>now update the karma config file with these new settings :
+```javascript
+// here we specify which of the files we want to appear in the coverage report
+preprocessors: {</p>
+
+<pre><code>'src/angular-stepper.js': ['coverage']
+</code></pre>
+
+<p>},
+// add the coverage plugin
+plugins: [ 'karma-jasmine', 'karma-firefox-launcher', 'karma-chrome-launcher', 'karma-coverage'],
+// add coverage to reporters
+reporters: ['dots', 'coverage'],
+// tell karma how you want the coverage results
+coverageReporter: {
+  type : 'html',
+  // where to store the report
+  dir : 'coverage/'
+}
+```</p>
+
+<p>More coverage config options here : <a href="https://github.com/karma-runner/karma-coverage">https://github.com/karma-runner/karma-coverage</a></p>
+
+<p>You now need to run your tests again to generate your first report. It should be located in the project root "coverage" folder.</p>
+
+<p><strong>Feel free to comment/ask below :)</strong></p>
+
+<p>Next week, we'll talk about distributing our now well tested directive on Github and Bower :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Create a reusable AngularJS input form component]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/"/>
+    <updated>2013-11-28T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component</id>
+    <content type="html"><![CDATA[<p>One of the beauty of the AngularJS framework is its ability to isolate complexity with services and directives; This is perfect for segmenting our code, create very testable components, and make them reusable. A directive, which is an anticipation of the future <a href="http://css-tricks.com/modular-future-web-components/">web components</a>, is a piece of isolated javascript, HTML and CSS that encapsulate a specific behaviour and that you can easily reuse in various apps. Once created, a directive is simply invoked by adding it to the DOM via a HTML tag (<code>&lt;accordion&gt;&lt;/accordion&gt;</code>, or a custom attribute <code>&lt;div accordion&gt;&lt;/div&gt;</code>, or a CSS class <code>&lt;div class="accordion"&gt;&lt;/div&gt;</code> (and even as HTML comment).</p>
+
+<p>In this tutorial we'll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We'll cover the classic directive creation but also the input validation, and the use of the <a href="http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController">ngModelController</a>, that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The <a href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive">next part will cover the test suites with Jasmine and KarmaJS</a>, and the publication and distribution of our widget with GitHub and bower.</p>
+
+<p>For this example we'll build a custom numeric input widget, named "rn-stepper". We'll use the last AngularJS 1.2 that brings some important fixes to the private scopes management (capital point for reusable components). The full widget code is <a href="https://github.com/revolunet/angular-stepper">available on github</a> as a reusable component and you can see the final result here :</p>
+
+<p><iframe style="width: 100%; height: 250px" src="http://jsfiddle.net/26ghx/embedded/result,js,html,css/light/"></iframe><br><br></p>
+
+<h3>Markup generation</h3>
+
+<p>The first step is to create a naïve directive that build our markup, and renders correctly. We just declare the directive name, and template to use.</p>
+
+<p>```javascript
+// we declare a module name for our projet, and its dependencies (none)
+angular.module('revolunet.stepper', [])
+// declare our naïve directive
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    // can be used as attribute or element
+    restrict: 'AE',
+    // which markup this directive generates
+    template: '&lt;button&gt;-&lt;/button&gt;' +
+              '&lt;div&gt;0&lt;/div&gt;' +
+              '&lt;button&gt;+&lt;/button&gt;'
+};
+</code></pre>
+
+<p>});
+```
+Now, to use our directive, its quite straightforward :</p>
+
+<ul>
+<li>declare our <code>revolunet.stepper</code> module as one of our app dependencies</li>
+<li>use <code>&lt;div rn-stepper&gt;&lt;/div&gt;</code> (attribute form) or simply <code>&lt;rn-stepper&gt;&lt;/rn-stepper&gt;</code> (element form). to integrate the directive somewhere.</li>
+</ul>
+
+
+<p>The attribute form is better if you want to support IE8 as it works out-of-the-box.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/n4JHg">http://jsfiddle.net/revolunet/n4JHg/</a></p>
+
+<h3>Add internal behaviour</h3>
+
+<p>Now we need to add behaviour and internal variables to our custom component. We'll declare a "private scope" that will hold internal variables and functions, and add the <code>link</code> function to our directive, which is responsible of initialising the component behaviour just after the markup has been inserted in the final page.</p>
+
+<p>Here's the updated directive code :</p>
+
+<p>```javascript
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    restrict: 'AE',
+    // declare the directive scope as private (and empty)
+    scope: {},
+    // add behaviour to our buttons and use a variable value
+    template: '&lt;button ng-click="decrement()"&gt;-&lt;/button&gt;' +
+              '&lt;div&gt;&lt;/div&gt;' +
+              '&lt;button ng-click="increment()"&gt;+&lt;/button&gt;',
+    // this function is called on each rn-stepper instance initialisation
+    // we just declare what we need in the above template
+    link: function(scope, iElement, iAttrs) {
+        scope.value = 0;
+        scope.increment = function() {
+            scope.value++;
+        }
+        scope.decrement = function() {
+            scope.value--;
+        }
+    }
+};
+</code></pre>
+
+<p>});
+```</p>
+
+<p>We now have a functionnal component with an isolated code and template.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/A92Aw/">http://jsfiddle.net/revolunet/A92Aw/</a></p>
+
+<h3>Communicate with the external world</h3>
+
+<p>Our component works great but it would be more useful if it could control a real public variable, known as a <code>ngModel</code> in AngularJS.</p>
+
+<p>Let's add a databinding between our component internal <code>value</code> and the outer world (our application).</p>
+
+<p>We just need to update our scope declaration like this :</p>
+
+<p>```javascript
+scope: {</p>
+
+<pre><code>value: '=ngModel'
+</code></pre>
+
+<p>}
+<code>``
+This will automagically bind our internal</code>value<code>variable to the external one declared in the</code>ngModel<code>attribute. The</code>=<code>means "double data-binding" which means if ngModel is updated externally then the internal</code>value` will be updated, and vice-versa.</p>
+
+<p>Say my app expose a <code>rating</code> variable, we could now bind it to our component simply like this :</p>
+
+<p>```html</p>
+
+<div rn-stepper ng-model="rating"></div>
+
+
+<p>```</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/9e7Hy/">http://jsfiddle.net/revolunet/9e7Hy/</a></p>
+
+<h3>Make our component form-friendly</h3>
+
+<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to modify a bit the code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$render</code> and <code>ngModelController.$setViewValue</code> API methods, which are available <strong>as soon as you "require" a ngModel</strong> on your directive.</p>
+
+<p>The <code>ngModelController.$render</code> method is a method which you should override yourself in the directive and is responsible of updating the view; it will be called by the framework when the external ngModel changes. When the model changes, the framework executes the <code>$formatters</code> pipeline which is responsible of eventually converting the <code>$modelValue</code> raw value to a usable <code>$viewValue</code>.</p>
+
+<p>For example, if your model is a real Date object, you'd want your input to display it as dd/mm/YY. The model-to-view conversion is made by the <code>$formatters</code> pipeline and the view-to-model by the <code>$parsers</code> pipeline. Once you get a ngModelController instance, you can easily insert new items in these pipelines.</p>
+
+<p>The <code>ngModelController.$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline. Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here's the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a>.</p>
+
+<p>As pointed by a comment from <a href="http://twitter.com/@ThomasBelin4">@ThomasBelin4</a> below, we don't need anymore to have a scope <code>value</code> variable, as we now have a reference to the original <code>ngModelController</code> which holds a reference to the viewValue.</p>
+
+<p>Here's how we update the directive declaration :</p>
+
+<p>```javascript
+.directive('rnStepper', function() {</p>
+
+<pre><code>return {
+    // restrict and template attributes are the same as before.
+    // we don't need anymore to bind the value to the external ngModel
+    // as we require its controller and thus can access it directly
+    scope: {},
+    // the 'require' property says we need a ngModel attribute in the declaration.
+    // this require makes a 4th argument available in the link function below
+    require: 'ngModel',
+    // the ngModelController attribute is an instance of an ngModelController
+    // for our current ngModel.
+    // if we had required multiple directives in the require attribute, this 4th
+    // argument would give us an array of controllers.
+    link: function(scope, iElement, iAttrs, ngModelController) {
+        // we can now use our ngModelController builtin methods
+        // that do the heavy-lifting for us
+
+        // when model change, update our view (just update the div content)
+        ngModelController.$render = function() {
+            iElement.find('div').text(ngModelController.$viewValue);
+        };
+
+        // update the model then the view
+        function updateModel(offset) {
+            // call $parsers pipeline then update $modelValue
+            ngModelController.$setViewValue(ngModelController.$viewValue + offset);
+            // update the local view
+            ngModelController.$render();
+        }
+
+        // update the value when user clicks the buttons
+        scope.decrement = function() {
+            updateModel(-1);
+        };
+        scope.increment = function() {
+            updateModel(+1);
+        };
+    }
+};
+</code></pre>
+
+<p>});
+```</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/s4gm6/">http://jsfiddle.net/revolunet/s4gm6/</a></p>
+
+<h3>Add min/max attributes</h3>
+
+<p>Now our component is form-friendly, so let's as some builtin validation rules.</p>
+
+<p>We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).</p>
+
+<p>The <code>ngModelController</code> API gives us also a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
+
+<p>We just need to call <code>ngModelController.$setValidity('outOfBounds', false)</code> to make our input, and thus parent forms invalids, and have <code>ng-invalid</code> and <code>ng-invalid-out-of-bound</code> CSS classes added to our forms and to our component.</p>
+
+<p>Our stepper component is now full functionnal and integrates seamlessly in any form.</p>
+
+<p>demo: <a href="http://jsfiddle.net/revolunet/HCUNC/">http://jsfiddle.net/revolunet/HCUNC/</a></p>
+
+<h3>Prevent invalid input</h3>
+
+<p>Another nice-to-have feature would be to prevent the user from entering invalid data, which means disabling the buttons when the internal value reach the min/max limits. This could be achieved in two ways :</p>
+
+<ul>
+<li>BAD :  manually in our link function, toggling our buttons states on each click.</li>
+<li>GOOD : automagically, using a builtin <code>ng-disabled</code> directive in our template, that will disable the buttons under some conditions.</li>
+</ul>
+
+
+<p>The second option is much more Angular-ish and there are several ways to achieve this so let's see how we can do.</p>
+
+<p>We can add <code>ng-disabled="isOverMin()"</code> to our first button template and add a <code>scope.isOverMin</code> function that returns a boolean indicating if we should disable or not the given button. same with <code>overMax</code> that would check if the max has been reached or not.</p>
+
+<p>Our template is now :
+
+```html
+<button ng-disabled="isOverMin()" ng-click="decrement()">-</button></p>
+
+<div>{{ value }}</div>
+
+
+<p><button ng-disabled="isOverMax()" ng-click="increment()">+</button>
+```
+</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/26ghx/">http://jsfiddle.net/revolunet/26ghx/</a></p>
+
+<p>The <a href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive">next part will detail the tests suite</a> and distribution subjects over github and bower.</p>
+
+<p>Stay tuned :) and feel free to comment/ask below !</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[AngularJS tips'n'tricks part 2]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/"/>
+    <updated>2013-07-23T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2</id>
+    <content type="html"><![CDATA[<p>Here's a new batch of AngularJS tips and gotchas; If you didn't read it yet, you can check the <a href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/">part 1</a> and feel free to comment below :)</p>
+
+<h3>Access an element scope from outside</h3>
+
+<p>This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :</p>
+
+<p><code>js
+angular.element($0).scope();
+</code>
+or even :
+<code>js
+angular.element(document.getElementById('elementId')).scope();
+</code></p>
+
+<p>The <a href="https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon">Batarang Chrome Extension</a> is much powerful and let you inspect any scope, anywhere :)</p>
+
+<h3>Unwatch an expression</h3>
+
+<p>Sometimes you want to watch an expression only a few times, and then forget it. The <code>$watch</code> function returns a callback just for that. You just have to execute it back to destruct the watcher.</p>
+
+<p>```js
+var watcher = $scope.$watch('data.counter', function(newValue, oldValue) {</p>
+
+<pre><code>iElement.css('width', 50 * newValue + 'px');
+if (newValue &gt;= 10) {
+    // autodestruction when data.counter reaches 10
+    watcher();
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<h3>Group elements in a select</h3>
+
+<p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
+
+<p>For example you can easily group a model by attribute to have a nested select menu :</p>
+
+<p><code>html
+&lt;select ng-options="distrib.version group by distrib.name for distrib in distribs"&gt;&lt;/select&gt;
+</code></p>
+
+<p>Of course, just add an <code>ng-model</code> directive to your select to data-bind it to one of the values.</p>
+
+<h3>Filter falsy values</h3>
+
+<p>You can't use the builtin filter for falsy attributes or values :/ I don't know if this is a bug of feature, but a simple workaround is to use a custom filter function that you can expose on the scope. (you can also define your own filter).</p>
+
+<p><code>js
+$scope.testValues = ['a', 'b', 'c', false, true, 0, -1, 5, 42];
+$scope.isFalsy = function(val) {
+  return !val;
+}
+</code>
+
+<code>html
+{{ testValues|filter:true }}        //  [true]
+{{ testValues|filter:5 }}           //  [5]
+{{ testValues|filter:0 }}           //  ['a', 'b', 'c', false, true, 0, -1, 5, 42]
+{{ testValues|filter:false }}       //  ['a', 'b', 'c', false, true, 0, -1, 5, 42]
+{{ testValues|filter:isFalsy }}     //  [false, 0]
+</code>
+</p>
+
+<h3>Filter on objects</h3>
+
+<p>The builtin filter function is <a href="http://code.angularjs.org/1.1.5/docs/api/ng.filter:filter">quite powerful</a> and allows you to filter a list of objects on given properties only, or on everything, exactly or not, negated or not, etc...</p>
+
+<p>
+<code>html
+{{ games|filter:'street' }}                       //  all games containing "street" in any property
+{{ games|filter:'!street' }}                      //  all games NOT containing "street" in any property
+{{ games|filter:{name:'street'} }}                //  all games containing "street" in their name
+{{ games|filter:{name:'street'}:true }}           //  all games named exactly "street"
+{{ games|filter:{name:'street', device:'PS3'} }}  //  all games containing "street" in their name and PS3 in their device
+</code>
+</p>
+
+<h3>ng-repeat with duplicate items</h3>
+
+<p>If for some reason you need to have duplicate items in your <code>ng-repeat</code> you can extend your <code>ng-repeat</code> expression with <code>track by $index</code> and it works :)</p>
+
+<h3>Directive : parse attribute without watching it</h3>
+
+<p>In one of your directive, if you need to have a read-only access to an attribute model, but without the automatic watch/binding, you can simply use <code>&amp;</code> instead of <code>=</code> when declaring the binding in the scope. You'll then be able to access the model value . (this may break in future releases). This is a shortcut for using the <code>$parse</code> service on the current scope.</p>
+
+<p>```js
+app.directive('rnCounter', function() {
+  return {</p>
+
+<pre><code>scope: {
+  count: '&amp;rnCounter'
+},
+link:function(scope, iElement) {
+  iElement.bind('click', function() {
+    console.dir(scope.count());
+  })
+}
+</code></pre>
+
+<p>  }
+})
+```</p>
+
+<h3>Data-binding to a boolean</h3>
+
+<p>You can bind to a boolean value, but you <strong>can't</strong> update that value from your directive.</p>
+
+<p>This won't work :
+```html</p>
+
+<div rn-zippy status="true"></div>
+
+
+<p>```</p>
+
+<p>```js
+app.directive('rnZippy', function() {
+  return {</p>
+
+<pre><code>restrict: 'A',
+scope: {
+  status: '=?'
+},
+link: function(scope, iElement) {
+  function toggle () {
+    scope.$apply(function() {
+      scope.status = !scope.status;  
+    });
+  }
+  iElement.bind('click', toggle);
+}
+</code></pre>
+
+<p>  }
+})
+```</p>
+
+<p>You need to use a real model, OR, initialise a new one and use it as your model instead :
+```html</p>
+
+<div rn-zippy ng-init="status=true" status="status"></div>
+
+
+<p>```</p>
+
+<h3>Includes onload</h3>
+
+<p>You can trigger a callback when your <code>ng-include</code> partial is loaded :
+```html</p>
+
+<div ng-inlude="'partials/' + page + '.html'" onload="callback()"></div>
+
+
+<p>```</p>
+
+<p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
+
+<h3>Express testing</h3>
+
+<p>You know you should write serious tests suites ? There's everything to help you in AngularJS with Karma test runner + Jasmine.</p>
+
+<p>Once you have many tests, they can take some time to execute and there's a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>iit</code> instead of <code>it</code>.</p>
+
+<p>That's awesome to focus on specific tests for a while.</p>
+
+<h3>Service decorators</h3>
+
+<p>You can easily decorate and modify any existing service or directive. That's how the <code>ngMobile</code> overrides the <code>ngClick</code> directive to handle transparently the FastClick behaviour.</p>
+
+<p>Here's an exemple that overrides the <code>$sniffer</code> service and fix the animation detection for older androids devices (landed in <a href="https://github.com/angular/angular.js/commit/ef5bc6c">ef5bc6c</a>) :</p>
+
+<p>```js
+app.config(['$provide', function ($provide) {
+  $provide.decorator('$sniffer', ['$delegate', function ($delegate) {</p>
+
+<pre><code>if (!$delegate.transitions||!$delegate.animations) {
+  $delegate.transitions = (typeof document.body.style.webkitTransition=== 'string'); 
+  $delegate.animations = (typeof document.body.style.webkitAnimation === 'string'); 
+}
+return $delegate;
+</code></pre>
+
+<p>  }]);
+}]);
+```</p>
+
+<p>That's all for today, feel free to ask and comment below :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Learn AngularJS in 5 steps]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/06/01/starting-with-angularjs/"/>
+    <updated>2013-06-01T02:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/06/01/starting-with-angularjs</id>
+    <content type="html"><![CDATA[<p>I've seen some developers quite shy about AngularJS when confronted to all the magical powers; don't be afraid, AngularJS indeed introduces several new concepts but you can get them in just a few weeks of practice... The Google team is working hard to lower the Angular entry barrier and to make everything as simple as possible for developers.</p>
+
+<p><strong>AngularJS is a new disruptive innovation in the Javascript frameworks world and it prefigures the future of web browsers : templates, data-binding, web components...</strong></p>
+
+<p>In this post i'll give some advices for the AngularJS newbies and share with you the best pointers to learn and understand the core concepts quickly.</p>
+
+<p>First, to understand AngularJS you of course need to know a bit of Javascript. If you're not comfortable enough yet, pick a free book on <a href="http://jsbooks.revolunet.com">JSbooks</a> and <a href="http://www.codecademy.com/tracks/javascript">practice</a>.</p>
+
+<p>If you have a jQuery background, you absolutely need to read this in-depth Stack Overflow answer : <a href="http://stackoverflow.com/questions/14994391/how-do-i-think-in-angularjs-if-i-have-a-jquery-background/15012542#15012542">How to think in AngularJS if i have a jQuery background</a>. Just imagine the productivity boost you'll get when you won't need to maintain the DOM anymore :)</p>
+
+<h3>To sum up key features of AngularJS :</h3>
+
+<ul>
+<li><strong>Templates</strong> : Your templates lives right in the DOM. Forget mustache, handlebars, hogan...</li>
+<li><strong>Two-way data-binding</strong> : Your javascript data automagically updates your DOM and vice-versa.</li>
+<li><strong>Routing</strong> : Define routes, associate templates and controller in just a few lines.</li>
+<li><strong>Forms</strong> : Many helpers to help dealing with forms, one of the worst webdevs nightmare.</li>
+<li><strong>Directives</strong> : Encapsulates templates and code in reusable components easily.</li>
+<li><strong>Testability</strong> : AngularJS was designed in a way your web app can be fully testable.</li>
+<li><strong>Animation</strong> : Easily animate elements and views.</li>
+</ul>
+
+
+<h3>Here are 5 steps to boost your AngularJS skills right now :</h3>
+
+<ol>
+<li>follow the <a href="http://docs.angularjs.org/tutorial">official tutorial</a> and the <a href="http://docs.angularjs.org/guide">dev guide</a>.</li>
+<li>watch the awesome <a href="http://egghead.io">egghead.io video series</a>. they're 3mins each only :)</li>
+<li>watch the <a href="http://www.youtube.com/watch?v=i9MHigUZKEM">60mins AngularJS fundamentals video</a></li>
+<li>read the code of <a href="http://todomvc.com/architecture-examples/angularjs">some</a> <a href="https://github.com/petebacondarwin/foodme">great</a> <a href="https://github.com/angular-app/angular-app">AngularJS</a> <a href="https://github.com/vojtajina/task-manager">app</a> <a href="https://github.com/IgorMinar/Memory-Game">examples</a>.</li>
+<li>read as many times as needed the <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">nuances of scope prototypal inheritance</a></li>
+</ol>
+
+
+<p>Of course, dont just watch/read, you need to experiment every step :)</p>
+
+<p>After that, you should have a pretty good understanding of the framework and be able to <strong>angularize all the things</strong> :)</p>
+
+<p><strong>Need help ?</strong> Ask your questions in the comments below, or on IRC #angularjs channel, or on <a href="https://groups.google.com/forum/?fromgroups#!forum/angular">the dedicated google group</a>.</p>
+
+<p>BTW, if you read French, great ressources here : <a href="http://www.frangular.com">frangular.com</a> and <a href="http://lauterry.github.io/slides-prez-angular">Thierry Lau's introduction slides</a>.</p>
+
+<p>Need more ressources ?</p>
+
+<ul>
+<li>Read the Angular source itself : <a href="https://github.com/angular/angular.js">github.com/angular/angular.js</a></li>
+<li><a href="https://github.com/jmcunningham/AngularJS-Learning">A huge list of good AngularJS ressources</a> maintained by the community</li>
+<li><a href="https://gist.github.com/revolunet/4657146">My AngularJS ressources compilation</a></li>
+<li><a href="https://github.com/angular/angular.js/wiki/JSFiddle-Examples">Lots of JSfiddle examples in the AngularJS wiki</a></li>
+<li><a href="http://stackoverflow.com/questions/tagged/angularjs">Stack overflow answers</a></li>
+<li><a href="https://speakerdeck.com/search?q=angularjs">Speackerdeck prezos</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

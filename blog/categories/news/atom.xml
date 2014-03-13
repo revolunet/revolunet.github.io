@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: news | revolunet blog]]></title>
+  <link href="http://blog.revolunet.com/blog/categories/news/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2014-02-13T09:37:13+01:00</updated>
+  <id>http://blog.revolunet.com/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GoogleIO 2013 keynote recap]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/"/>
+    <updated>2013-05-15T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote</id>
+    <content type="html"><![CDATA[<p>So today was the opening of the 2013 GoogleIO developer conference in San Francisco and the Googlers announced a <strong>insanely crazy</strong> amount of new projects/services/features in just the first few hours, which is very exciting for every web/android developer. The next three days will be very busy, with a lot of focus on Chrome, Android and Google+.</p>
+
+<p>Though, we don't have new Nexus devices, no Android 4.3, and no Javascript AppEngine runtime. So huge fail on my <a href="https://twitter.com/revolunet/status/333620420798472192">previous predictions</a>.</p>
+
+<p>The keynote started with a big fail demo effect happened in the very first demo about Android multiplayer gaming when demoing a new Google Cloud Messaging feature, quite embarassing, but then everything ran smoothly.</p>
+
+<p>Here's a little recap of the most important things announced just during the 3 hours keynote :</p>
+
+<h2><a href="http://officialandroid.blogspot.fr/2013/05/androidio-just-press-play.html">Android</a></h2>
+
+<ul>
+<li>Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards...).</li>
+<li>Google Game Services platform to help game developers with new APIs</li>
+<li>Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.</li>
+<li><a href="http://www.youtube.com/watch?v=e0fXuyL0xVU">Android studio</a> to replace Eclipse nightmare, finally ! good move !</li>
+<li>Unified and synced notifications between devices.</li>
+<li>Translation service for apps, better analytics...</li>
+<li>Enhanced maps API</li>
+</ul>
+
+
+<h2><a href="http://play.google.com/about/music/">Google Music</a></h2>
+
+<ul>
+<li>Access to all the music for 9.99$/month</li>
+<li>Discover to new recommended songs with google suggestions</li>
+<li>Google powered radio feature based on what you like</li>
+</ul>
+
+
+<h2><a href="https://plus.google.com/+chrome/posts">Chrome / Web</a></h2>
+
+<ul>
+<li>750 millions active chrome users globally</li>
+<li>WebP and VP9 royalty-free compression standards for images and videos to increase speed specially on mobile devices.</li>
+<li>Google provides a free (deactivable) proxy for Android to improve speed based on this codecs.</li>
+<li>New payment autocomplete API will help process payments quickly on websites, specially useful on mobile (2 clicks payments)</li>
+<li>Google will finally release a rock solid UI framework based on web components standards : <a href="http://www.polymer-project.org">polymer-project.org</a> . I wonder how it will fit with AngularJS.</li>
+<li>V8 will integrate asm.js to improve Javascript performance.</li>
+</ul>
+
+
+<h2><a href="http://googleplusproject.blogspot.fr/2013/05/new-google-stream-hangouts-and-photos.html">Google +</a></h2>
+
+<ul>
+<li>New interface :)</li>
+<li>Better Hangouts</li>
+<li>Unified notifications across devices</li>
+<li>Better pictures management, event an 'auto awesome' mode :)</li>
+</ul>
+
+
+<h2><a href="http://google-latlong.blogspot.fr/2013/05/meet-new-google-maps-map-for-every.html">Maps</a></h2>
+
+<ul>
+<li>iPad version this summer</li>
+<li>Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL</li>
+</ul>
+
+
+<h2>Gmail</h2>
+
+<ul>
+<li>You can now <a href="http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html">send money to your friends right from Gmail with google wallet</a> :)</li>
+<li>Developers can now <a href="http://googleappsdeveloper.blogspot.fr/2013/05/introducing-actions-in-inbox-powered-by.html">add actions to their email</a></li>
+</ul>
+
+
+<h2>In other news</h2>
+
+<ul>
+<li>For some reasons (<a href="https://code.google.com/p/googleappengine/issues/list">top requested features</a>), <a href="https://gaeforphp.appspot.com">Google choosed PHP over Javascript as a new AppEngine runtime</a>. <strong>#WTF</strong></li>
+<li>Google Play for education allows teachers/schools to push content directly to students devices</li>
+<li>Google TVs will be <a href="https://plus.google.com/+GoogleTVDevelopers/posts/X5rmq6Yu8xG">updated to Android 4.2 and latest chrome</a> !</li>
+</ul>
+
+
+<p>Anything missed ?</p>
+
+<p>You can still watch the full keynote <a href="http://www.youtube.com/watch?v=lLPue2vK3wg">on Youtube</a> of course.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A fresh start]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/04/11/a-fresh-start/"/>
+    <updated>2013-04-11T01:46:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/04/11/a-fresh-start</id>
+    <content type="html"><![CDATA[<p>Our good old WordPress blog has been shutdown since a few months and now its time for us to start a brand new blogging adventure with OctoPress. As expected, we'll talk about Web technologies, Rich web applications, Javascript, Python and Phonegap among others.</p>
+
+<p>We've got so many stories to tell, so many tips to share and so much code to dissect, so stay tuned.</p>
+
+<p>140 chars isn't long enough.</p>
+
+<p><code>js
+console.log('Welcome :)');
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

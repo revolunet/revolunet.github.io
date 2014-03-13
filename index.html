@@ -1,0 +1,2351 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>revolunet blog</title>
+  <meta name="author" content="revolunet team">
+
+  
+  <meta name="description" content="Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the variety &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.revolunet.com">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-294393-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+    <img class="basic-alignment left" src="/images/carre-75.jpg">
+  <h1><a href="/">revolunet blog</a></h1>
+  
+    <h2>web technologies for desktop and mobile</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.revolunet.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS Services</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-14T00:00:00+01:00" pubdate data-updated="true">Feb 14<span>th</span>, 2014</time>
+        
+         | <a href="/blog/2014/02/14/angularjs-services-inheritance/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the <a href="http://shichuan.github.io/javascript-patterns/#code-reuse-patterns">variety</a> of <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#prototypepatternjavascript">Javascript</a> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">OOP</a> <a href="http://howtonode.org/prototypical-inheritance">patterns</a> <a href="http://javascript.info/tutorial/oop">available</a>. Combined with the new service and factory concepts introduced in AngularJS, implementing OOP in your applications can lead to serious headaches, so i&#8217;ll try to show you some solutions here.</p>
+
+<p>If you need a step-by-step explanation of the Javascript prototypal inheritance, you can read the great <a href="http://www.2ality.com/2012/01/js-inheritance-by-example.html">Dr. Axel Rauschmayer JavaScript inheritance by example</a> article.</p>
+
+<p>Once your app grow and your services multiply, you&#8217;ll quickly feel the need to <strong>reuse your code</strong>, and to split it in small modules to be able to separate concerns and setup some serious unit testing.</p>
+
+<p>In this post, i&#8217;ll show how to create a base AngularJS service, based on the Github API, that we&#8217;ll be able to extend and reuse in different scenarios. We&#8217;ll also leverage the power of promises chaining to extend the server responses and add additional data before returning the final result.</p>
+
+<p>Something important to note here is that <code>factories</code> are useful to define our classes that you can instantiate many times using the <code>new</code> keyword, while <code>services</code> always create singletons.</p>
+
+<h3>Create our base service</h3>
+
+<p>Our first service will be responsible of fetching Github basic user data and return the result. We&#8217;ll use a <code>factory</code> instead of a <code>service</code>, which will make it easier to instantiate many versions of the service in our application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;SimpleGithubUser&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// instantiate our initial object</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">SimpleGithubUser</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">profile</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// define the getProfile method which will fetch data</span>
+</span><span class='line'>    <span class="c1">// from GH API and *returns* a promise</span>
+</span><span class='line'>    <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// Generally, javascript callbacks, like here the $http.get callback,</span>
+</span><span class='line'>        <span class="c1">// change the value of the &quot;this&quot; variable inside it</span>
+</span><span class='line'>        <span class="c1">// so we need to keep a reference to the current instance &quot;this&quot; :</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">&#39;users/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">username</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// when we get the results we store the data in user.profile</span>
+</span><span class='line'>            <span class="nx">self</span><span class="p">.</span><span class="nx">profile</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// promises success should always return something in order to allow chaining</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">SimpleGithubUser</span><span class="p">;</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So we can now easily inject our factory anywhere and use it like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we first inject our factory</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">SimpleGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// instantiate a new user</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SimpleGithubUser</span><span class="p">(</span><span class="s1">&#39;substack&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// fetch data and publish on scope</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$scope</span><span class="p">.</span><span class="nx">userLogin</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">login</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Extending the base service</h3>
+
+<p>Now we&#8217;d like to attach some additional data to our users. Instead of modiying the original factory, or even worse, duplicate it, we can create another factory that extends the original one, just by using the regular javascript prototypal inheritance. We&#8217;ll override some methods and use promises chaining to deliver the final data only when all the subsequent requests have been completed.</p>
+
+<p>This has the advantage of encapsulating the logic inside the new service, making it easily testable while keeping your controllers light.</p>
+
+<p>In this example we&#8217;ll add some data from the Github events API and attach it to the user profile before returning the final result.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we define a new factory and inject our original service so we can extend it properly</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;AdvancedGithubUser&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$http</span><span class="p">,</span> <span class="nx">SimpleGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">apiUrl</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// create our new custom object that reuse the original object constructor</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">AdvancedGithubUser</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// reuse the original object prototype</span>
+</span><span class='line'>    <span class="nx">AdvancedGithubUser</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SimpleGithubUser</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// define a new internal private method for this object</span>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">getUserEvents</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">$http</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">apiUrl</span> <span class="o">+</span> <span class="s1">&#39;users/&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">username</span> <span class="o">+</span> <span class="s1">&#39;/events&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// attach the events API result to our user profile</span>
+</span><span class='line'>            <span class="nx">self</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// promises should always return a result</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">response</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Now let&#39;s override our original getProfile method</span>
+</span><span class='line'>    <span class="nx">AdvancedGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// we first call the original getProfile method (aka super method)</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">originalGetProfile</span> <span class="o">=</span> <span class="nx">SimpleGithubUser</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// we use promises chaining to add additional data</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">originalGetProfile</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// before returning the result,</span>
+</span><span class='line'>            <span class="c1">// call our new private method and bind &quot;this&quot; to &quot;self&quot;</span>
+</span><span class='line'>            <span class="c1">// we need to do this because the method is not part of the prototype</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">getUserEvents</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">AdvancedGithubUser</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Usage is exactly the same, except the service added the events data for us :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// we first inject our factory</span>
+</span><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">AdvancedGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// instantiate a new user</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AdvancedGithubUser</span><span class="p">(</span><span class="s1">&#39;substack&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// fetch data and publish on scope</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">$scope</span><span class="p">.</span><span class="nx">userEvents</span> <span class="o">=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">profile</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">})</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Create a service instance</h3>
+
+<p>Now that you have some solid factories, you can also instantiate some app-wide services that expose pre-configured instances.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">service</span><span class="p">(</span><span class="s1">&#39;MyUserProfile&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">AdvancedGithubUser</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AdvancedGithubUser</span><span class="p">(</span><span class="s1">&#39;revolunet&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">user</span><span class="p">.</span><span class="nx">getProfile</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">user</span><span class="p">;</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And use it like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">MyUserProfile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">$scope</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="nx">MyUserProfile</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="nx">MyUserProfile</span><span class="p">.</span><span class="nx">location</span><span class="p">);</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Final result</h2>
+
+<iframe style="width: 100%; height: 600px" src="http://jsfiddle.net/YLs26/embedded/result,html,js,css/light/"></iframe>
+
+
+<br><br>
+
+
+<p>Hope this has been useful to you, please ask below or on twitter <a href="http://twitter.com/revolunet">@revolunet</a> for any question/suggestion :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit Testing an AngularJS Directive</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-05T00:00:00+01:00" pubdate data-updated="true">Dec 5<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/12/05/unit-testing-angularjs-directive/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In this article, i&#8217;ll detail the process to unit test the stepper directive we&#8217;ve created in the last week <a href="http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/">custom component creation article</a>. Next week, i&#8217;ll cover how to distribute your component via GitHub and Bower.</p>
+
+<p>Unit testing is the art of testing individually every smallest part of your code, which are the foundations of your apps sanity. Once correctly tested, these parts assembled together will also play nicely, as their behaviour has already been validated independently.</p>
+
+<p>Unit testing helps you <strong>prevent regressions, increase quality, maintenability, and trust in your codebase</strong>, thus better team collaboration, easier refactoring&#8230; and WIN :)</p>
+
+<p>Another usage is, when you get a new bug report, you add the revelant test that demo the bug, fix it in your code so the test will pass, then keep it there as a proof of reliability.</p>
+
+<p>Among AngularJS best friends there is the <a href="http://karma-runner.github.io">KarmaJS test runner</a> (A nodeJS server to launch the tests in browsers and reports the results) and the <a href="http://pivotal.github.io/jasmine/">Jasmine behaviour-driven testing framework</a> (the language to define your tests and expectations). We&#8217;ll use the grunt-karma task to integrate karma in our classic yet awesome grunt workflow and launch the tests in our browsers. Note that karma can run the tests in remote cloud browsers, for example via <a href="http://saucelabs.com/">SauceLabs</a> or <a href="http://www.browserstack.com/">BrowserStack</a>.</p>
+
+<p><strong>AngularJS is made from ground-up for testing, so make yourself a favor, start NOW :)</strong></p>
+
+<h2>Glossary</h2>
+
+<p>There are some terms that may need clarification before we go further :</p>
+
+<ul>
+<li><code>spec</code> : the specifications of something you want to test, consisting one or many tests suites. should cover all the expected behaviour.</li>
+<li><code>test suite</code> : This is a group of tests; defined within a <code>describe</code> block in Jasmine. blocks can be nested as much as needed.</li>
+<li><code>test</code> : Test instructions, that ends with one or more expectations; defined within a <code>it</code> block in Jasmine.</li>
+<li><code>actual</code> : this is the value you test in your expectation.</li>
+<li><code>expected value</code> : this is the value you test the actual value against.</li>
+<li><code>matcher</code> : A function that compares the <code>actual</code> and the <code>expected</code> values and returns a boolean success result to Jasmine. eg : <code>toEqual</code>, <code>toBeGreatherThan</code>, <code>toHaveBeenCalledWith</code>&#8230; you can even define your owns.</li>
+<li><code>expectation</code> : Use the expect function to test a value, called the actual. It is chained with a matcher function, which takes the expected value.</li>
+<li><code>mock</code> : a stubbed service that replace a real one at runtime with fake data/methods that you can control during your tests.</li>
+</ul>
+
+
+<p>Here&#8217;s an example spec file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// a test suite (group of tests)</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;sample component test&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// a single test</span>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ensure addition is correct&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// sample expectation</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//                  `--- the expected value (2)</span>
+</span><span class='line'>        <span class="c1">//             `--- the matcher method (equality)</span>
+</span><span class='line'>        <span class="c1">//       `-- the actual value (2)</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="c1">// another test</span>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ensure substraction is correct&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Setup the test environnement</h2>
+
+<h4>Add grunt-karma to your project dependencies</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>npm install grunt-karma --save-dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Create karma-unit.js file</h4>
+
+<p><a href="https://github.com/revolunet/angular-stepper/blob/master/karma-unit.js">Here is our full example</a>. This file defines :</p>
+
+<ul>
+<li>the javascript files to be loaded in the browsers for the tests. Typically, this is the libraries you use, your application files, but also the files for your tests and the eventuals mocks.</li>
+<li>which browsers to run the tests against.</li>
+<li>how to reports the results : console, browser&#8230; ?</li>
+<li>optional plugins.</li>
+</ul>
+
+
+<p>Here&#8217;s our example &#8220;files&#8221; section :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">files</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>  <span class="s2">&quot;http://code.angularjs.org/1.2.1/angular.js&quot;</span><span class="p">,</span>       <span class="o">&lt;--</span> <span class="nx">angular</span> <span class="nx">source</span>
+</span><span class='line'>  <span class="s2">&quot;http://code.angularjs.org/1.2.1/angular-mocks.js&quot;</span><span class="p">,</span> <span class="o">&lt;--</span> <span class="nx">angular</span> <span class="nx">mocks</span> <span class="o">&amp;</span> <span class="nx">test</span> <span class="nx">utils</span>
+</span><span class='line'>  <span class="s2">&quot;src/angular-stepper.js&quot;</span><span class="p">,</span>                           <span class="o">&lt;--</span> <span class="nx">our</span> <span class="nx">component</span> <span class="nx">source</span> <span class="nx">code</span>
+</span><span class='line'>  <span class="s2">&quot;src/angular-stepper.spec.js&quot;</span>                       <span class="o">&lt;--</span> <span class="nx">our</span> <span class="nx">component</span> <span class="nx">test</span> <span class="nx">suite</span>
+</span><span class='line'><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>NB: One could add jquery here if it helps you write your test code (more powerful selectors, CSS tests, size computation&#8230;)</p>
+
+<h4>Add the karma grunt tasks to your Gruntfile.js</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">karma</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">unit</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">configFile</span><span class="o">:</span> <span class="s1">&#39;karma-unit.js&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// run karma in the background</span>
+</span><span class='line'>        <span class="nx">background</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// which browsers to run the tests on</span>
+</span><span class='line'>        <span class="nx">browsers</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;Chrome&#39;</span><span class="p">,</span> <span class="s1">&#39;Firefox&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Create <code>angular-stepper.spec.js</code> and paste the content of the sample test above. You can now simply run <code>grunt karma</code> and see your tests executing in the browsers and reporting the results in the console.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>....
+</span><span class='line'>Chrome 33.0.1712 <span class="o">(</span>Mac OS X 10.9.0<span class="o">)</span>: Executed 2 of 2 SUCCESS <span class="o">(</span>1.65 secs / 0.004 secs<span class="o">)</span>
+</span><span class='line'>Firefox 25.0.0 <span class="o">(</span>Mac OS X 10.9<span class="o">)</span>: Executed 2 of 2 SUCCESS <span class="o">(</span>2.085 secs / 0.006 secs<span class="o">)</span>
+</span><span class='line'>TOTAL: 4 SUCCESS
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Each dot represent a successfull test and you can see our two tests runs in the two browsers we&#8217;ve configured before in our karma-unit.js file. woot !</p>
+
+<p>Now let&#8217;s code the real tests :)</p>
+
+<h2>Code our directive unit tests</h2>
+
+<p>Our component unit test suite, aka the <em>spec</em> should cover all the expected behaviour of our component, but also test the edge cases (eg : invalid input, unexpected server behaviours&#8230;)</p>
+
+<p>Below you can see an extract of our angular-stepper component test suite (angular-stepper.spec.js), and <a href="https://github.com/revolunet/angular-stepper/blob/master/src/angular-stepper.spec.js">here&#8217;s the full spec</a>. Our tests for such a component are quite simple, no need for mocks here. The only tricky thing is that we wrap our directive inside a form to be able to test that it plays well with ngModelController and updates form validity correctly.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// the describe keyword is used to define a test suite (group of tests)</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;rnStepper directive&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// we declare some global vars to be used in the tests</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">elm</span><span class="p">,</span>        <span class="c1">// our directive jqLite element</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">;</span>      <span class="c1">// the scope where our directive is inserted</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// load the modules we want to test</span>
+</span><span class='line'>    <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;revolunet.stepper&#39;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// before each test, creates a new fresh scope</span>
+</span><span class='line'>    <span class="c1">// the inject function interest is to make use of the angularJS</span>
+</span><span class='line'>    <span class="c1">// dependency injection to get some other services in our test</span>
+</span><span class='line'>    <span class="c1">// here we need $rootScope to create a new scope</span>
+</span><span class='line'>    <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">inject</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$rootScope</span><span class="p">,</span> <span class="nx">$compile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">scope</span> <span class="o">=</span> <span class="nx">$rootScope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testModel</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">function</span> <span class="nx">compileDirective</span><span class="p">(</span><span class="nx">tpl</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// function to compile a fresh directive with the given template, or a default one</span>
+</span><span class='line'>        <span class="c1">// compile the tpl with the $rootScope created above</span>
+</span><span class='line'>        <span class="c1">// wrap our directive inside a form to be able to test</span>
+</span><span class='line'>        <span class="c1">// that our form integration works well (via ngModelController)</span>
+</span><span class='line'>        <span class="c1">// our directive instance is then put in the global &#39;elm&#39; variable for further tests</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tpl</span><span class="p">)</span> <span class="nx">tpl</span> <span class="o">=</span> <span class="s1">&#39;&lt;div rn-stepper ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&lt;/form&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">tpl</span> <span class="o">=</span> <span class="s1">&#39;&lt;form name=&quot;form&quot;&gt;&#39;</span> <span class="o">+</span> <span class="nx">tpl</span> <span class="o">+</span> <span class="s1">&#39;&lt;/tpl&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// inject allows you to use AngularJS dependency injection</span>
+</span><span class='line'>        <span class="c1">// to retrieve and use other services</span>
+</span><span class='line'>        <span class="nx">inject</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$compile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">form</span> <span class="o">=</span> <span class="nx">$compile</span><span class="p">(</span><span class="nx">tpl</span><span class="p">)(</span><span class="nx">scope</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">elm</span> <span class="o">=</span> <span class="nx">form</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="c1">// $digest is necessary to finalize the directive generation</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$digest</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;initialisation&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// before each test in this block, generates a fresh directive</span>
+</span><span class='line'>        <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">compileDirective</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="c1">// a single test example, check the produced DOM</span>
+</span><span class='line'>        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should produce 2 buttons and a div&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">length</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>        <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should check validity on init&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">expect</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">$valid</span><span class="p">).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should update form validity initialy&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// test with a min attribute that is out of bounds</span>
+</span><span class='line'>        <span class="c1">// first set the min value</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testMin</span> <span class="o">=</span> <span class="mi">45</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// then produce our directive using it</span>
+</span><span class='line'>        <span class="nx">compileDirective</span><span class="p">(</span><span class="s1">&#39;&lt;div rn-stepper min=&quot;testMin&quot; ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// this should impact the form validity</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">form</span><span class="p">.</span><span class="nx">$valid</span><span class="p">).</span><span class="nx">toBeFalsy</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;decrease button should be disabled when min reached&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// test the initial button status</span>
+</span><span class='line'>        <span class="nx">compileDirective</span><span class="p">(</span><span class="s1">&#39;&lt;div rn-stepper min=&quot;40&quot; ng-model=&quot;testModel&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">)).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBeDefined</span><span class="p">();</span>
+</span><span class='line'>        <span class="c1">// update the scope model value</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">testModel</span> <span class="o">=</span> <span class="mi">40</span><span class="p">;</span>
+</span><span class='line'>        <span class="c1">// force model change propagation</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$digest</span><span class="p">();</span>
+</span><span class='line'>        <span class="c1">// validate it has updated the button status</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">elm</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;disabled&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="c1">// and many others...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Some notes :</strong></p>
+
+<ul>
+<li>A directive needs to be compiled in a given scope to be tested</li>
+<li>A non-isolated scope can be acceded via element.scope()</li>
+<li>An isolated scope can be acceded via element.isolatedscope()</li>
+</ul>
+
+
+<p><strong>Why to we have to call <code>scope.$digest()</code> when we change a model value in the tests ?</strong></p>
+
+<p>In a real angular app, the <code>$digest</code> is automatically triggered by the framework in reaction to various events (clicks, inputs, requests&#8230;). There&#8217;s no such user-based events during the automated tests so we just need to force the <code>$digest</code>. (the <code>$digest</code> is what update all the bindings).</p>
+
+<h2>Bonus #1: real time tests</h2>
+
+<p>Thanks to grunt, we can make the tests run when the source changes and be alerted in real time.</p>
+
+<p>If you want the tests to be run on each code change, just add a section to your <code>watch</code> task :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">js</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">files</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;src/*.js&#39;</span><span class="p">],</span>
+</span><span class='line'>    <span class="nx">tasks</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;karma:unit:run&#39;</span><span class="p">,</span> <span class="s1">&#39;build&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You could update your default grunt task like this</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;karma:unit&#39;</span><span class="p">,</span> <span class="s1">&#39;connect&#39;</span><span class="p">,</span> <span class="s1">&#39;watch&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, just run <code>grunt</code> and you&#8217;ll get real-time tests and a builtin webserver :)</p>
+
+<h2>Bonus #2: add code coverage reporting</h2>
+
+<p>As developers, we love solid metrics; and we also love continous improvements. &#8220;coverage&#8221; refers to the code coverage of your test suite; It gives you metrics and detailed info to increase your code coverage without pain.</p>
+
+<p>Here&#8217;s a sample coverage HTML report :</p>
+
+<p><img class="center" src="/images/coverage-example.png" width="600" height="283" title="AngularJS test coverage report example" ></p>
+
+<p>We can see, for each folder and file, how much code is covered by our test suite. And this is updated in real-time thanks to grunt+karma integration. For each file, we can see line by line which blocks stays untested, which makes writing the remaining tests more straightforward.</p>
+
+<p><strong>100% test coverage doesnt mean your code is bug-free, but it increase quality for sure !</strong></p>
+
+<p>Its really easy to integrate this in our karma+grunt setup. Karma has a &#8220;plugin&#8221; system that allows you to plug the fantastic <a href="https://github.com/gotwarlost/istanbul">Istanbul code coverage tool</a> so we just need to configure the karma-unit.js file and we&#8217;re done :)</p>
+
+<h4>Add coverage to karma</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># add the necessary node_modules</span>
+</span><span class='line'>npm install karma-coverage --save-dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>now update the karma config file with these new settings :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// here we specify which of the files we want to appear in the coverage report</span>
+</span><span class='line'><span class="nx">preprocessors</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s1">&#39;src/angular-stepper.js&#39;</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;coverage&#39;</span><span class="p">]</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">// add the coverage plugin</span>
+</span><span class='line'><span class="nx">plugins</span><span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;karma-jasmine&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-firefox-launcher&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-chrome-launcher&#39;</span><span class="p">,</span> <span class="s1">&#39;karma-coverage&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="c1">// add coverage to reporters</span>
+</span><span class='line'><span class="nx">reporters</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;dots&#39;</span><span class="p">,</span> <span class="s1">&#39;coverage&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="c1">// tell karma how you want the coverage results</span>
+</span><span class='line'><span class="nx">coverageReporter</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">type</span> <span class="o">:</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">// where to store the report</span>
+</span><span class='line'>  <span class="nx">dir</span> <span class="o">:</span> <span class="s1">&#39;coverage/&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>More coverage config options here : <a href="https://github.com/karma-runner/karma-coverage">https://github.com/karma-runner/karma-coverage</a></p>
+
+<p>You now need to run your tests again to generate your first report. It should be located in the project root &#8220;coverage&#8221; folder.</p>
+
+<p><strong>Feel free to comment/ask below :)</strong></p>
+
+<p>Next week, we&#8217;ll talk about distributing our now well tested directive on Github and Bower :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a Reusable AngularJS Input Form Component</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-28T00:00:00+01:00" pubdate data-updated="true">Nov 28<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>One of the beauty of the AngularJS framework is its ability to isolate complexity with services and directives; This is perfect for segmenting our code, create very testable components, and make them reusable. A directive, which is an anticipation of the future <a href="http://css-tricks.com/modular-future-web-components/">web components</a>, is a piece of isolated javascript, HTML and CSS that encapsulate a specific behaviour and that you can easily reuse in various apps. Once created, a directive is simply invoked by adding it to the DOM via a HTML tag (<code>&lt;accordion&gt;&lt;/accordion&gt;</code>, or a custom attribute <code>&lt;div accordion&gt;&lt;/div&gt;</code>, or a CSS class <code>&lt;div class="accordion"&gt;&lt;/div&gt;</code> (and even as HTML comment).</p>
+
+<p>In this tutorial we&#8217;ll go through the creation of a custom stepper directive that can be used as a reusable input component in your applications. We&#8217;ll cover the classic directive creation but also the input validation, and the use of the <a href="http://docs.angularjs.org/api/ng.directive:ngModel.NgModelController">ngModelController</a>, that will allow a seamless integration with any form, leveraging the existing AngularJS forms superpowers. The <a href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive">next part will cover the test suites with Jasmine and KarmaJS</a>, and the publication and distribution of our widget with GitHub and bower.</p>
+
+<p>For this example we&#8217;ll build a custom numeric input widget, named &#8220;rn-stepper&#8221;. We&#8217;ll use the last AngularJS 1.2 that brings some important fixes to the private scopes management (capital point for reusable components). The full widget code is <a href="https://github.com/revolunet/angular-stepper">available on github</a> as a reusable component and you can see the final result here :</p>
+
+<iframe style="width: 100%; height: 250px" src="http://jsfiddle.net/26ghx/embedded/result,js,html,css/light/"></iframe>
+
+
+<br><br>
+
+
+<h3>Markup generation</h3>
+
+<p>The first step is to create a naïve directive that build our markup, and renders correctly. We just declare the directive name, and template to use.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// we declare a module name for our projet, and its dependencies (none)</span>
+</span><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;revolunet.stepper&#39;</span><span class="p">,</span> <span class="p">[])</span>
+</span><span class='line'><span class="c1">// declare our naïve directive</span>
+</span><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// can be used as attribute or element</span>
+</span><span class='line'>        <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;AE&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// which markup this directive generates</span>
+</span><span class='line'>        <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;button&gt;-&lt;/button&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;div&gt;0&lt;/div&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;button&gt;+&lt;/button&gt;&#39;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, to use our directive, its quite straightforward :</p>
+
+<ul>
+<li>declare our <code>revolunet.stepper</code> module as one of our app dependencies</li>
+<li>use <code>&lt;div rn-stepper&gt;&lt;/div&gt;</code> (attribute form) or simply <code>&lt;rn-stepper&gt;&lt;/rn-stepper&gt;</code> (element form). to integrate the directive somewhere.</li>
+</ul>
+
+
+<p>The attribute form is better if you want to support IE8 as it works out-of-the-box.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/n4JHg">http://jsfiddle.net/revolunet/n4JHg/</a></p>
+
+<h3>Add internal behaviour</h3>
+
+<p>Now we need to add behaviour and internal variables to our custom component. We&#8217;ll declare a &#8220;private scope&#8221; that will hold internal variables and functions, and add the <code>link</code> function to our directive, which is responsible of initialising the component behaviour just after the markup has been inserted in the final page.</p>
+
+<p>Here&#8217;s the updated directive code :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;AE&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// declare the directive scope as private (and empty)</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="o">:</span> <span class="p">{},</span>
+</span><span class='line'>        <span class="c1">// add behaviour to our buttons and use a variable value</span>
+</span><span class='line'>        <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;button ng-click=&quot;decrement()&quot;&gt;-&lt;/button&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>                  <span class="s1">&#39;&lt;button ng-click=&quot;increment()&quot;&gt;+&lt;/button&gt;&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// this function is called on each rn-stepper instance initialisation</span>
+</span><span class='line'>        <span class="c1">// we just declare what we need in the above template</span>
+</span><span class='line'>        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">,</span> <span class="nx">iAttrs</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">increment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">decrement</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">scope</span><span class="p">.</span><span class="nx">value</span><span class="o">--</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We now have a functionnal component with an isolated code and template.</p>
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/A92Aw/">http://jsfiddle.net/revolunet/A92Aw/</a></p>
+
+<h3>Communicate with the external world</h3>
+
+<p>Our component works great but it would be more useful if it could control a real public variable, known as a <code>ngModel</code> in AngularJS.</p>
+
+<p>Let&#8217;s add a databinding between our component internal <code>value</code> and the outer world (our application).</p>
+
+<p>We just need to update our scope declaration like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;=ngModel&#39;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will automagically bind our internal <code>value</code> variable to the external one declared in the <code>ngModel</code> attribute. The <code>=</code> means &#8220;double data-binding&#8221; which means if ngModel is updated externally then the internal <code>value</code> will be updated, and vice-versa.</p>
+
+<p>Say my app expose a <code>rating</code> variable, we could now bind it to our component simply like this :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-stepper</span> <span class="na">ng-model=</span><span class="s">&quot;rating&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/9e7Hy/">http://jsfiddle.net/revolunet/9e7Hy/</a></p>
+
+<h3>Make our component form-friendly</h3>
+
+<p>We now have a dynamic input that can manipulate arbitrary ngModel data. We need to modify a bit the code to make it play nice with the AngularJS forms. For example, AngularJS forms and input generally expose a <code>$pristine</code> and <code>$dirty</code> state which can be useful in many situation. To make the forms aware of our model changes from inside our component, we need to make use of the <code>ngModelController.$render</code> and <code>ngModelController.$setViewValue</code> API methods, which are available <strong>as soon as you &#8220;require&#8221; a ngModel</strong> on your directive.</p>
+
+<p>The <code>ngModelController.$render</code> method is a method which you should override yourself in the directive and is responsible of updating the view; it will be called by the framework when the external ngModel changes. When the model changes, the framework executes the <code>$formatters</code> pipeline which is responsible of eventually converting the <code>$modelValue</code> raw value to a usable <code>$viewValue</code>.</p>
+
+<p>For example, if your model is a real Date object, you&#8217;d want your input to display it as dd/mm/YY. The model-to-view conversion is made by the <code>$formatters</code> pipeline and the view-to-model by the <code>$parsers</code> pipeline. Once you get a ngModelController instance, you can easily insert new items in these pipelines.</p>
+
+<p>The <code>ngModelController.$setViewValue</code> method should always be called when you want update a model from your directive (view). It takes care of calling the eventual <code>$parsers</code> pipeline. Then it applies the final value to the internal $modelValue, update the input $dirty state, update the optional parent form $dirty state and call any registered <code>$viewChangeListeners</code>. Here&#8217;s the <a href="https://github.com/angular/angular.js/blob/a090400f09d7993d102f527609879cdc74abae60/src/ng/directive/input.js#L1140-L1166">full code for this function</a>.</p>
+
+<p>As pointed by a comment from <a href="http://twitter.com/@ThomasBelin4">@ThomasBelin4</a> below, we don&#8217;t need anymore to have a scope <code>value</code> variable, as we now have a reference to the original <code>ngModelController</code> which holds a reference to the viewValue.</p>
+
+<p>Here&#8217;s how we update the directive declaration :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnStepper&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// restrict and template attributes are the same as before.</span>
+</span><span class='line'>        <span class="c1">// we don&#39;t need anymore to bind the value to the external ngModel</span>
+</span><span class='line'>        <span class="c1">// as we require its controller and thus can access it directly</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="o">:</span> <span class="p">{},</span>
+</span><span class='line'>        <span class="c1">// the &#39;require&#39; property says we need a ngModel attribute in the declaration.</span>
+</span><span class='line'>        <span class="c1">// this require makes a 4th argument available in the link function below</span>
+</span><span class='line'>        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;ngModel&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">// the ngModelController attribute is an instance of an ngModelController</span>
+</span><span class='line'>        <span class="c1">// for our current ngModel.</span>
+</span><span class='line'>        <span class="c1">// if we had required multiple directives in the require attribute, this 4th</span>
+</span><span class='line'>        <span class="c1">// argument would give us an array of controllers.</span>
+</span><span class='line'>        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">,</span> <span class="nx">iAttrs</span><span class="p">,</span> <span class="nx">ngModelController</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// we can now use our ngModelController builtin methods</span>
+</span><span class='line'>            <span class="c1">// that do the heavy-lifting for us</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// when model change, update our view (just update the div content)</span>
+</span><span class='line'>            <span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$render</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">iElement</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$viewValue</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// update the model then the view</span>
+</span><span class='line'>            <span class="kd">function</span> <span class="nx">updateModel</span><span class="p">(</span><span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// call $parsers pipeline then update $modelValue</span>
+</span><span class='line'>                <span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$setViewValue</span><span class="p">(</span><span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$viewValue</span> <span class="o">+</span> <span class="nx">offset</span><span class="p">);</span>
+</span><span class='line'>                <span class="c1">// update the local view</span>
+</span><span class='line'>                <span class="nx">ngModelController</span><span class="p">.</span><span class="nx">$render</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// update the value when user clicks the buttons</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">decrement</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">updateModel</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>            <span class="nx">scope</span><span class="p">.</span><span class="nx">increment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">updateModel</span><span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">};</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/s4gm6/">http://jsfiddle.net/revolunet/s4gm6/</a></p>
+
+<h3>Add min/max attributes</h3>
+
+<p>Now our component is form-friendly, so let&#8217;s as some builtin validation rules.</p>
+
+<p>We could add optional min/max attributes to our component, which will handle the form validation by himself when they are present. These attributes will be data-bound so they can be updated at any time by the application (some other inputs in a form may impact the min/max here).</p>
+
+<p>The <code>ngModelController</code> API gives us also a <code>$setValidity</code> method that can inform the parent forms about our component validity, and automatically add some handy CSS classes related to validity to out form and inputs.</p>
+
+<p>We just need to call <code>ngModelController.$setValidity('outOfBounds', false)</code> to make our input, and thus parent forms invalids, and have <code>ng-invalid</code> and <code>ng-invalid-out-of-bound</code> CSS classes added to our forms and to our component.</p>
+
+<p>Our stepper component is now full functionnal and integrates seamlessly in any form.</p>
+
+<p>demo: <a href="http://jsfiddle.net/revolunet/HCUNC/">http://jsfiddle.net/revolunet/HCUNC/</a></p>
+
+<h3>Prevent invalid input</h3>
+
+<p>Another nice-to-have feature would be to prevent the user from entering invalid data, which means disabling the buttons when the internal value reach the min/max limits. This could be achieved in two ways :</p>
+
+<ul>
+<li>BAD :  manually in our link function, toggling our buttons states on each click.</li>
+<li>GOOD : automagically, using a builtin <code>ng-disabled</code> directive in our template, that will disable the buttons under some conditions.</li>
+</ul>
+
+
+<p>The second option is much more Angular-ish and there are several ways to achieve this so let&#8217;s see how we can do.</p>
+
+<p>We can add <code>ng-disabled="isOverMin()"</code> to our first button template and add a <code>scope.isOverMin</code> function that returns a boolean indicating if we should disable or not the given button. same with <code>overMax</code> that would check if the max has been reached or not.</p>
+
+<p>Our template is now :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;button</span> <span class="na">ng-disabled=</span><span class="s">&quot;isOverMin()&quot;</span> <span class="na">ng-click=</span><span class="s">&quot;decrement()&quot;</span><span class="nt">&gt;</span>-<span class="nt">&lt;/button&gt;</span>
+</span><span class='line'><span class="nt">&lt;div&gt;</span>{{ value }}<span class="nt">&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;button</span> <span class="na">ng-disabled=</span><span class="s">&quot;isOverMax()&quot;</span> <span class="na">ng-click=</span><span class="s">&quot;increment()&quot;</span><span class="nt">&gt;</span>+<span class="nt">&lt;/button&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>demo : <a href="http://jsfiddle.net/revolunet/26ghx/">http://jsfiddle.net/revolunet/26ghx/</a></p>
+
+<p>The <a href="http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive">next part will detail the tests suite</a> and distribution subjects over github and bower.</p>
+
+<p>Stay tuned :) and feel free to comment/ask below !</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS Support</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-03T00:00:00+02:00" pubdate data-updated="true">Oct 3<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/03/universal-CORS-htaccess/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>What is CORS</h2>
+
+<p>In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented javascript on a given page to communicate with third party domains. Many workarounds have been implemented since, like JSONP, which is only a &#8216;hack&#8217; allowing cross-domain communication using javascirpt callbacks; Handy, but this prevents any other method than GET and forces the use of querystring to pass parameters.</p>
+
+<p>With the RISE of internet APIs and decentralised services, having a way to communicate with 3rd party domain became critical; thus, the <a href="http://www.w3.org/TR/cors/">W3C defined the CORS</a> protocol, acronym which stands for &#8220;Cross-Origin Resource Sharing&#8221; and allows different domains to communicate together, the same way Adobe Flash did it a long time before with the crossdomain.xml policy (remember?).</p>
+
+<p>Now with CORS, the server defines which domains (applications) can communicate with him (or anyone). When CORS is enabled on the server, your javascript can communicate transparently using any HTTP method; For non-GET requests, the browser transparently make an initial OPTIONS request to check if the request is allowed or not, and then makes the real request.</p>
+
+<h2>CORS-enable your API</h2>
+
+<p>You can find the whole specs and various implementations at <a href="http://enable-cors.org/">enable-cors.org</a>.</p>
+
+<h2>Pain-free CORS for Apache servers</h2>
+
+<p>If you don&#8217;t want to change your code, we&#8217;ve crafted a small .htaccess for you that will force CORS on your API, without even touching your code. Just drop one of the implementations in your .htaccess and your API is magically CORS-enabled :)</p>
+
+<div><script src='https://gist.github.com/revolunet/6295643.js'></script>
+<noscript><pre><code># with AJAX withCredentials=false (cookies NOT sent)
+Header always set Access-Control-Allow-Origin &quot;*&quot;                   
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On                  
+RewriteCond %{REQUEST_METHOD} OPTIONS 
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]]
+
+# with AJAX withCredentials=true (cookies sent, SSL allowed...)
+SetEnvIfNoCase ORIGIN (.*) ORIGIN=$1
+Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
+Header always set Access-Control-Allow-Origin &quot;%{ORIGIN}e&quot;
+Header always set Access-Control-Allow-Credentials &quot;true&quot;
+Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
+</code></pre></noscript></div>
+
+
+<p>Note: If you use the withCredentials version, be sure to add <code>withCredentials: true</code> in your AJAX requests.</p>
+
+<p>You can validate your API CORS support using this demo : <a href="http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview">http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview</a></p>
+
+<p>Hope this helps !</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS Framework</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-30T00:00:00+02:00" pubdate data-updated="true">Sep 30<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/30/extending-topcoat-css-framework/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Introduction</h2>
+
+<p><a href="http://topcoat.io">Topcoat.io</a> is the new kid on the block of the CSS-only frameworks. It&#8217;s the first one that&#8217;s built for performance from the ground up, thanks to the constant performance tracking using Chrome telemetry, which makes it a tool of choice to build your mobile applications UI.It is also easy to theme and customize thanks to a smart CSS organisation and a powerful toolchain.</p>
+
+<p>Topcoat has been built for the future, thanks to solid conventions and a cutting-edge javascript architecture, and more goodness :</p>
+
+<ul>
+<li><a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> convention</li>
+<li><a href="http://learnboost.github.io/stylus/">stylus</a> CSS preprocessor</li>
+<li><a href="http://gruntjs.com">grunt</a> task automation</li>
+<li><a href="https://github.com/topcoat/topdoc">TopDoc</a> CSS documentation generator</li>
+<li><a href="http://npmjs.org">npm</a> for dependencies</li>
+</ul>
+
+
+<p>It&#8217;s fully open source, not &#8220;fauxpen source&#8221;, and the contributors uses various online tools to run the project :</p>
+
+<ul>
+<li><a href="http://github.com/topcoat">Github</a> of course for code and issues</li>
+<li><a href="http://codepen.io/Topcoat">codepen.io</a> to prototype and host widgets demos</li>
+<li><a href="http://huboard.com/topcoat/topcoat">huboard</a> to manage milestones on top of Github issues</li>
+</ul>
+
+
+<p>All of this make it a powerful framework made to be extensible and performant.</p>
+
+<h2>Install Topcoat</h2>
+
+<p>Just <a href="https://github.com/topcoat/topcoat/releases">download the latest release</a> from github and extract it. The release contains the final CSS with dark and light themes for desktop and mobile, so you can use then directly; just add a link to the <code>topcoat-mobile-light.min.css</code> file in your app for example.</p>
+
+<p>If you want to customize the themes or add new components, you need to run <code>npm install</code> from the topcoat folder. This will download all the widgets sources and local dependencies to your <code>node_modules</code> folder.</p>
+
+<p>Some important things to notice :</p>
+
+<ul>
+<li>Each component (button, list, checkbox&#8230;) has its own folder in the <code>node_modules</code> subfolder (so each one has its own npm repo). Each one also has its own gruntfile in case you want to build its css separately.</li>
+<li>Most of components have a <code>topcoat-[COMPONENT]-base</code> folder with just enough CSS to completely reset the styling of the element, so other components can override it entirely. For example the default button hasn&#8217;t any default border or background and looks like a simple text block;</li>
+<li>The <code>topcoat-theme</code> folder defines the 4 builtin Topcoat themes which are just a combination of variables that defines some variations of the components.</li>
+<li>The main Gruntfile list the available themes and associated widgets using pattern globbing and this is from where the final CSS are built, including the given widgets.</li>
+</ul>
+
+
+<h2>Adding a custom theme</h2>
+
+<p>You can easily tweak the builtin themes by modifying the variables inside the <code>topcoat-theme</code> folder then run <code>grunt</code> to rebuild the final CSS. But its much better to add your own theme and leave the others untouched.</p>
+
+<p>Let&#8217;s add a simple green theme :</p>
+
+<ul>
+<li>copy the <code>topcoat-theme/src/theme-topcoat-*</code> file from the theme that matches the most your design, eg copy <code>theme-topcoat-mobile-light.styl</code> to <code>theme-green.styl</code>.</li>
+<li>create a <code>variables-green.styl</code> with a bunch of variables that override the default ones (see the list of variables in the other variables-* files). For example :</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// base colors</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">color</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span> <span class="o">=</span> <span class="err">#</span><span class="nx">e2ffe2</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">placeholder</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">input</span> <span class="o">=</span> <span class="err">#</span><span class="mi">4</span><span class="nx">eff4e</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">down</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">hover</span> <span class="o">=</span> <span class="err">#</span><span class="mi">02</span><span class="nx">ff01</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">border</span><span class="o">--</span><span class="nx">focus</span> <span class="o">=</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">box</span><span class="o">-</span><span class="nx">shadow</span><span class="o">--</span><span class="nx">focus</span> <span class="o">=</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">2</span><span class="nx">px</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// cta button colors</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b300</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">border</span><span class="o">--</span><span class="nx">cta</span> <span class="o">=</span> <span class="mi">1</span><span class="nx">px</span> <span class="nx">solid</span> <span class="err">#</span><span class="mi">006700</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span><span class="o">--</span><span class="nx">down</span> <span class="o">=</span> <span class="err">#</span><span class="mi">00</span><span class="nx">b400</span>
+</span><span class='line'><span class="kd">var</span><span class="o">-</span><span class="nx">background</span><span class="o">-</span><span class="nx">color</span><span class="o">--</span><span class="nx">cta</span><span class="o">--</span><span class="nx">hover</span> <span class="o">=</span> <span class="err">#</span><span class="mi">02</span><span class="nx">ff01</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>add <code>@import variables-green</code> to your <code>theme-green.styl</code>. (This allows you later to combine some variables files)</li>
+<li>add the theme link in the main gruntfile, &#8216;stylus&#8217; section:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">stylus</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">green</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kr">import</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;theme-green&#39;</span><span class="p">,</span> <span class="s1">&#39;utils&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">files</span><span class="o">:</span> <span class="p">[{</span>
+</span><span class='line'>            <span class="nx">src</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>                <span class="c1">// here you can eventually add/remove some components from the output</span>
+</span><span class='line'>                <span class="s1">&#39;node_modules/topcoat-*/src/**/*.styl&#39;</span>
+</span><span class='line'>                <span class="p">],</span>
+</span><span class='line'>            <span class="nx">dest</span><span class="o">:</span> <span class="s1">&#39;css/topcoat-green.css&#39;</span>
+</span><span class='line'>        <span class="p">}]</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Now run <code>grunt</code> and you&#8217;ll see your final <code>topcoat-green.css</code> and  <code>topcoat-green.min.css</code> appear magically in the CSS folder :)</li>
+<li>You also have a <code>demo/topcoat-green.html</code> file for free that show you the final result, generated via TopDoc.</li>
+</ul>
+
+
+<h2>Add a custom component</h2>
+
+<p>Now, let&#8217;s say you want to add a custom button to the generated theme, for example <code>button-round</code>.</p>
+
+<p>Add a <code>node_modules/topcoat-button-round</code> folder and create <code>src/topcoat-button-round.styl</code> file. Inside, add your round button definition, with the documentation to generate the demo :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="o">//</span> <span class="nt">import</span> <span class="nt">anything</span> <span class="nt">you</span> <span class="nt">need</span> <span class="nt">to</span> <span class="nt">extend</span>
+</span><span class='line'><span class="k">@import</span> <span class="nt">topcoat-button</span>
+</span><span class='line'><span class="c">/* topdoc</span>
+</span><span class='line'><span class="c">  name: Round Button</span>
+</span><span class='line'><span class="c">  description: A simple, yet round button</span>
+</span><span class='line'><span class="c">  modifiers:</span>
+</span><span class='line'><span class="c">    :active: Round button active state</span>
+</span><span class='line'><span class="c">    :disabled: Disabled state</span>
+</span><span class='line'><span class="c">    :hover: Hover state</span>
+</span><span class='line'><span class="c">    :focus: Focused</span>
+</span><span class='line'><span class="c">  markup:</span>
+</span><span class='line'><span class="c">    &lt;button class=&quot;topcoat-button--round&quot;&gt;Button&lt;/button&gt;</span>
+</span><span class='line'><span class="c">    &lt;button class=&quot;topcoat-button--round&quot; disabled&gt;Button&lt;/button&gt;</span>
+</span><span class='line'><span class="c">  tags:</span>
+</span><span class='line'><span class="c">    - desktop</span>
+</span><span class='line'><span class="c">    - light</span>
+</span><span class='line'><span class="c">    - mobile</span>
+</span><span class='line'><span class="c">    - button</span>
+</span><span class='line'><span class="c">    - round</span>
+</span><span class='line'><span class="c">*/</span>
+</span><span class='line'><span class="nc">.topcoat-button--round</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">@extend</span> <span class="nc">.topcoat-button</span>
+</span><span class='line'>    <span class="nt">border-radius</span><span class="o">:</span> <span class="nt">999px</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:disabled</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">disabled</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:hover</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">hover</span>
+</span><span class='line'>  <span class="k">text-shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">text-shadow</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:focus</span> <span class="p">{</span>
+</span><span class='line'>  <span class="o">@</span><span class="n">extend</span> <span class="o">.</span><span class="n">topcoat</span><span class="o">-</span><span class="n">button</span><span class="o">:</span><span class="n">focus</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nc">.topcoat-button--round</span><span class="nd">:active</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">color</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">color</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">text-shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">text-shadow</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">background-color</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="k">background-color</span><span class="o">--</span><span class="n">down</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="n">var</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">--</span><span class="n">down</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, when you&#8217;ll run <code>grunt</code> again, the final CSS will include your button definition and the <code>demo/topcoat-green.html</code> demo page will present your new button with related documentation.</p>
+
+<h2>Creating new Topcoat components</h2>
+
+<p>Now you know how to add custom components and integrate them in the Topcoat workflow properly.</p>
+
+<p>If you&#8217;re willing to share new components with the community (and you should), here&#8217;s the workflow :</p>
+
+<ul>
+<li>demo your component markup and css on <a href="http://codepen.io">codepen.io</a></li>
+<li>create a github repo for your component, using the same structure as any of the <code>node_modules/topcoat-*</code> folder.</li>
+<li>if accepted, your component will be added to the main Topcoat <code>package.json</code> then auto-installed with <code>npm install</code>.</li>
+</ul>
+
+
+<h2>Need help ?</h2>
+
+<p>Comment below, use Github issues or join the #topcoat irc channel to discuss :)</p>
+
+<p><strong>I hope this quick intro will help you choose Topcoat as your next CSS framework and you will contribute to the project so we can build together a better CSS framework.</strong></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/24/phonegap-day-amsterdam/">Phonegap Day Amsterdam 2013</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-24T00:00:00+02:00" pubdate data-updated="true">Sep 24<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/24/phonegap-day-amsterdam/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Once again, i&#8217;ve been lucky enough to go to Amsterdam today to attend the Phonegap Europe annual conference.</p>
+
+<p>The <a href="http://www.compagnietheater.nl/compagnietheater.html">venue</a> was great, the talks covered various subjects, and, most importantly, the atmosphere reflected a positive and healthy community : open-minded and confident in the open web as a major platform for the future of mobile applications.</p>
+
+<p>Almost 2 years after Adobe took control of Nitobi (the team behind the Phonegap genesis), the Phonegap project is in a great shape, dynamic, more open than ever, and with a sane and solid codebase, powered by node.js and a modern javascript toolchain, thanks to the hard work of the core team and many contributors.</p>
+
+<p>With the 3.0 version, released a few weeks ago, Phonegap is now mature and flexible enough to serve as a foundation for your various mobile projects. Every single plugin has been extracted from codebase, which is now focused on bridging performance and plugin management.</p>
+
+<p><strong>Phonegap is the perfect example of how open source can increase code quality and grow a solid community while serving a company business.</strong></p>
+
+<p>Here is a quick recap of the most notable talks.</p>
+
+<h3>Distimo</h3>
+
+<p>Distimo is an app-analytic company that analyses app downloads, conversions and profits and compute smart data for the app developers.</p>
+
+<p>They shared some interesting metrics :</p>
+
+<ul>
+<li>33% of worlwide app revenues comes from Asia.</li>
+<li>Globally, ~65% of revenues comes from the AppStore and ~35% from Play Store (growing fast).</li>
+<li>Candy Crush saga makes as much money in Asia on both iOS or Android</li>
+<li>Games of course dominates stores revenues</li>
+</ul>
+
+
+<p>More data at : <a href="http://www.distimo.com/publications">http://www.distimo.com/publications</a></p>
+
+<h3>Untappd</h3>
+
+<p>Demo of one of the most successfull Phonegap apps : Untappd, a beautiful beer-centered social network app with 700k users and 4 stars rating. <a href="https://untappd.com/">Join now !</a></p>
+
+<h3>Blackberry loves the web</h3>
+
+<p>Too late maybe ?</p>
+
+<h3>Native UI in Phonegap Apps</h3>
+
+<p>Tanaka Masahiro demoed the <a href="https://github.com/monaca/monaca-framework-ios">Monaca hybrid framework</a> which gives you the ability to add native UI elements to your Phonegap app. You can wrap the phonegap webview with native tabbar/navigation bar to improve your UX, specially revelant on older Android devices. The framework also allows native transitions between various webviews, but this breaks application state. The framework hasn&#8217;t yet migrated to phonegap 3.0 so not usable as is IMHO.</p>
+
+<p>Interesting real hybrid approach that demonstrates again that Phonegap is not necessarly a &#8220;full web&#8221; solution, but you can use as much &#8220;native&#8221; stuff as needed.</p>
+
+<h3>Apple phonegap apps rejection prevention</h3>
+
+<p><a href="https://twitter.com/rdlauer">Rob Lauer</a> from <a href="http://www.kendoui.com/">kendoui</a> shared his experiences about mobile web apps rejection reasons on the Apple Store.</p>
+
+<p>Here&#8217;s a bunch of common best practices to prevent your Phonegap app to be rejected :</p>
+
+<ul>
+<li>Make an app, not a website</li>
+<li>Create unique and useful apps</li>
+<li>Don&#8217;t use annoying ads</li>
+<li>User registration shouldn&#8217;t be mandatory (at least a free demo access)</li>
+<li>Don&#8217;t force users to validate CGU</li>
+<li>Never tag your app version lower to 1.0</li>
+<li>Should work offline with minimal features</li>
+<li>Don&#8217;t load remote code that change your app behaviour</li>
+<li>Use beautiful, homogenous icons</li>
+<li>Write accurate app description</li>
+<li>Don&#8217;t try to steal Apple money, use in-app payments or die instantly</li>
+</ul>
+
+
+<h3>Topcoat.io</h3>
+
+<p>Kristofer Joseph, original <a href="http://topcoat.io">TopCoat</a> author, talked about this beautiful and slick CSS framework focused on performance and themability.</p>
+
+<p>TopCoat.io provides various widgets as pure HTML/CSS and, most importantly, provides the best technical stack ever to extend it cleanly :</p>
+
+<ul>
+<li><a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM CSS syntax</a> convention</li>
+<li><a href="http://gruntjs.com">grunt</a>-based automation</li>
+<li><a href="npmjs.org">npm</a> dependencies management</li>
+<li><a href="https://github.com/topcoat/topdoc">TopDoc</a> documentation generator</li>
+<li><a href="http://www.chromium.org/developers/telemetry">chrome telemetry</a>  performance analysis</li>
+<li><a href="codepen.io">codepen.io</a> as a prototyping tool</li>
+<li>What else ??</li>
+</ul>
+
+
+<p>Another great example of a successful project, open-sourced from day one and following the best practices from the ground up.</p>
+
+<p>TopCoat is definitely shaped for the future and you can already use it in your Phonegap projects !</p>
+
+<p>Check out <a href="https://twitter.com/devgirlfl">@devgirlfl</a> article &amp; demo : <a href="http://devgirl.org/2013/08/29/totally-rad-topcoat/">http://devgirl.org/2013/08/29/totally-rad-topcoat</a></p>
+
+<h3>WizCorp HTML5 gaming</h3>
+
+<p>Yes you can build great games with Phonegap. You don&#8217;t necessarly draw directly inside the webview, but as phonegap is very open and extensible, you can easily plug native features as needed, like <a href="http://impactjs.com/ejecta">Ejecta</a> (off browser canvas+audio for iOS), webGL views&#8230; WizCorp team shares some interesting code <a href="https://github.com/Wizcorp">on their github</a>, like a native spinner, navigation views helper&#8230;</p>
+
+<h3>Chrome Cordova plugins</h3>
+
+<p>This may be the biggest announce of this event : We can now use Chrome APIs right in our cordova applications. For the moment, we just have socket, storage, notifications, and identity (oauth), but in a near future, we&#8217;ll see support for syncFileSystem (synced data across devices) and more.</p>
+
+<p>Basically, this means that you can code a Chrome Packaged App using only chrome APIs, then distribute it on desktop via the chrome store and then on mobile app stores using cordova !</p>
+
+<p>This is very early stage but Google puts some efforts to stabilize and extend capabilities quickly.</p>
+
+<p>All Chrome javascript APIs : <a href="http://developer.chrome.com/apps/api_index.html">http://developer.chrome.com/apps/api_index.html</a></p>
+
+<p>Cordova implemented APIs can be found at : <a href="http://plugins.cordova.io">http://plugins.cordova.io</a></p>
+
+<h3>Testing with appium.io</h3>
+
+<p><a href="http://twitter.com/filmaj">Fil Maj</a> demonstrated <a href="http://appium.io">appium</a>, an open source end-to-end testing platform that fully support phonegap applications. You can write automation scripts (think selenium) then run them on your own devices, or use appium infrastructure to run the tests on various devices and produces detailed reported.</p>
+
+<p>In a world of such devices fragmentation, this can be very useful :)</p>
+
+<h3>Firefox OS</h3>
+
+<p>Phonegap now also support Firefox OS ;) and Firefox provides many more javascript APIs, like &#8216;Activites&#8217; (think Web intents). If you support the real open web, Mozilla is definitely the way to go :)</p>
+
+<h3>Phonegap CLI</h3>
+
+<p>This awesome talk by <a href="twitter.com/mwbrooks">Michael Brooks</a> was the most interesting and technical talk of the day. Michael showed us how powerful the cordova and phonegap CLI are. Based on a cutting edge javascript architecture, the phonegap CLI is made of nodes modules that you can use directly in the CLI, or as external nodeJS modules, which allows you to integrate the whole workflow in third-party tools and vice-versa. open source power :)</p>
+
+<p>He also demonstrated how easy it is to create and compile apps with or without the locally installed SDKs, using phonegap build as a fallback. Just run for example <code>phonegap compile ios</code> from your machine, then in seconds you get back a QRcode that you can scan to test your final app on a real device instantly; neat !</p>
+
+<h4>Finally, a big thanks to <a href="https://twitter.com/colene">Colene</a>, <a href="https://twitter.com/ppk">Peter Paul Koch</a> and all the Phonegap team for this event, can&#8217;t wait for next year :)</h4>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/18/npm-vs-pip/">Npm vs Pip</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-18T00:00:00+02:00" pubdate data-updated="true">Sep 18<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/18/npm-vs-pip/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After my morning <a href="https://twitter.com/revolunet/status/380210846578016256">twitter rant</a> about <code>npm install &gt; pip install</code> i need to add some clarifications and explain why i meant. Basically i meant that npm is much easier to use from a user perspective, which is an essential point to grow a community. Package management and dependencies is an important part of modern application development workflow and thus needs high consideration.</p>
+
+<p><a href="https://npmjs.org/">npm</a> (node packaged modules) was released at end of 2011 and for sure it&#8217;s inspired from many other packages manager while removing their commons hassles. Also, its used both on backend and on frontend projects (eg: AngularJS+grunt).</p>
+
+<p>Some of the <a href="http://www.pip-installer.org/en/latest/">pip</a> hassles are :</p>
+
+<ul>
+<li>you need to install virtualenv separately</li>
+<li>you need to configure it and run cryptic commands to activate virtualenvs</li>
+<li>you can install virtualenvwrapper to make thing easier though</li>
+<li>you still need to configure it though</li>
+<li>a fresh <code>pip install</code> in a project containing the standard requirements.txt does nothing</li>
+</ul>
+
+
+<p>On the other side, npm is a no-brainer to use :</p>
+
+<ul>
+<li><code>npm install</code> installs/upgrades any project dependencies</li>
+<li>there&#8217;s no notion of virtualenv, it just uses what you have in the current <code>node_modules</code> folder or in your global install.</li>
+</ul>
+
+
+<p>Both are for sure very powerful tools that goes far beyond this basic usage but this is daily work for the developer and also the first contact when entering a new project so it should work seamlessly.</p>
+
+<p>Please correct me if i&#8217;m wrong :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/">AngularJS Tips&#8217;n&#8217;tricks Part 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-23T00:00:00+02:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2013</time>
+        
+         | <a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Here&#8217;s a new batch of AngularJS tips and gotchas; If you didn&#8217;t read it yet, you can check the <a href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/">part 1</a> and feel free to comment below :)</p>
+
+<h3>Access an element scope from outside</h3>
+
+<p>This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nx">$0</span><span class="p">).</span><span class="nx">scope</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or even :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;elementId&#39;</span><span class="p">)).</span><span class="nx">scope</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <a href="https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon">Batarang Chrome Extension</a> is much powerful and let you inspect any scope, anywhere :)</p>
+
+<h3>Unwatch an expression</h3>
+
+<p>Sometimes you want to watch an expression only a few times, and then forget it. The <code>$watch</code> function returns a callback just for that. You just have to execute it back to destruct the watcher.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">watcher</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;data.counter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">iElement</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="mi">50</span> <span class="o">*</span> <span class="nx">newValue</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">newValue</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// autodestruction when data.counter reaches 10</span>
+</span><span class='line'>        <span class="nx">watcher</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Group elements in a select</h3>
+
+<p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
+
+<p>For example you can easily group a model by attribute to have a nested select menu :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;select</span> <span class="na">ng-options=</span><span class="s">&quot;distrib.version group by distrib.name for distrib in distribs&quot;</span><span class="nt">&gt;&lt;/select&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, just add an <code>ng-model</code> directive to your select to data-bind it to one of the values.</p>
+
+<h3>Filter falsy values</h3>
+
+<p>You can&#8217;t use the builtin filter for falsy attributes or values :/ I don&#8217;t know if this is a bug of feature, but a simple workaround is to use a custom filter function that you can expose on the scope. (you can also define your own filter).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">testValues</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">42</span><span class="p">];</span>
+</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">isFalsy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="o">!</span><span class="nx">val</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>{{ testValues|filter:true }}        //  [true]
+</span><span class='line'>{{ testValues|filter:5 }}           //  [5]
+</span><span class='line'>{{ testValues|filter:0 }}           //  [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, false, true, 0, -1, 5, 42]
+</span><span class='line'>{{ testValues|filter:false }}       //  [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, false, true, 0, -1, 5, 42]
+</span><span class='line'>{{ testValues|filter:isFalsy }}     //  [false, 0]
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Filter on objects</h3>
+
+<p>The builtin filter function is <a href="http://code.angularjs.org/1.1.5/docs/api/ng.filter:filter">quite powerful</a> and allows you to filter a list of objects on given properties only, or on everything, exactly or not, negated or not, etc&#8230;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>{{ games|filter:&#39;street&#39; }}                       //  all games containing &quot;street&quot; in any property
+</span><span class='line'>{{ games|filter:&#39;!street&#39; }}                      //  all games NOT containing &quot;street&quot; in any property
+</span><span class='line'>{{ games|filter:{name:&#39;street&#39;} }}                //  all games containing &quot;street&quot; in their name
+</span><span class='line'>{{ games|filter:{name:&#39;street&#39;}:true }}           //  all games named exactly &quot;street&quot;
+</span><span class='line'>{{ games|filter:{name:&#39;street&#39;, device:&#39;PS3&#39;} }}  //  all games containing &quot;street&quot; in their name and PS3 in their device
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>ng-repeat with duplicate items</h3>
+
+<p>If for some reason you need to have duplicate items in your <code>ng-repeat</code> you can extend your <code>ng-repeat</code> expression with <code>track by $index</code> and it works :)</p>
+
+<h3>Directive : parse attribute without watching it</h3>
+
+<p>In one of your directive, if you need to have a read-only access to an attribute model, but without the automatic watch/binding, you can simply use <code>&amp;</code> instead of <code>=</code> when declaring the binding in the scope. You&#8217;ll then be able to access the model value . (this may break in future releases). This is a shortcut for using the <code>$parse</code> service on the current scope.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnCounter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">count</span><span class="o">:</span> <span class="s1">&#39;&amp;rnCounter&#39;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">link</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">iElement</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">dir</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">count</span><span class="p">());</span>
+</span><span class='line'>      <span class="p">})</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Data-binding to a boolean</h3>
+
+<p>You can bind to a boolean value, but you <strong>can&#8217;t</strong> update that value from your directive.</p>
+
+<p>This won&#8217;t work :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-zippy</span> <span class="na">status=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnZippy&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;=?&#39;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">function</span> <span class="nx">toggle</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$apply</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nx">scope</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="o">!</span><span class="nx">scope</span><span class="p">.</span><span class="nx">status</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">});</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="nx">iElement</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">toggle</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You need to use a real model, OR, initialise a new one and use it as your model instead :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-zippy</span> <span class="na">ng-init=</span><span class="s">&quot;status=true&quot;</span> <span class="na">status=</span><span class="s">&quot;status&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Includes onload</h3>
+
+<p>You can trigger a callback when your <code>ng-include</code> partial is loaded :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-inlude=</span><span class="s">&quot;&#39;partials/&#39; + page + &#39;.html&#39;&quot;</span> <span class="na">onload=</span><span class="s">&quot;callback()&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
+
+<h3>Express testing</h3>
+
+<p>You know you should write serious tests suites ? There&#8217;s everything to help you in AngularJS with Karma test runner + Jasmine.</p>
+
+<p>Once you have many tests, they can take some time to execute and there&#8217;s a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>iit</code> instead of <code>it</code>.</p>
+
+<p>That&#8217;s awesome to focus on specific tests for a while.</p>
+
+<h3>Service decorators</h3>
+
+<p>You can easily decorate and modify any existing service or directive. That&#8217;s how the <code>ngMobile</code> overrides the <code>ngClick</code> directive to handle transparently the FastClick behaviour.</p>
+
+<p>Here&#8217;s an exemple that overrides the <code>$sniffer</code> service and fix the animation detection for older androids devices (landed in <a href="https://github.com/angular/angular.js/commit/ef5bc6c">ef5bc6c</a>) :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span><span class="s1">&#39;$provide&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$provide</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">$provide</span><span class="p">.</span><span class="nx">decorator</span><span class="p">(</span><span class="s1">&#39;$sniffer&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;$delegate&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$delegate</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span><span class="o">||!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitTransition</span><span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitAnimation</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">$delegate</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}]);</span>
+</span><span class='line'><span class="p">}]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&#8217;s all for today, feel free to ask and comment below :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/01/starting-with-angularjs/">Learn AngularJS in 5 Steps</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-01T02:00:00+02:00" pubdate data-updated="true">Jun 1<span>st</span>, 2013</time>
+        
+         | <a href="/blog/2013/06/01/starting-with-angularjs/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve seen some developers quite shy about AngularJS when confronted to all the magical powers; don&#8217;t be afraid, AngularJS indeed introduces several new concepts but you can get them in just a few weeks of practice&#8230; The Google team is working hard to lower the Angular entry barrier and to make everything as simple as possible for developers.</p>
+
+<p><strong>AngularJS is a new disruptive innovation in the Javascript frameworks world and it prefigures the future of web browsers : templates, data-binding, web components&#8230;</strong></p>
+
+<p>In this post i&#8217;ll give some advices for the AngularJS newbies and share with you the best pointers to learn and understand the core concepts quickly.</p>
+
+<p>First, to understand AngularJS you of course need to know a bit of Javascript. If you&#8217;re not comfortable enough yet, pick a free book on <a href="http://jsbooks.revolunet.com">JSbooks</a> and <a href="http://www.codecademy.com/tracks/javascript">practice</a>.</p>
+
+<p>If you have a jQuery background, you absolutely need to read this in-depth Stack Overflow answer : <a href="http://stackoverflow.com/questions/14994391/how-do-i-think-in-angularjs-if-i-have-a-jquery-background/15012542#15012542">How to think in AngularJS if i have a jQuery background</a>. Just imagine the productivity boost you&#8217;ll get when you won&#8217;t need to maintain the DOM anymore :)</p>
+
+<h3>To sum up key features of AngularJS :</h3>
+
+<ul>
+<li><strong>Templates</strong> : Your templates lives right in the DOM. Forget mustache, handlebars, hogan&#8230;</li>
+<li><strong>Two-way data-binding</strong> : Your javascript data automagically updates your DOM and vice-versa.</li>
+<li><strong>Routing</strong> : Define routes, associate templates and controller in just a few lines.</li>
+<li><strong>Forms</strong> : Many helpers to help dealing with forms, one of the worst webdevs nightmare.</li>
+<li><strong>Directives</strong> : Encapsulates templates and code in reusable components easily.</li>
+<li><strong>Testability</strong> : AngularJS was designed in a way your web app can be fully testable.</li>
+<li><strong>Animation</strong> : Easily animate elements and views.</li>
+</ul>
+
+
+<h3>Here are 5 steps to boost your AngularJS skills right now :</h3>
+
+<ol>
+<li>follow the <a href="http://docs.angularjs.org/tutorial">official tutorial</a> and the <a href="http://docs.angularjs.org/guide">dev guide</a>.</li>
+<li>watch the awesome <a href="http://egghead.io">egghead.io video series</a>. they&#8217;re 3mins each only :)</li>
+<li>watch the <a href="http://www.youtube.com/watch?v=i9MHigUZKEM">60mins AngularJS fundamentals video</a></li>
+<li>read the code of <a href="http://todomvc.com/architecture-examples/angularjs">some</a> <a href="https://github.com/petebacondarwin/foodme">great</a> <a href="https://github.com/angular-app/angular-app">AngularJS</a> <a href="https://github.com/vojtajina/task-manager">app</a> <a href="https://github.com/IgorMinar/Memory-Game">examples</a>.</li>
+<li>read as many times as needed the <a href="http://stackoverflow.com/questions/14049480/what-are-the-nuances-of-scope-prototypal-prototypical-inheritance-in-angularjs">nuances of scope prototypal inheritance</a></li>
+</ol>
+
+
+<p>Of course, dont just watch/read, you need to experiment every step :)</p>
+
+<p>After that, you should have a pretty good understanding of the framework and be able to <strong>angularize all the things</strong> :)</p>
+
+<p><strong>Need help ?</strong> Ask your questions in the comments below, or on IRC #angularjs channel, or on <a href="https://groups.google.com/forum/?fromgroups#!forum/angular">the dedicated google group</a>.</p>
+
+<p>BTW, if you read French, great ressources here : <a href="http://www.frangular.com">frangular.com</a> and <a href="http://lauterry.github.io/slides-prez-angular">Thierry Lau&#8217;s introduction slides</a>.</p>
+
+<p>Need more ressources ?</p>
+
+<ul>
+<li>Read the Angular source itself : <a href="https://github.com/angular/angular.js">github.com/angular/angular.js</a></li>
+<li><a href="https://github.com/jmcunningham/AngularJS-Learning">A huge list of good AngularJS ressources</a> maintained by the community</li>
+<li><a href="https://gist.github.com/revolunet/4657146">My AngularJS ressources compilation</a></li>
+<li><a href="https://github.com/angular/angular.js/wiki/JSFiddle-Examples">Lots of JSfiddle examples in the AngularJS wiki</a></li>
+<li><a href="http://stackoverflow.com/questions/tagged/angularjs">Stack overflow answers</a></li>
+<li><a href="https://speakerdeck.com/search?q=angularjs">Speackerdeck prezos</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/15/google-io-2013-keynote/">GoogleIO 2013 Keynote Recap</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T00:00:00+02:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/05/15/google-io-2013-keynote/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So today was the opening of the 2013 GoogleIO developer conference in San Francisco and the Googlers announced a <strong>insanely crazy</strong> amount of new projects/services/features in just the first few hours, which is very exciting for every web/android developer. The next three days will be very busy, with a lot of focus on Chrome, Android and Google+.</p>
+
+<p>Though, we don&#8217;t have new Nexus devices, no Android 4.3, and no Javascript AppEngine runtime. So huge fail on my <a href="https://twitter.com/revolunet/status/333620420798472192">previous predictions</a>.</p>
+
+<p>The keynote started with a big fail demo effect happened in the very first demo about Android multiplayer gaming when demoing a new Google Cloud Messaging feature, quite embarassing, but then everything ran smoothly.</p>
+
+<p>Here&#8217;s a little recap of the most important things announced just during the 3 hours keynote :</p>
+
+<h2><a href="http://officialandroid.blogspot.fr/2013/05/androidio-just-press-play.html">Android</a></h2>
+
+<ul>
+<li>Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards&#8230;).</li>
+<li>Google Game Services platform to help game developers with new APIs</li>
+<li>Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.</li>
+<li><a href="http://www.youtube.com/watch?v=e0fXuyL0xVU">Android studio</a> to replace Eclipse nightmare, finally ! good move !</li>
+<li>Unified and synced notifications between devices.</li>
+<li>Translation service for apps, better analytics&#8230;</li>
+<li>Enhanced maps API</li>
+</ul>
+
+
+<h2><a href="http://play.google.com/about/music/">Google Music</a></h2>
+
+<ul>
+<li>Access to all the music for 9.99$/month</li>
+<li>Discover to new recommended songs with google suggestions</li>
+<li>Google powered radio feature based on what you like</li>
+</ul>
+
+
+<h2><a href="https://plus.google.com/+chrome/posts">Chrome / Web</a></h2>
+
+<ul>
+<li>750 millions active chrome users globally</li>
+<li>WebP and VP9 royalty-free compression standards for images and videos to increase speed specially on mobile devices.</li>
+<li>Google provides a free (deactivable) proxy for Android to improve speed based on this codecs.</li>
+<li>New payment autocomplete API will help process payments quickly on websites, specially useful on mobile (2 clicks payments)</li>
+<li>Google will finally release a rock solid UI framework based on web components standards : <a href="http://www.polymer-project.org">polymer-project.org</a> . I wonder how it will fit with AngularJS.</li>
+<li>V8 will integrate asm.js to improve Javascript performance.</li>
+</ul>
+
+
+<h2><a href="http://googleplusproject.blogspot.fr/2013/05/new-google-stream-hangouts-and-photos.html">Google +</a></h2>
+
+<ul>
+<li>New interface :)</li>
+<li>Better Hangouts</li>
+<li>Unified notifications across devices</li>
+<li>Better pictures management, event an &#8216;auto awesome&#8217; mode :)</li>
+</ul>
+
+
+<h2><a href="http://google-latlong.blogspot.fr/2013/05/meet-new-google-maps-map-for-every.html">Maps</a></h2>
+
+<ul>
+<li>iPad version this summer</li>
+<li>Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL</li>
+</ul>
+
+
+<h2>Gmail</h2>
+
+<ul>
+<li>You can now <a href="http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html">send money to your friends right from Gmail with google wallet</a> :)</li>
+<li>Developers can now <a href="http://googleappsdeveloper.blogspot.fr/2013/05/introducing-actions-in-inbox-powered-by.html">add actions to their email</a></li>
+</ul>
+
+
+<h2>In other news</h2>
+
+<ul>
+<li>For some reasons (<a href="https://code.google.com/p/googleappengine/issues/list">top requested features</a>), <a href="https://gaeforphp.appspot.com">Google choosed PHP over Javascript as a new AppEngine runtime</a>. <strong>#WTF</strong></li>
+<li>Google Play for education allows teachers/schools to push content directly to students devices</li>
+<li>Google TVs will be <a href="https://plus.google.com/+GoogleTVDevelopers/posts/X5rmq6Yu8xG">updated to Android 4.2 and latest chrome</a> !</li>
+</ul>
+
+
+<p>Anything missed ?</p>
+
+<p>You can still watch the full keynote <a href="http://www.youtube.com/watch?v=lLPue2vK3wg">on Youtube</a> of course.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS services</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a reusable AngularJS input form component</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
+      </li>
+    
+  </ul>
+</section>
+<a class="twitter-timeline" href="https://twitter.com/revolunet" data-widget-id="329159054884737024">Tweets de @revolunet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/revolunet">@revolunet</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'revolunet',
+            count: 10,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+</section>
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - revolunet team -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'revolunetblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

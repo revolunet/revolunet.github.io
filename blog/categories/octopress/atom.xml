@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: octopress | revolunet blog]]></title>
+  <link href="http://blog.revolunet.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2014-02-13T09:37:13+01:00</updated>
+  <id>http://blog.revolunet.com/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress Cheat Sheet]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/"/>
+    <updated>2013-04-15T01:46:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet</id>
+    <content type="html"><![CDATA[<p>When you switch to Octopress for blogging there are a very few things to know :</p>
+
+<h2>Command line</h2>
+
+<p>```bash</p>
+
+<h1>create a new post</h1>
+
+<p>rake new_post['Title of the post']</p>
+
+<h1>create a new page</h1>
+
+<p>rake new_page['Title of the page']</p>
+
+<h1>preview your work</h1>
+
+<p>rake preview</p>
+
+<h1>publish it</h1>
+
+<p>rake generate &amp;&amp; rake deploy</p>
+
+<h1>commit and backup(automatic message)</h1>
+
+<p>git commit -am "<code>date</code>" &amp;&amp; git push origin source
+```</p>
+
+<h2>Creating a post</h2>
+
+<p>You can create a post just by adding a .markdown file in the source/_posts folder and preview it with <code>rake preview</code>. The name of the file will be your post url so use an appropriate <a href="http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug">slugified name</a>.</p>
+
+<p>You must add some metas at the top of the file :</p>
+
+<h2>```</h2>
+
+<p>layout: post
+title: My Awesome article.
+date: 2013-05-1 00:00
+categories: news technology web
+author: Super Man
+comments: true</p>
+
+<h2>published: false</h2>
+
+<p>```</p>
+
+<p>If you set <code>published: false</code>, your posts will only be visible in preview mode.</p>
+
+<h2>Publish</h2>
+
+<p>When ready, just use <code>rake generate &amp;&amp; rake deploy</code> to publish it :)</p>
+
+<p>Here's a micro script to simplify the publish process, jsut put it in the blog root folder :</p>
+
+<p>```bash</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>push.sh : publish &amp; commit with a single command</h1>
+
+<p>git add source
+git commit -am "<code>date</code>" &amp;&amp; git push origin source
+rake generate &amp;&amp; rake deploy
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

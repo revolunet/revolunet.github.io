@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mobile | revolunet blog]]></title>
+  <link href="http://blog.revolunet.com/blog/categories/mobile/atom.xml" rel="self"/>
+  <link href="http://blog.revolunet.com/"/>
+  <updated>2014-02-13T09:37:13+01:00</updated>
+  <id>http://blog.revolunet.com/</id>
+  <author>
+    <name><![CDATA[revolunet team]]></name>
+    <email><![CDATA[contact@revolunet.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Phonegap day Amsterdam 2013]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/09/24/phonegap-day-amsterdam/"/>
+    <updated>2013-09-24T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/09/24/phonegap-day-amsterdam</id>
+    <content type="html"><![CDATA[<p>Once again, i've been lucky enough to go to Amsterdam today to attend the Phonegap Europe annual conference.</p>
+
+<p>The <a href="http://www.compagnietheater.nl/compagnietheater.html">venue</a> was great, the talks covered various subjects, and, most importantly, the atmosphere reflected a positive and healthy community : open-minded and confident in the open web as a major platform for the future of mobile applications.</p>
+
+<p>Almost 2 years after Adobe took control of Nitobi (the team behind the Phonegap genesis), the Phonegap project is in a great shape, dynamic, more open than ever, and with a sane and solid codebase, powered by node.js and a modern javascript toolchain, thanks to the hard work of the core team and many contributors.</p>
+
+<p>With the 3.0 version, released a few weeks ago, Phonegap is now mature and flexible enough to serve as a foundation for your various mobile projects. Every single plugin has been extracted from codebase, which is now focused on bridging performance and plugin management.</p>
+
+<p><strong>Phonegap is the perfect example of how open source can increase code quality and grow a solid community while serving a company business.</strong></p>
+
+<p>Here is a quick recap of the most notable talks.</p>
+
+<h3>Distimo</h3>
+
+<p>Distimo is an app-analytic company that analyses app downloads, conversions and profits and compute smart data for the app developers.</p>
+
+<p>They shared some interesting metrics :</p>
+
+<ul>
+<li>33% of worlwide app revenues comes from Asia.</li>
+<li>Globally, ~65% of revenues comes from the AppStore and ~35% from Play Store (growing fast).</li>
+<li>Candy Crush saga makes as much money in Asia on both iOS or Android</li>
+<li>Games of course dominates stores revenues</li>
+</ul>
+
+
+<p>More data at : <a href="http://www.distimo.com/publications">http://www.distimo.com/publications</a></p>
+
+<h3>Untappd</h3>
+
+<p>Demo of one of the most successfull Phonegap apps : Untappd, a beautiful beer-centered social network app with 700k users and 4 stars rating. <a href="https://untappd.com/">Join now !</a></p>
+
+<h3>Blackberry loves the web</h3>
+
+<p>Too late maybe ?</p>
+
+<h3>Native UI in Phonegap Apps</h3>
+
+<p>Tanaka Masahiro demoed the <a href="https://github.com/monaca/monaca-framework-ios">Monaca hybrid framework</a> which gives you the ability to add native UI elements to your Phonegap app. You can wrap the phonegap webview with native tabbar/navigation bar to improve your UX, specially revelant on older Android devices. The framework also allows native transitions between various webviews, but this breaks application state. The framework hasn't yet migrated to phonegap 3.0 so not usable as is IMHO.</p>
+
+<p>Interesting real hybrid approach that demonstrates again that Phonegap is not necessarly a "full web" solution, but you can use as much "native" stuff as needed.</p>
+
+<h3>Apple phonegap apps rejection prevention</h3>
+
+<p><a href="https://twitter.com/rdlauer">Rob Lauer</a> from <a href="http://www.kendoui.com/">kendoui</a> shared his experiences about mobile web apps rejection reasons on the Apple Store.</p>
+
+<p>Here's a bunch of common best practices to prevent your Phonegap app to be rejected :</p>
+
+<ul>
+<li>Make an app, not a website</li>
+<li>Create unique and useful apps</li>
+<li>Don't use annoying ads</li>
+<li>User registration shouldn't be mandatory (at least a free demo access)</li>
+<li>Don't force users to validate CGU</li>
+<li>Never tag your app version lower to 1.0</li>
+<li>Should work offline with minimal features</li>
+<li>Don't load remote code that change your app behaviour</li>
+<li>Use beautiful, homogenous icons</li>
+<li>Write accurate app description</li>
+<li>Don't try to steal Apple money, use in-app payments or die instantly</li>
+</ul>
+
+
+<h3>Topcoat.io</h3>
+
+<p>Kristofer Joseph, original <a href="http://topcoat.io">TopCoat</a> author, talked about this beautiful and slick CSS framework focused on performance and themability.</p>
+
+<p>TopCoat.io provides various widgets as pure HTML/CSS and, most importantly, provides the best technical stack ever to extend it cleanly :</p>
+
+<ul>
+<li><a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM CSS syntax</a> convention</li>
+<li><a href="http://gruntjs.com">grunt</a>-based automation</li>
+<li><a href="npmjs.org">npm</a> dependencies management</li>
+<li><a href="https://github.com/topcoat/topdoc">TopDoc</a> documentation generator</li>
+<li><a href="http://www.chromium.org/developers/telemetry">chrome telemetry</a>  performance analysis</li>
+<li><a href="codepen.io">codepen.io</a> as a prototyping tool</li>
+<li>What else ??</li>
+</ul>
+
+
+<p>Another great example of a successful project, open-sourced from day one and following the best practices from the ground up.</p>
+
+<p>TopCoat is definitely shaped for the future and you can already use it in your Phonegap projects !</p>
+
+<p>Check out <a href="https://twitter.com/devgirlfl">@devgirlfl</a> article &amp; demo : <a href="http://devgirl.org/2013/08/29/totally-rad-topcoat/">http://devgirl.org/2013/08/29/totally-rad-topcoat</a></p>
+
+<h3>WizCorp HTML5 gaming</h3>
+
+<p>Yes you can build great games with Phonegap. You don't necessarly draw directly inside the webview, but as phonegap is very open and extensible, you can easily plug native features as needed, like <a href="http://impactjs.com/ejecta">Ejecta</a> (off browser canvas+audio for iOS), webGL views... WizCorp team shares some interesting code <a href="https://github.com/Wizcorp">on their github</a>, like a native spinner, navigation views helper...</p>
+
+<h3>Chrome Cordova plugins</h3>
+
+<p>This may be the biggest announce of this event : We can now use Chrome APIs right in our cordova applications. For the moment, we just have socket, storage, notifications, and identity (oauth), but in a near future, we'll see support for syncFileSystem (synced data across devices) and more.</p>
+
+<p>Basically, this means that you can code a Chrome Packaged App using only chrome APIs, then distribute it on desktop via the chrome store and then on mobile app stores using cordova !</p>
+
+<p>This is very early stage but Google puts some efforts to stabilize and extend capabilities quickly.</p>
+
+<p>All Chrome javascript APIs : <a href="http://developer.chrome.com/apps/api_index.html">http://developer.chrome.com/apps/api_index.html</a></p>
+
+<p>Cordova implemented APIs can be found at : <a href="http://plugins.cordova.io">http://plugins.cordova.io</a></p>
+
+<h3>Testing with appium.io</h3>
+
+<p><a href="http://twitter.com/filmaj">Fil Maj</a> demonstrated <a href="http://appium.io">appium</a>, an open source end-to-end testing platform that fully support phonegap applications. You can write automation scripts (think selenium) then run them on your own devices, or use appium infrastructure to run the tests on various devices and produces detailed reported.</p>
+
+<p>In a world of such devices fragmentation, this can be very useful :)</p>
+
+<h3>Firefox OS</h3>
+
+<p>Phonegap now also support Firefox OS ;) and Firefox provides many more javascript APIs, like 'Activites' (think Web intents). If you support the real open web, Mozilla is definitely the way to go :)</p>
+
+<h3>Phonegap CLI</h3>
+
+<p>This awesome talk by <a href="twitter.com/mwbrooks">Michael Brooks</a> was the most interesting and technical talk of the day. Michael showed us how powerful the cordova and phonegap CLI are. Based on a cutting edge javascript architecture, the phonegap CLI is made of nodes modules that you can use directly in the CLI, or as external nodeJS modules, which allows you to integrate the whole workflow in third-party tools and vice-versa. open source power :)</p>
+
+<p>He also demonstrated how easy it is to create and compile apps with or without the locally installed SDKs, using phonegap build as a fallback. Just run for example <code>phonegap compile ios</code> from your machine, then in seconds you get back a QRcode that you can scan to test your final app on a real device instantly; neat !</p>
+
+<h4>Finally, a big thanks to <a href="https://twitter.com/colene">Colene</a>, <a href="https://twitter.com/ppk">Peter Paul Koch</a> and all the Phonegap team for this event, can't wait for next year :)</h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Making of the angular-carousel]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/"/>
+    <updated>2013-05-02T00:00:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of</id>
+    <content type="html"><![CDATA[<p>Our first real life experiment with AngularJS is a mobile and touch-friendly carousel directive.</p>
+
+<p>As this project shed some lights on various AngularJS aspects, we'd like to share it with you;
+The full demo+code is available here : <a href="http://blog.revolunet.com/angular-carousel">http://blog.revolunet.com/angular-carousel</a></p>
+
+<p>The goal is to transform any <code>ng-repeat</code> directive into a carousel, just by adding the <code>rn-carousel</code> attribute to its <code>ul</code> container. The directive take care of the dirty work for you, without any jQuery.</p>
+
+<p>Here's a very basic example of a Youtube API call, with the data displayed in a regular Angular template; We just add a <code>rn-carousel</code> attribute to the <code>ul</code> element to ask a carousel :)</p>
+
+<p><iframe style="width: 100%; height: 330px" src="http://jsfiddle.net/3QBEE/embedded/result,html,js,css/light/"></iframe><br><br></p>
+
+<p>This <code>rn-carousel</code> directive is responsible of :</p>
+
+<p><strong>1) wrapping the real ul/li in a carousel container and add CSS classes</strong></p>
+
+<p>We first wrap the original <code>ul</code> block in an outer div using JQlite <code>wraps</code> method during the directive link phase. This cannot be doneduring the compile phase as it would lead to an infinite recursion loop. (AngularJS will wrap again an again as the original directive stays untouched).</p>
+
+<p>Then we add some CSS classes and an unique carousel identifier class so we can target that instance easily later.</p>
+
+<p>The CSS makes the ul/li block appears as a single horizontal line composed of many li blocks, so its very easy to slide the blocks horizontally.</p>
+
+<p><strong>2) watching the ng-repeat expression</strong></p>
+
+<p>Because we want to monitor precisely the items in our carousel, and we want to be able to dynamically add/remove items, we need to extract and watch the original <code>ng-repeat</code> expression. We can then watch that expression and then be notified when its updated. This is useful to know how many slides we have and update our indicators accordingly for example.</p>
+
+<p><del>This extraction is done by literally parsing the ng-repeat expression in a generic way, using the generated normalized comment node. <a href="http://www.bennadel.com/blog/2457-Accessing-scope-On-The-DOM-Using-AngularJS.htm">Credits goes to @bennadel</a> for this awesome trick</del>.</p>
+
+<p><strong>Update :</strong> I ended up with just extracting the li <code>ng-repeat</code> attribute during the <code>compile</code> phase which is much less overhead.</p>
+
+<p><strong>3) binding touch and click events</strong></p>
+
+<p>Like most directives, we bind events in the linking phase. We just take care of binding both touch and mouse events.</p>
+
+<p><code>js
+// bind events
+container.bind('mousedown touchstart', swipeStart);
+container.bind('mousemove touchmove', swipe);
+container.bind('mouseup touchend', swipeEnd);
+</code></p>
+
+<p><strong>4) animating the slides smoothly</strong></p>
+
+<p>When we detect a <code>touchstart</code> we just store the initial event position. On <code>touchemove</code> we update the horizontal offset and move the whole <code>ul</code> accordingly using CSS. Then on <code>touchend</code>, we detect the desired position (prev or next) and dynamically add CSS styles and classes to move the slides accordingly, or restore the current position in some cases.</p>
+
+<p>The slide movement is made thanks to the CSS <code>transition</code> and <code>translate3d</code> properties to force CSS 3D transforms and thus animate the slides using the GPU which make the movement much more smooth especially on mobile devices.</p>
+
+<p>```js
+// the offset value is simply : desiredSlideIndex * slideWidth
+carousel.css({</p>
+
+<pre><code>'-webkit-transform': 'translate3d(' + offset + 'px,0,0)',
+'-moz-transform': 'translate3d(' + offset + 'px,0,0)',
+'-ms-transform': 'translate3d(' + offset + 'px,0,0)',
+'-o-transform': 'translate3d(' + offset + 'px,0,0)',
+'transform': 'translate3d(' + offset + 'px,0,0)'
+</code></pre>
+
+<p>});
+```</p>
+
+<p><strong>5) adding an indicator to our carousel</strong></p>
+
+<p>As we already watch the <code>ng-repeat</code> expression, we track the number of slides in the carousel and so its quite easy to add data-bound indicators to our carousel. You can enable these by adding a <code>rn-carousel-indicator="true"</code> attribute on your <code>ul</code>.</p>
+
+<p>The indicators are produced by the <code>rn-carousel-indicators</code> directive, completely decoupled, during the linking phase. For the directive to be executed, we compile it through the <code>$compile</code> service before appending it to our container.</p>
+
+<p>It just takes <code>items</code> and <code>index</code> attributes that will be injected in an isolated scope to produce the indicators and set the CSS classes.</p>
+
+<p>```js
+// enable carousel indicator
+var showIndicator = (iAttrs['rnCarouselIndicator']==='true');
+if (showIndicator) {</p>
+
+<pre><code>// as the HTML contains a directive, we need to $compile it
+// before appending it to our container
+var indicator = $compile("&lt;div id='" + carouselId +"-indicator' " + 
+    " index='carouselIndex' items='carouselItems' rn-carousel-indicators " +
+    " class='rn-carousel-indicator'&gt;&lt;/div&gt;"
+)(scope);
+container.append(indicator);
+</code></pre>
+
+<p>}
+```
+<strong>6) offer a two-way data binding for the active slide index</strong></p>
+
+<p>The carousel current index position can be data-bound to an optional <code>rn-carousel-index</code> attribute if provided. This allows you to display the carousel position somewhere else, add custom controls/indicators, initialise to a different slide...</p>
+
+<p>```js</p>
+
+<p>// set initial position at first slide
+scope.carouselIndex = 0;</p>
+
+<p>if (iAttrs.rnCarouselIndex) {</p>
+
+<pre><code>//  if a binding attribute is present, use it.
+var activeModel = $parse(iAttrs['rnCarouselIndex']);
+scope.$watch('carouselIndex', function(newValue) {
+    // when the carousel internal index changes, update the model
+    activeModel.assign(scope.$parent, newValue);
+});
+scope.$parent.$watch($parse(iAttrs.rnCarouselIndex), function(newValue) {
+    // when the model change, update the local position
+    // this is also useful for the initial position
+    scope.carouselIndex = newValue;
+    updateSlidePosition();
+});
+</code></pre>
+
+<p>} else {</p>
+
+<pre><code>// if no index attribute, just watch internal index and update display
+scope.$watch('carouselIndex', function(newValue) {
+    updateSlidePosition();
+});
+</code></pre>
+
+<p>}
+```</p>
+
+<p>The <code>updateSlidePosition()</code> function simply moves the <code>ul</code> block based on the <code>carouselIndex</code> value and the width of the slides. We do this with CSS transition and <code>translate3d</code> so this is animated and hardware accelerated.</p>
+
+<p><strong>7) tests and grunt automation</strong></p>
+
+<p>These subjects will have a dedicated article soon :)</p>
+
+<p><strong>Limitations</strong></p>
+
+<ul>
+<li>Only works with ul/li structure</li>
+<li>Carousel dimensions is based on the first li detected</li>
+</ul>
+
+
+<p><strong>UPDATE</strong> : the carousel can now be buffered to improve performance with large datasets !</p>
+
+<p><strong>Easy isn't it ?</strong></p>
+
+<p>If you have questions, suggestions, issues, pulls requests... just comment below or on Github :)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using AngularJS views animations for mobile applications]]></title>
+    <link href="http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/"/>
+    <updated>2013-04-30T20:20:00+02:00</updated>
+    <id>http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications</id>
+    <content type="html"><![CDATA[<p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
+
+<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+
+<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
+
+<p><strong>UPDATE</strong> : Just created an much more simpler example based on AngularJS 1.2; check it out : <a href="http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/">http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/</a></p>
+
+<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
+
+<p><iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe><br><br></p>
+
+<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a 'Back' button, the user expects the slide animation to be reversed when he touches it. If you don't do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+
+<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn't handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
+
+<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
+
+<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
+
+<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn't be very efficient due to multiple downloads of the ressource.</p>
+
+<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
+
+<p>Here's how we've done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
+
+<p><iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe><br><br></p>
+
+<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
+
+<p><code>css
+.LR .enter-setup {...}
+.LR .leave-setup {...}
+.RL .enter-setup {...}
+.RL .leave-setup {...}
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
