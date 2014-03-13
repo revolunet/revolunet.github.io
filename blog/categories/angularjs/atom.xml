@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AngularJS | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2014-02-13T09:37:13+01:00</updated>
+  <updated>2014-03-13T13:03:00+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -405,7 +405,7 @@ it('decrease button should be disabled when min reached', function() {
 <ul>
 <li>A directive needs to be compiled in a given scope to be tested</li>
 <li>A non-isolated scope can be acceded via element.scope()</li>
-<li>An isolated scope can be acceded via element.isolatedscope()</li>
+<li>An isolated scope can be acceded via element.isolateScope()</li>
 </ul>
 
 
