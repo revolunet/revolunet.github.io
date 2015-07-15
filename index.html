@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="Javascript prototypal inheritance can be confusing at first if you come from classical OOP languages, due to Javascript versatility, and the variety &hellip;">
+  <meta name="description" content="In this tutorial i&#8217;ll show you how you can setup, publish and host a nice single-page website in minutes and completely free of charge using &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,207 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/07/15/beautiful-static-website-in-minutes-with-github/">Create and Host a Beautiful Website for Free Using GitHub</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-15T00:00:00+02:00" pubdate data-updated="true">Jul 15<span>th</span>, 2015</time>
+        
+         | <a href="/blog/2015/07/15/beautiful-static-website-in-minutes-with-github/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In this tutorial i&#8217;ll show you how you can setup, publish and host a nice single-page website in minutes and completely free of charge using Github pages.</p>
+
+<p>I assume you&#8217;re you are already familiar with :</p>
+
+<ul>
+<li><strong>HTML</strong> : <a href="http://www.cheatography.com/davechild/cheat-sheets/html4/">cheat sheet</a></li>
+<li><strong>GitHub</strong> : create a free account here : <a href="http://github.com">github.com</a></li>
+</ul>
+
+
+<p>We&#8217;ll use the awesome GitHub.com to host our <strong>static website</strong> and create it using an existing template. Github hosts your website code history publicly and you benefit, among other things, from code versionning and free, high-quality hosting (cdn, ddos protection&#8230;).</p>
+
+<p><strong>WARN</strong> Files stored on Github are public to anyone (except if you buy a private repo), so don&#8217;t store anything sensible here.</p>
+
+<h2>What is a &#8220;static&#8221; website ?</h2>
+
+<p>For small websites, CMS solutions like WordPress and equivalents are largely overkill and require some technical setup and mandatory maintenance mostly due to security patches and unattended upgrades.</p>
+
+<p>Nowadays, it is possible to create awesome websites in a server-less way, using only client-side technologies. This mean you can host your website anywhere without any configuration, as all the code executes is only in the final user browser (HTML, Javascript and CSS), and this has several advantages :</p>
+
+<ul>
+<li>simple</li>
+<li>no maintenance</li>
+<li>no hacking</li>
+<li>better performance</li>
+<li>less is more</li>
+<li>simple is beautiful</li>
+</ul>
+
+
+<p>Any serious business now offers an API that you can integrate in some way your static website if you need so this static approach has <strong>NO LIMIT</strong>.</p>
+
+<p>Next articles will provide more advanced examples using a <a href="https://www.staticgen.com/">static website
+ generator</a>.</p>
+
+<h2>Create the Github repository</h2>
+
+<p>create a new repository for your website : <a href="https://github.com/new">https://github.com/new</a> ex: mywebsite</p>
+
+<p>This will create a public repository at <a href="https://github.com/USERNAME/mywebsite">https://github.com/USERNAME/mywebsite</a></p>
+
+<h2>Single page website with Github page generator</h2>
+
+<p>3-clicks setup using one of the GitHub built-in templates</p>
+
+<p>Go to your github project page, <a href="https://github.com/USERNAME/mywebsite">https://github.com/USERNAME/mywebsite</a></p>
+
+<ul>
+<li>Go to <strong>repository settings</strong> (icon in the right-bottom)</li>
+<li><strong>Automatic page generator</strong> and click <strong>Launch</strong></li>
+<li>Edit your website text</li>
+<li>Select a template and <strong>Publish Page</strong></li>
+</ul>
+
+
+<p>Wait a few seconds and goto : <a href="http://USERNAME.github.io/mywebsite">http://USERNAME.github.io/mywebsite</a></p>
+
+<p><strong>✔</strong> your website is up :)</p>
+
+<h2>Edit the website online</h2>
+
+<p>Go to your github project page, <a href="https://github.com/USERNAME/mywebsite">https://github.com/USERNAME/mywebsite</a></p>
+
+<p>This is all your websites files.</p>
+
+<p>Click the file you want to edit, for example <code>index.html</code> (main page), make your changes then click the &#8220;pen&#8221; icon on top-right of the editor.</p>
+
+<p>Under the file editor there&#8217;s a &#8220;Commit changes&#8221; form, set the title to a good description of your changes : ex: &#8220;contact info update&#8221;</p>
+
+<p>Press <strong>Commit changes</strong> button.</p>
+
+<p>Wait a few seconds and goto : <a href="http://USERNAME.github.io/mywebsite">http://USERNAME.github.io/mywebsite</a></p>
+
+<p><strong>✔</strong> your website is updated :)</p>
+
+<h2>Edit the website on your computer</h2>
+
+<p>For more advanced edition and comfort you may want to edit from your <a href="http://atom.io">preferred text editor</a> on your computer.</p>
+
+<p>Setup the GitHub app with your account : <a href="http://mac.github.com">mac.github.com</a> or <a href="http://windows.github.com">windows.github.com</a></p>
+
+<ul>
+<li><strong>Clone</strong> the project on your computer, it will download the code from github</li>
+<li><strong>Edit</strong> the files on your computer, add javascript, images, etc&#8230;</li>
+<li><strong>Test</strong> if everything works locally</li>
+<li>Then <strong>Commit</strong> those files with an explicit message from github app</li>
+<li><strong>Sync</strong> with Github</li>
+</ul>
+
+
+<p><strong>✔</strong> your website is updated :)</p>
+
+<h2>Test the website locally</h2>
+
+<p>You can open the file in your web browser to test the result.</p>
+
+<p><strong>WARN</strong> If you added google maps or some javascript API, be sure to run <code>python -m SimpleHTTPServer</code> from your console in the project folder, and use http://127.0.0.1:8000 in the browser.</p>
+
+<h2>Use great templates</h2>
+
+<p>If you want different templates than github ones, you just need to replace your repository content with the new one.</p>
+
+<p>Choose one of the high-quality template from <a href="http://html5up.net">html5up.net</a> or <a href="http://pixelarity.com">pixelarity.com</a>, download and extract to your project folder.</p>
+
+<p>Edit the files, test, commit &amp; sync and you&#8217;re done.</p>
+
+<h2>Next steps</h2>
+
+<p>Learn Markdown syntax : <a href="https://en.support.wordpress.com/markdown-quick-reference/">reference</a></p>
+
+<p>Learn GIT : <a href="https://try.github.io">try.github.io</a></p>
+
+<p>Learn Javascript : <a href="http://jsbooks.revolunet.com">jsbooks.revolunet.com</a> and <a href="https://ericelliottjs.com/product/programming-javascript-applications-paper-ebook-bundle/">Eric Elliott book</a></p>
+
+<h2>FAQ</h2>
+
+<h3>How do i setup a domain name ?</h3>
+
+<ul>
+<li>Buy a domain from <a href="http://gandi.net">gandi.net</a> (or other serious one)</li>
+<li>Edit the domain &#8220;DNS zone&#8221; and follow the <a href="https://help.github.com/articles/tips-for-configuring-a-cname-record-with-your-dns-provider/">github dns instructions</a></li>
+<li>add <code>CNAME</code> file, containing <code>www.myproject.com</code>, to your repository</li>
+</ul>
+
+
+<p>The DNS changes can take up to 24h before propagating so try www.myproject.com tomorrow</p>
+
+<p>Github Help :  <a href="https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages/">custom domain</a>, <a href="https://help.github.com/articles/tips-for-configuring-a-cname-record-with-your-dns-provider/">dns setup</a></p>
+
+<h3>How to add a page ?</h3>
+
+<p>Just add some more html files, like &#8220;products.html&#8221; and add a link to it from index : <code>&lt;a href="products.html"&gt;products&lt;/a&gt;</code>.</p>
+
+<h3>How to get traffic analytics ?</h3>
+
+<p>If you want to track your visitors and analyse where they come from and what they do on your website, create an account on <a href="http://www.google.com/analytics">Google Analytics</a> and add the tracker to your page code.</p>
+
+<h3>How to add a Map ?</h3>
+
+<p>If you need an interactive map, follow <a href="https://developers.google.com/maps/tutorials/fundamentals/adding-a-google-map">google maps instructions</a></p>
+
+<p>If you just need a map image : generate the HTML code from here : <a href="http://staticmapmaker.com">staticmapmaker.com</a> ad copy the &#8220;HTML&#8221; to your page.</p>
+
+<p>Full static images doc : <a href="https://developers.google.com/maps/documentation/staticmaps/">https://developers.google.com/maps/documentation/staticmaps/</a></p>
+
+<h3>How to add comments ?</h3>
+
+<p>Create an account on <a href="disqus.com">disqus.com</a> and add the javascript code to your page.</p>
+
+<h3>How to add a contact form ?</h3>
+
+<p>Create an account on <a href="typeform.com">typeform.com</a> and add the javascript code to your page, create the form there and copy the javascript &#8220;embed&#8221; code to your page.</p>
+
+<p>Alternatively : Create an account on <a href="mailchimp.com">mailchimp.com</a>, create the form there and copy the javascript &#8220;embed&#8221; code to your page.</p>
+
+<h3>How to receive payments ?</h3>
+
+<p>Create an account on <a href="stripe.com">stripe.com</a> and add the javascript code to your page.</p>
+
+<h3>What is gh-pages ?</h3>
+
+<p><code>gh-pages</code> is a special &#8220;branch&#8221; (source code version) on github that automagically publish and host a static website.</p>
+
+<p>If you have any question, feel free to ask below :)</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2092,123 +2293,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/15/google-io-2013-keynote/">GoogleIO 2013 Keynote Recap</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-15T00:00:00+02:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/05/15/google-io-2013-keynote/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So today was the opening of the 2013 GoogleIO developer conference in San Francisco and the Googlers announced a <strong>insanely crazy</strong> amount of new projects/services/features in just the first few hours, which is very exciting for every web/android developer. The next three days will be very busy, with a lot of focus on Chrome, Android and Google+.</p>
-
-<p>Though, we don&#8217;t have new Nexus devices, no Android 4.3, and no Javascript AppEngine runtime. So huge fail on my <a href="https://twitter.com/revolunet/status/333620420798472192">previous predictions</a>.</p>
-
-<p>The keynote started with a big fail demo effect happened in the very first demo about Android multiplayer gaming when demoing a new Google Cloud Messaging feature, quite embarassing, but then everything ran smoothly.</p>
-
-<p>Here&#8217;s a little recap of the most important things announced just during the 3 hours keynote :</p>
-
-<h2><a href="http://officialandroid.blogspot.fr/2013/05/androidio-just-press-play.html">Android</a></h2>
-
-<ul>
-<li>Google cloud messaging : can now be used in a bidirectionnal way, and apps can now also store data in the cloud and sync it across devices (scores, leaderboards&#8230;).</li>
-<li>Google Game Services platform to help game developers with new APIs</li>
-<li>Samsung Galaxy S4 will be available in June on Google Play with standard Android build and unlocked bootloader ! 649$ though but without that ugly, messy, shitty Samsung overlay.</li>
-<li><a href="http://www.youtube.com/watch?v=e0fXuyL0xVU">Android studio</a> to replace Eclipse nightmare, finally ! good move !</li>
-<li>Unified and synced notifications between devices.</li>
-<li>Translation service for apps, better analytics&#8230;</li>
-<li>Enhanced maps API</li>
-</ul>
-
-
-<h2><a href="http://play.google.com/about/music/">Google Music</a></h2>
-
-<ul>
-<li>Access to all the music for 9.99$/month</li>
-<li>Discover to new recommended songs with google suggestions</li>
-<li>Google powered radio feature based on what you like</li>
-</ul>
-
-
-<h2><a href="https://plus.google.com/+chrome/posts">Chrome / Web</a></h2>
-
-<ul>
-<li>750 millions active chrome users globally</li>
-<li>WebP and VP9 royalty-free compression standards for images and videos to increase speed specially on mobile devices.</li>
-<li>Google provides a free (deactivable) proxy for Android to improve speed based on this codecs.</li>
-<li>New payment autocomplete API will help process payments quickly on websites, specially useful on mobile (2 clicks payments)</li>
-<li>Google will finally release a rock solid UI framework based on web components standards : <a href="http://www.polymer-project.org">polymer-project.org</a> . I wonder how it will fit with AngularJS.</li>
-<li>V8 will integrate asm.js to improve Javascript performance.</li>
-</ul>
-
-
-<h2><a href="http://googleplusproject.blogspot.fr/2013/05/new-google-stream-hangouts-and-photos.html">Google +</a></h2>
-
-<ul>
-<li>New interface :)</li>
-<li>Better Hangouts</li>
-<li>Unified notifications across devices</li>
-<li>Better pictures management, event an &#8216;auto awesome&#8217; mode :)</li>
-</ul>
-
-
-<h2><a href="http://google-latlong.blogspot.fr/2013/05/meet-new-google-maps-map-for-every.html">Maps</a></h2>
-
-<ul>
-<li>iPad version this summer</li>
-<li>Brand new Google maps, with new design, more space for content, and builtin 3D thanks to WebGL</li>
-</ul>
-
-
-<h2>Gmail</h2>
-
-<ul>
-<li>You can now <a href="http://googlecommerce.blogspot.fr/2013/05/send-money-to-friends-with-gmail-and.html">send money to your friends right from Gmail with google wallet</a> :)</li>
-<li>Developers can now <a href="http://googleappsdeveloper.blogspot.fr/2013/05/introducing-actions-in-inbox-powered-by.html">add actions to their email</a></li>
-</ul>
-
-
-<h2>In other news</h2>
-
-<ul>
-<li>For some reasons (<a href="https://code.google.com/p/googleappengine/issues/list">top requested features</a>), <a href="https://gaeforphp.appspot.com">Google choosed PHP over Javascript as a new AppEngine runtime</a>. <strong>#WTF</strong></li>
-<li>Google Play for education allows teachers/schools to push content directly to students devices</li>
-<li>Google TVs will be <a href="https://plus.google.com/+GoogleTVDevelopers/posts/X5rmq6Yu8xG">updated to Android 4.2 and latest chrome</a> !</li>
-</ul>
-
-
-<p>Anything missed ?</p>
-
-<p>You can still watch the full keynote <a href="http://www.youtube.com/watch?v=lLPue2vK3wg">on Youtube</a> of course.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2224,6 +2308,10 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/07/15/beautiful-static-website-in-minutes-with-github/">Create and host a beautiful website for free using GitHub</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS services</a>
       </li>
     
@@ -2237,10 +2325,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     
       <li class="post">
         <a href="/blog/2013/10/03/universal-CORS-htaccess/">Universal .htaccess CORS support</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/30/extending-topcoat-css-framework/">Extending the Topcoat CSS framework</a>
       </li>
     
   </ul>
@@ -2281,7 +2365,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (1)</a></li></ul>
 </section>
 
   
@@ -2290,7 +2374,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - revolunet team -
+  Copyright &copy; 2015 - revolunet team -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

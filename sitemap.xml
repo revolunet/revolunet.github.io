@@ -2,82 +2,88 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/04/11/a-fresh-start/</loc>
-        <lastmod>2013-04-11T02:33:11+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/04/15/octopress-cheatsheet/</loc>
-        <lastmod>2013-05-05T14:18:56+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/
         </loc>
-        <lastmod>2013-12-09T23:33:48+01:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/</loc>
-        <lastmod>2013-08-04T00:21:15+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/05/02/angular-carousel-making-of/</loc>
-        <lastmod>2013-05-08T14:44:17+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/05/15/google-io-2013-keynote/</loc>
-        <lastmod>2013-05-16T00:46:13+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/06/01/starting-with-angularjs/</loc>
-        <lastmod>2013-06-12T03:49:39+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/07/23/angularjs-tips-n-tricks-2/</loc>
-        <lastmod>2013-07-26T12:40:05+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/09/18/npm-vs-pip/</loc>
-        <lastmod>2013-09-18T15:40:22+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/09/24/phonegap-day-amsterdam/</loc>
-        <lastmod>2013-09-29T15:36:44+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/09/30/extending-topcoat-css-framework/</loc>
-        <lastmod>2013-09-30T17:45:54+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess/</loc>
-        <lastmod>2013-10-03T16:39:14+02:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://blog.revolunet.com/blog/2013/11/28/create-resusable-angularjs-input-component/
         </loc>
-        <lastmod>2013-12-06T01:18:39+01:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2013/12/05/unit-testing-angularjs-directive/</loc>
-        <lastmod>2014-03-13T13:01:58+01:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/2014/02/14/angularjs-services-inheritance/</loc>
-        <lastmod>2014-02-13T09:37:03+01:00</lastmod>
+        <lastmod>2015-07-15T21:32:55+02:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://blog.revolunet.com/blog/2015/07/15/beautiful-static-website-in-minutes-with-github/
+        </loc>
+        <lastmod>2015-07-15T21:36:50+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/about/</loc>
-        <lastmod>2013-04-11T11:27:32+02:00</lastmod>
+        <lastmod>2015-07-15T21:39:15+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/blog/archives/</loc>
-        <lastmod>2014-03-13T13:01:58+01:00</lastmod>
+        <lastmod>2015-07-15T21:39:15+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/</loc>
-        <lastmod>2014-03-13T13:01:58+01:00</lastmod>
+        <lastmod>2015-07-15T21:36:50+02:00</lastmod>
     </url>
     <url>
         <loc>http://blog.revolunet.com/robots.txt</loc>
-        <lastmod>2013-04-11T01:33:44+02:00</lastmod>
+        <lastmod>2015-07-15T21:16:36+02:00</lastmod>
     </url>
 </urlset>
