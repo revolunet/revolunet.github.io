@@ -131,11 +131,11 @@ If you want to track your visitors and analyse where they come from and what the
 
 ### How to add a Map ?
 
-If you need an interactive map, follow [google maps instructions](https://developers.google.com/maps/tutorials/fundamentals/adding-a-google-map)
+If you need an interactive map, you can follow [Google Maps instructions](https://developers.google.com/maps/tutorials/fundamentals/adding-a-google-map).
 
-If you just need a map image : generate the HTML code from here : [staticmapmaker.com](http://staticmapmaker.com) ad copy the "HTML" to your page.
+Alternatively, follow [Leaflet instructions](http://leafletjs.com/examples/quick-start.html) to take avantage of the OpenStreetMap project, which is community driven, free and open source.
 
-Full static images doc : [https://developers.google.com/maps/documentation/staticmaps/](https://developers.google.com/maps/documentation/staticmaps/)
+If you just need a map image : generate the HTML code from here : [staticmapmaker.com](http://staticmapmaker.com) ad copy the "HTML" to your page. Full static images doc : [https://developers.google.com/maps/documentation/staticmaps/](https://developers.google.com/maps/documentation/staticmaps/)
 
 ### How to add comments ?
 
