@@ -4,7 +4,7 @@
   <title><![CDATA[revolunet blog]]></title>
   <link href="http://blog.revolunet.com/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2015-09-04T17:02:41+02:00</updated>
+  <updated>2015-09-04T17:20:09+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -158,9 +158,9 @@
 <p>Choose a solid boilerplate with all your sane defaults.</p>
 
 <ul>
-<li>for react : https://github.com/mzabriskie/rackt-cli</li>
-<li>for angular : https://github.com/Swiip/generator-gulp-angular - see also <a href="https://github.com/ng-tools/ng-factory">ng-factory</a>, an upgradable development workflow for AngularJS.</li>
-<li>for node+babel : https://github.com/revolunet/node-babel-boilerplate</li>
+<li>for react : <a href="https://github.com/mzabriskie/rackt-cli">rackt-cli</a></li>
+<li>for angular : <a href="https://github.com/Swiip/generator-gulp-angular">generator-gulp-angular</a> - see also <a href="https://github.com/ng-tools/ng-factory">ng-factory</a>, the upgradable development workflow for AngularJS.</li>
+<li>for node+babel : <a href="https://github.com/revolunet/node-babel-boilerplate">node-babel-boilerplate</a></li>
 </ul>
 
 
