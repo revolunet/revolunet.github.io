@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Universal .htaccess CORS support - revolunet blog</title>
+  <title>The web developer survival guide - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="What is CORS In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented &hellip;">
+  <meta name="description" content="Applicable mostly to frontend web development teams. Comments welcome :) On the same subject, by Eric Eliott : How to Build a High Velocity &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess">
+  <link rel="canonical" href="http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -82,7 +82,7 @@
   
   <header>
     
-      <h1 class="entry-title">Universal .htaccess CORS Support</h1>
+      <h1 class="entry-title">The Web Developer Survival Guide</h1>
     
     
       <p class="meta">
@@ -98,7 +98,7 @@
   
 
 
-<time datetime="2013-10-03T00:00:00+02:00" pubdate data-updated="true">Oct 3<span>rd</span>, 2013</time>
+<time datetime="2015-09-04T00:00:00+02:00" pubdate data-updated="true">Sep 4<span>th</span>, 2015</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -107,48 +107,159 @@
   </header>
 
 
-<div class="entry-content"><h2>What is CORS</h2>
+<div class="entry-content"><p>Applicable mostly to frontend web development teams.</p>
 
-<p>In the internet AJAX early days (~2000) browsers vendors implemented a strict cross-domain communication policy that prevented javascript on a given page to communicate with third party domains. Many workarounds have been implemented since, like JSONP, which is only a &#8216;hack&#8217; allowing cross-domain communication using javascirpt callbacks; Handy, but this prevents any other method than GET and forces the use of querystring to pass parameters.</p>
+<p>Comments welcome :)</p>
 
-<p>With the RISE of internet APIs and decentralised services, having a way to communicate with 3rd party domain became critical; thus, the <a href="http://www.w3.org/TR/cors/">W3C defined the CORS</a> protocol, acronym which stands for &#8220;Cross-Origin Resource Sharing&#8221; and allows different domains to communicate together, the same way Adobe Flash did it a long time before with the crossdomain.xml policy (remember?).</p>
+<p>On the same subject, by Eric Eliott : <a href="https://medium.com/javascript-scene/how-to-build-a-high-velocity-development-team-4b2360d34021">How to Build a High Velocity Development Team</a></p>
 
-<p>Now with CORS, the server defines which domains (applications) can communicate with him (or anyone). When CORS is enabled on the server, your javascript can communicate transparently using any HTTP method; For non-GET requests, the browser transparently make an initial OPTIONS request to check if the request is allowed or not, and then makes the real request.</p>
+<p>Even if the main factor for a project success is human relations, providing a friendly, secure and comfy development workflow for your team is essential to improve happiness, and thus encourage high-quality standards.</p>
 
-<h2>CORS-enable your API</h2>
+<h2>TL;DR</h2>
 
-<p>You can find the whole specs and various implementations at <a href="http://enable-cors.org/">enable-cors.org</a>.</p>
-
-<h2>Pain-free CORS for Apache servers</h2>
-
-<p>If you don&#8217;t want to change your code, we&#8217;ve crafted a small .htaccess for you that will force CORS on your API, without even touching your code. Just drop one of the implementations in your .htaccess and your API is magically CORS-enabled :)</p>
-
-<div><script src='https://gist.github.com/revolunet/6295643.js'></script>
-<noscript><pre><code># with AJAX withCredentials=false (cookies NOT sent)
-Header always set Access-Control-Allow-Origin &quot;*&quot;                   
-Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
-Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
-RewriteEngine On                  
-RewriteCond %{REQUEST_METHOD} OPTIONS 
-RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]]
-
-# with AJAX withCredentials=true (cookies sent, SSL allowed...)
-SetEnvIfNoCase ORIGIN (.*) ORIGIN=$1
-Header always set Access-Control-Allow-Methods &quot;POST, GET, PUT, OPTIONS, PATCH, DELETE&quot; 
-Header always set Access-Control-Allow-Origin &quot;%{ORIGIN}e&quot;
-Header always set Access-Control-Allow-Credentials &quot;true&quot;
-Header always set Access-Control-Allow-Headers &quot;X-Accept-Charset,X-Accept,Content-Type&quot;
-RewriteEngine On
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
-</code></pre></noscript></div>
+<ul>
+<li>Premature optimisation is the root of all evil</li>
+<li>Simple and fast dev workflow</li>
+<li>Standards tools</li>
+<li>Early feedback</li>
+<li>Modularity</li>
+<li>Quality</li>
+</ul>
 
 
-<p>Note: If you use the withCredentials version, be sure to add <code>withCredentials: true</code> in your AJAX requests.</p>
+<h2>Project management</h2>
 
-<p>You can validate your API CORS support using this demo : <a href="http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview">http://embed.plnkr.co/1E8ot9e1eVs23IrjzqKr/preview</a></p>
+<p>Reduce the number of tools you use :</p>
 
-<p>Hope this helps !</p>
+<ul>
+<li>Issues, milestones&#8230; : GitHub + ZenHub</li>
+<li>Slack for centralized communication</li>
+<li>Markdown :)</li>
+</ul>
+
+
+<p>As a product owner, define clear goals and deadlines, and detailed user stories and mockups that will act as base reference for future milestones.</p>
+
+<p>As a developer, expose your plans when starting working on a new feature so you can have early feedback from your team. Github issues are cool for that. Think <a href="http://tom.preston-werner.com/2010/08/23/readme-driven-development.html">Readme Driven Development</a>.</p>
+
+<p>Avoid slack-driven-development which can lead to precipitate design decisions, premature optimisations and throwaway features through endless chats; prefer argumented GH issues.</p>
+
+<p>Dont wait months to receive feedback on your feature. Release early to get early end-user feedback and favour useful features.</p>
+
+<p><img src="http://2.bp.blogspot.com/-Yjx5G4Nihko/VWYhDiery2I/AAAAAAAACOY/49BYuU3SJ7s/s1600/Spotify.png" alt="lean" /></p>
+
+<h2>Versionning</h2>
+
+<p>Use GIT with GitHub and a simple but <a href="https://gist.github.com/jbenet/ee6c9ac48068889b0912">effective model</a>.</p>
+
+<p>TL;DR :</p>
+
+<ul>
+<li>Production-ready <code>master</code> branch</li>
+<li>Pull requests from feature-branches to <code>master</code></li>
+<li>Hotfixes pull requests to master</li>
+<li>Always mention related issues in commit messages</li>
+<li>Use a <code>develop</code> branch to receive PRs for huge upgrades</li>
+<li>Never, ever, <code>push --force</code> to a shared branch</li>
+</ul>
+
+
+<p><img src="http://nicoespeon.com/assets/img/git/github-flow-branching-model.jpg" alt="github flow" /></p>
+
+<p>Use <a href="https://gist.github.com/stephenparish/9941e89d80e2bc58a153">standard commit messages</a>, respect <a href="http://semver.org/">SemVer</a> :  Breaking.Feature.Patch.</p>
+
+<p>See <a href="https://github.com/semantic-release/semantic-release">semantic-release</a> for automatic semver based on commit messages.</p>
+
+<h2>Standards</h2>
+
+<p>Choose and use battle-tested industry tools, standards and styleguides.</p>
+
+<p>Provide sane and homogenous defaults for developer environnement :</p>
+
+<ul>
+<li>.editorconfig</li>
+<li>.babelrc</li>
+<li>.eslintrc</li>
+<li>npm scripts</li>
+</ul>
+
+
+<p>Don&#8217;t rush on the new hype; Tools are continuously and fastly improving but early adoption means upgrading the whole team skills and may have significant impact on your workflow.</p>
+
+<p>Experiment, make proof-of-concepts, evaluate advantages and anticipate migrations.</p>
+
+<p>Once maturity is here and adoption is wide enough and if effort is worthwhile, engage progressive migration.</p>
+
+<h2>Modularity</h2>
+
+<p>You don&#8217;t want to create a monolithic, highly-coupled application.</p>
+
+<p>Break problems into smaller parts.</p>
+
+<p>From the UNIX philosophy : Build small programs that do one thing, do it well, and compose easily with other programs.</p>
+
+<p>Which means small, focused, testable and tested JavaScript modules, providing a nice API.</p>
+
+<p>see <a href="https://github.com/mattdesl/module-best-practices">JS Modules best practices</a> and <a href="http://addyosmani.com/first/">FIRST principles</a></p>
+
+<p>npm ecosystem is an incredible ressource for JavaScript modules which  come with already existing tests and corner-cases solved for you. USE IT !</p>
+
+<p>npm is a also a powerful packaging tool that makes it easy to publish your own modules and manage dependencies at scale.</p>
+
+<p>By separating concerns of your modules you&#8217;ll improve your velocity and reduce hassle due to working in complex contexts.</p>
+
+<p>Focusing on a specific problem without worrying about third party is the key to solve it.</p>
+
+<p><img src="https://openmerchantaccount.com/img/lego-adjusted.jpg" alt="NPM" /></p>
+
+<h2>Quality</h2>
+
+<p>Unit tests will build trust, save your ass, and make the developer feel more confident to work without breaking something, thus, make him/her much more productive, and happy.</p>
+
+<p>Test the public API, not the internal implementations.</p>
+
+<ul>
+<li><a href="https://medium.com/javascript-scene/what-every-unit-test-needs-f6cd34d9836d">5 Questions Every Unit Test Must Answer</a></li>
+<li><a href="https://medium.com/javascript-scene/why-i-use-tape-instead-of-mocha-so-should-you-6aa105d8eaf4">Why I use Tape instead of Mocha &amp; so you should</a></li>
+</ul>
+
+
+<p>Test coverage will give you cool insights and motivate you to do more.</p>
+
+<p>Add UI tests (aka &#8220;smoke tests&#8221;) to ensure integration and prevent repetitive and boring manual in-browser course tests.</p>
+
+<p>Tests won&#8217;t guarantee your code is bug-free but will increase quality (early bug fixes + easy refactoring), and most importantly, allow developers to iterate quickly in confidence.</p>
+
+<p>The earlier the bugs are discovered, the cheaper they are to fix.</p>
+
+<p><img src="http://sqa.fyicenter.com/FAQ/Why-Bugs-in-Software/BugsAnalizing.JPG" alt="no tests cost" /></p>
+
+<h2>Developer Experience</h2>
+
+<p>Offer powerful MacBooks or Linux laptops.</p>
+
+<p>Comment the code (JsDoc) and provide nice README.md files.</p>
+
+<p>Adding inline comments is cheap and helps later refactorig. Explain the WHY of your code when not obvious.</p>
+
+<p>Make development fast and easy : when working on a new feature, the developer should be able to install the environment quickly, and iterate with blazing-fast build times and hot-reload.</p>
+
+<p>Choose a solid boilerplate with all your sane defaults.</p>
+
+<ul>
+<li>for react : https://github.com/mzabriskie/rackt-cli</li>
+<li>for angular : https://github.com/Swiip/generator-gulp-angular - see also <a href="https://github.com/ng-tools/ng-factory">ng-factory</a>, an upgradable development workflow for AngularJS.</li>
+<li>for node+babel : https://github.com/revolunet/node-babel-boilerplate</li>
+</ul>
+
+
+<h2>Team</h2>
+
+<p>Work hard, Play hard.</p>
+
+<p>Be nice and always be yourself.</p>
+
+<p>There&#8217;s nothing as powerful as trust when you want to move mountains.</p>
 </div>
 
 
@@ -171,12 +282,12 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
   
 
 
-<time datetime="2013-10-03T00:00:00+02:00" pubdate data-updated="true">Oct 3<span>rd</span>, 2013</time>
+<time datetime="2015-09-04T00:00:00+02:00" pubdate data-updated="true">Sep 4<span>th</span>, 2015</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/apache/'>apache</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>
+    <a class='category' href='/blog/categories/web/'>web</a>
   
 </span>
 
@@ -184,10 +295,8 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     </p>
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/09/30/extending-topcoat-css-framework/" title="Previous Post: Extending the Topcoat CSS framework">&laquo; Extending the Topcoat CSS framework</a>
+        <a class="basic-alignment left" href="/blog/2015/07/15/beautiful-static-website-in-minutes-with-github/" title="Previous Post: Create and host a beautiful website for free using GitHub">&laquo; Create and host a beautiful website for free using GitHub</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/11/28/create-resusable-angularjs-input-component/" title="Next Post: Create a reusable AngularJS input form component">Create a reusable AngularJS input form component &raquo;</a>
       
     </p>
   </footer>
@@ -287,8 +396,8 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess/';
-        var disqus_url = 'http://blog.revolunet.com/blog/2013/10/03/universal-CORS-htaccess/';
+        var disqus_identifier = 'http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/';
+        var disqus_url = 'http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/';
         var disqus_script = 'embed.js';
       
     (function () {
