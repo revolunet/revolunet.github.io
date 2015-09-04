@@ -120,7 +120,7 @@ Tests won't guarantee your code is bug-free but will increase quality (early bug
 
 The earlier the bugs are discovered, the cheaper they are to fix.
 
-![no tests cost](http://sqa.fyicenter.com/FAQ/Why-Bugs-in-Software/BugsAnalizing.JPG)
+![no tests cost](https://glenndejaeger.files.wordpress.com/2010/02/testing.gif)
 
 ## Developer Experience
 
@@ -128,7 +128,7 @@ Offer powerful MacBooks or Linux laptops.
 
 Comment the code (JsDoc) and provide nice README.md files.
 
-Adding inline comments is cheap and helps later refactorig. Explain the WHY of your code when not obvious.
+Adding inline comments is cheap and helps later refactoring; Explain the WHY of your code when its not obvious.
 
 Make development fast and easy : when working on a new feature, the developer should be able to install the environment quickly, and iterate with blazing-fast build times and hot-reload.
 
