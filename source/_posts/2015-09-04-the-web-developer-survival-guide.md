@@ -120,7 +120,7 @@ Tests won't guarantee your code is bug-free but will increase quality (early bug
 
 The earlier the bugs are discovered, the cheaper they are to fix.
 
-![no tests cost](https://glenndejaeger.files.wordpress.com/2010/02/testing.gif)
+![bugs cost](http://www.jamkey.fr/wp-content/uploads/2015/05/bugs-prices.png)
 
 ## Developer Experience
 
