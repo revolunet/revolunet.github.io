@@ -134,9 +134,9 @@ Make development fast and easy : when working on a new feature, the developer sh
 
 Choose a solid boilerplate with all your sane defaults.
 
- - for react : https://github.com/mzabriskie/rackt-cli
- - for angular : https://github.com/Swiip/generator-gulp-angular - see also [ng-factory](https://github.com/ng-tools/ng-factory), an upgradable development workflow for AngularJS.
- - for node+babel : https://github.com/revolunet/node-babel-boilerplate
+ - for react : [rackt-cli](https://github.com/mzabriskie/rackt-cli)
+ - for angular : [generator-gulp-angular](https://github.com/Swiip/generator-gulp-angular) - see also [ng-factory](https://github.com/ng-tools/ng-factory), the upgradable development workflow for AngularJS.
+ - for node+babel : [node-babel-boilerplate](https://github.com/revolunet/node-babel-boilerplate)
 
 ## Team
 
