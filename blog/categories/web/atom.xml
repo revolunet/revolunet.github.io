@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2015-09-04T17:20:09+02:00</updated>
+  <updated>2015-09-04T17:37:40+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -143,7 +143,7 @@
 
 <p>The earlier the bugs are discovered, the cheaper they are to fix.</p>
 
-<p><img src="http://sqa.fyicenter.com/FAQ/Why-Bugs-in-Software/BugsAnalizing.JPG" alt="no tests cost" /></p>
+<p><img src="https://glenndejaeger.files.wordpress.com/2010/02/testing.gif" alt="no tests cost" /></p>
 
 <h2>Developer Experience</h2>
 
@@ -151,7 +151,7 @@
 
 <p>Comment the code (JsDoc) and provide nice README.md files.</p>
 
-<p>Adding inline comments is cheap and helps later refactorig. Explain the WHY of your code when not obvious.</p>
+<p>Adding inline comments is cheap and helps later refactoring; Explain the WHY of your code when its not obvious.</p>
 
 <p>Make development fast and easy : when working on a new feature, the developer should be able to install the environment quickly, and iterate with blazing-fast build times and hot-reload.</p>
 
