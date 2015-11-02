@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Using AngularJS views animations for mobile applications - revolunet blog</title>
+  <title>Development workflow with rackt-cli - revolunet blog</title>
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the Miško Hevery &hellip;">
+  <meta name="description" content="As advertised in my Web developer survival guide, modularisation is key to keep code maintenable, testable and understandable to others, and npm &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications">
+  <link rel="canonical" href="http://blog.revolunet.com/blog/2015/11/01/dev-workflow-with-rackt-cli">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="revolunet blog" type="application/atom+xml">
@@ -82,7 +82,7 @@
   
   <header>
     
-      <h1 class="entry-title">Using AngularJS Views Animations for Mobile Applications</h1>
+      <h1 class="entry-title">Development Workflow With Rackt-cli</h1>
     
     
       <p class="meta">
@@ -98,7 +98,7 @@
   
 
 
-<time datetime="2013-04-30T20:20:00+02:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
+<time datetime="2015-11-01T00:00:00+01:00" pubdate data-updated="true">Nov 1<span>st</span>, 2015</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -107,54 +107,78 @@
   </header>
 
 
-<div class="entry-content"><p>AngularJS team recently added the very expected animation feature to their framework. You can have a great overview with the <a href="http://www.youtube.com/watch?v=cF_JsA9KsDM">Miško Hevery introduction video</a> and a complete overview article at the great <a href="http://www.yearofmoo.com/2013/04/animation-in-angularjs.html">Year of Moo blog</a>.</p>
+<div class="entry-content"><p>As advertised in my <a href="http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/">Web developer survival guide</a>, modularisation is key to keep code maintenable, testable and understandable to others, and npm makes this easy and fun.</p>
 
-<p>From now (AngularJS 1.1.4), you can easily animate any directive, just by adding an <code>ng-animate</code> attribute and defining the animation CSS class.</p>
+<blockquote><p>see also <a href="https://github.com/sindresorhus/ama/issues/10">why writing small modules is important</a> by <a href="http://twitter.com/sindresorhus">@sindresorhus</a>.</p></blockquote>
 
-<p><strong>UPDATE</strong> : AngularJS team <a href="https://github.com/angular/angular.js/commit/fd21c7502f0a25364a810c26ebeecb678e5783c5">fixed the following</a> problem in the last 1.1.5 release. The ng-animate will now be evaulated on each animation, Yahoo :)</p>
+<p>But <strong>modularisation is not free</strong>, it comes at the cost of maintenability, specially if you use a complex toolchain like Babel + JSX + Tests&#8230; and have dozens of modules to maintain.</p>
 
-<p><strong>UPDATE</strong> : Just created an much more simpler example based on AngularJS 1.2; check it out : <a href="http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/">http://embed.plnkr.co/p7WZdsy0FznV3zo7VWjU/</a></p>
+<p>In this article, i&#8217;ll explain what is <a href="https://github.com/revolunet/rackt-cli">rackt-cli</a>, and how it helps to stay productive, with a modern and sane workflow, especially in the context of ReactJS components.</p>
 
-<p>As a mobile web developer, the first thing that come to mind is animating your mobile applications views. Its quite easy to add slide-in effects with the current routing system :</p>
+<p>If you&#8217;re in AngularJS world, be sure to check <a href="https://github.com/ng-tools/ng-factory">ng-factory</a> from the awesomes <a href="http://twitter.com/olouv">@olouv</a> and <a href="http://twitter.com/douglasduteil">@douglasduteil</a>, which has the same goals, but with a different tech stack.</p>
 
-<iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/8pny4/embedded/result,js,html,css/light/"></iframe>
+<p>Note that i work with a <a href="https://github.com/revolunet/rackt-cli">custom rackt-cli fork</a>, which make workflow even smoother IMHO :)</p>
 
+<p>There are already <a href="https://github.com/xgrommx/awesome-redux#boilerplate">tons</a> of <a href="https://github.com/erikras/react-redux-universal-hot-example">good</a> <a href="https://github.com/bloodyowl/react-boilerplate">boilerplates</a> around for the react stack, but once the boilerplate is used for your project, it became a part of it, and you end up with 50 different tooling for 50 modules.</p>
 
-<br><br>
+<h4>rackt-cli solves this by isolating the workflow tasks from your code, so you can maintain them among various projects.</h4>
 
+<p>Basically, it&#8217;s just an opiniated boilerplate, a set of shared tasks that do the boring stuff for you, and rules to enforce some basic coding and publishing conventions.</p>
 
-<p>As you can see, the code is very simple code and the animation is always the same (appear from right). But typically, if you open a screen in your mobile application, and there is a &#8216;Back&#8217; button, the user expects the slide animation to be reversed when he touches it. If you don&#8217;t do this, you expose your users to an unexpected behaviour, and an akward #WTF moment.</p>
+<h2>What rackt-cli gives you :</h2>
 
-<p>With the actual AngularJS implementation, there is a problem with the <code>ng-view</code> directive, which is heavily used for the AngularJS routing : it doesn&#8217;t handle dynamic <code>ng-animate</code> directive at all, despite what says the doc. You can only set the enter and leave animation once, because these <a href="https://github.com/angular/angular.js/blob/400f9360bb2f7553c5bd3b1f256a5f3db175b7bc/src/ng/directive/ngView.js#L173">are set at linking time</a> in case of the ng-view. And thus, you can only have one pre-defined enter and leave animation for your application view and for the whole application lifecycle.</p>
-
-<p>There are a <a href="https://github.com/angular/angular.js/issues/2480">few</a> <a href="https://github.com/angular/angular.js/issues/2464">issues</a> opened and we can hope the team must be working on it and that should be resolved some day.</p>
-
-<p>But an easy workaround to achieve this is to act on the enter and leave CSS classes themselves directly. Instead of changing the CSS classes names at the DOM level, one could update the CSS classes definitions to achieve the same result without even touching the DOM. The ng-view directive still has the same enter and leave CSS classes names and instead we change theses classes definition, and thus the animation direction.</p>
-
-<p>There are several ways to do this. We could dynamically add a stylesheet to the document, or change the stylesheet source using <code>ng-src</code> attribute but this wouldn&#8217;t be very efficient due to multiple downloads of the ressource.</p>
-
-<p>But, as we are AngularJS powered, we could simply <strong>bind a style tag to a javascript variable</strong> so it can be updated dynamically like any other DOM element.</p>
-
-<p>Here&#8217;s how we&#8217;ve done bi-directionnal animations for the ng-view. Note the usage of the <code>ng-bind-html-unsafe</code> that take cares of not escaping the CSS output and the use of <code>transition</code> and <code>transform</code> CSS properties to force the use of GPU and improve the animation smoothness, especially on mobile devices.</p>
-
-<iframe style="width: 100%; height: 350px" src="http://jsfiddle.net/UvP54/embedded/result,js,html,css/light/"></iframe>
-
-
-<br><br>
+<ul>
+<li><strong>Webpack</strong>, because being able to bundle assets into Javascript is awesome</li>
+<li><strong>Babel</strong>, because ES6 is explicit, powerful, and less verbose</li>
+<li><strong>Hot-reload</strong>, because a better developer experience means happier developer</li>
+<li><strong>Testem + Mocha + expect-jsx</strong>, to test your code in any browser, with CI support.</li>
+<li><strong>NPM</strong> : automated NPM publishing (bundle only) + GIT tagging</li>
+<li><strong>Changelog</strong> : automated changelog from commits messages with <a href="https://github.com/ryanflorence/rf-changelog">rf-changelog</a></li>
+<li><strong>Gh-pages</strong> : publish your examples to gh-pages</li>
+<li><strong>Eslint</strong> : code conventions based on eslint-react</li>
+</ul>
 
 
-<p>Another clever solution, as pointed out by Andrej in the comments below, is to simply wrap the <code>ng-view</code> in another div that have a dynamic class name, which could change when we need to change the animation direction, like <code>LR</code> then <code>RL</code>. This way we just need to update that classname and the CSS will pick the good one.</p>
+<h2>Typical workflow</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nc">.LR</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
-</span><span class='line'><span class="nc">.LR</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
-</span><span class='line'><span class="nc">.RL</span> <span class="nc">.enter-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
-</span><span class='line'><span class="nc">.RL</span> <span class="nc">.leave-setup</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># create a nice boilerplate for your component</span>
+</span><span class='line'>rackt init my-component
+</span><span class='line'>
+</span><span class='line'><span class="c"># start to make some changes</span>
+</span><span class='line'>rackt server
+</span><span class='line'>git add awesome.js
+</span><span class='line'>git commit -m <span class="s1">&#39;feat: awesome stuff&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># test &amp; publish to npm</span>
+</span><span class='line'>rackt release
+</span><span class='line'>
+</span><span class='line'><span class="c"># publish examples to gh-pages</span>
+</span><span class='line'>rackt pages
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h1>And that&#8217;s it :)</h1>
+
+<p>You can now focus on your code, tests and documentation !</p>
+
+<p>If you have some suggestions, ideas&#8230; feel free to ping me on twitter @revolunet or in the comments below.</p>
+
+<p>My rackt-cli fork : <a href="https://github.com/revolunet/rackt-cli">https://github.com/revolunet/rackt-cli</a></p>
+
+<p>Original project : <a href="https://github.com/mzabriskie/rackt-cli">https://github.com/mzabriskie/rackt-cli</a></p>
 </div>
 
 
@@ -177,12 +201,12 @@
   
 
 
-<time datetime="2013-04-30T20:20:00+02:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
+<time datetime="2015-11-01T00:00:00+01:00" pubdate data-updated="true">Nov 1<span>st</span>, 2015</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/angularjs/'>AngularJS</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>
+    <a class='category' href='/blog/categories/web/'>web</a>
   
 </span>
 
@@ -190,10 +214,8 @@
     </p>
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/04/15/octopress-cheatsheet/" title="Previous Post: Octopress Cheat Sheet">&laquo; Octopress Cheat Sheet</a>
+        <a class="basic-alignment left" href="/blog/2015/09/04/the-web-developer-survival-guide/" title="Previous Post: The web developer survival guide">&laquo; The web developer survival guide</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/05/01/angular-tips-n-tricks/" title="Next Post: AngularJS tips'n'tricks part 1">AngularJS tips'n'tricks part 1 &raquo;</a>
       
     </p>
   </footer>
@@ -293,8 +315,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/';
-        var disqus_url = 'http://blog.revolunet.com/blog/2013/04/30/angularjs-animations-mobile-applications/';
+        var disqus_identifier = 'http://blog.revolunet.com/blog/2015/11/01/dev-workflow-with-rackt-cli/';
+        var disqus_url = 'http://blog.revolunet.com/blog/2015/11/01/dev-workflow-with-rackt-cli/';
         var disqus_script = 'embed.js';
       
     (function () {

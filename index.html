@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="Applicable mostly to frontend web development teams. Comments welcome :) On the same subject, by Eric Eliott : How to Build a High Velocity &hellip;">
+  <meta name="description" content="As advertised in my Web developer survival guide, modularisation is key to keep code maintenable, testable and understandable to others, and npm &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,115 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/">Development Workflow With Rackt-cli</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-11-01T00:00:00+01:00" pubdate data-updated="true">Nov 1<span>st</span>, 2015</time>
+        
+         | <a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As advertised in my <a href="http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/">Web developer survival guide</a>, modularisation is key to keep code maintenable, testable and understandable to others, and npm makes this easy and fun.</p>
+
+<blockquote><p>see also <a href="https://github.com/sindresorhus/ama/issues/10">why writing small modules is important</a> by <a href="http://twitter.com/sindresorhus">@sindresorhus</a>.</p></blockquote>
+
+<p>But <strong>modularisation is not free</strong>, it comes at the cost of maintenability, specially if you use a complex toolchain like Babel + JSX + Tests&#8230; and have dozens of modules to maintain.</p>
+
+<p>In this article, i&#8217;ll explain what is <a href="https://github.com/revolunet/rackt-cli">rackt-cli</a>, and how it helps to stay productive, with a modern and sane workflow, especially in the context of ReactJS components.</p>
+
+<p>If you&#8217;re in AngularJS world, be sure to check <a href="https://github.com/ng-tools/ng-factory">ng-factory</a> from the awesomes <a href="http://twitter.com/olouv">@olouv</a> and <a href="http://twitter.com/douglasduteil">@douglasduteil</a>, which has the same goals, but with a different tech stack.</p>
+
+<p>Note that i work with a <a href="https://github.com/revolunet/rackt-cli">custom rackt-cli fork</a>, which make workflow even smoother IMHO :)</p>
+
+<p>There are already <a href="https://github.com/xgrommx/awesome-redux#boilerplate">tons</a> of <a href="https://github.com/erikras/react-redux-universal-hot-example">good</a> <a href="https://github.com/bloodyowl/react-boilerplate">boilerplates</a> around for the react stack, but once the boilerplate is used for your project, it became a part of it, and you end up with 50 different tooling for 50 modules.</p>
+
+<h4>rackt-cli solves this by isolating the workflow tasks from your code, so you can maintain them among various projects.</h4>
+
+<p>Basically, it&#8217;s just an opiniated boilerplate, a set of shared tasks that do the boring stuff for you, and rules to enforce some basic coding and publishing conventions.</p>
+
+<h2>What rackt-cli gives you :</h2>
+
+<ul>
+<li><strong>Webpack</strong>, because being able to bundle assets into Javascript is awesome</li>
+<li><strong>Babel</strong>, because ES6 is explicit, powerful, and less verbose</li>
+<li><strong>Hot-reload</strong>, because a better developer experience means happier developer</li>
+<li><strong>Testem + Mocha + expect-jsx</strong>, to test your code in any browser, with CI support.</li>
+<li><strong>NPM</strong> : automated NPM publishing (bundle only) + GIT tagging</li>
+<li><strong>Changelog</strong> : automated changelog from commits messages with <a href="https://github.com/ryanflorence/rf-changelog">rf-changelog</a></li>
+<li><strong>Gh-pages</strong> : publish your examples to gh-pages</li>
+<li><strong>Eslint</strong> : code conventions based on eslint-react</li>
+</ul>
+
+
+<h2>Typical workflow</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># create a nice boilerplate for your component</span>
+</span><span class='line'>rackt init my-component
+</span><span class='line'>
+</span><span class='line'><span class="c"># start to make some changes</span>
+</span><span class='line'>rackt server
+</span><span class='line'>git add awesome.js
+</span><span class='line'>git commit -m <span class="s1">&#39;feat: awesome stuff&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># test &amp; publish to npm</span>
+</span><span class='line'>rackt release
+</span><span class='line'>
+</span><span class='line'><span class="c"># publish examples to gh-pages</span>
+</span><span class='line'>rackt pages
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>And that&#8217;s it :)</h1>
+
+<p>You can now focus on your code, tests and documentation !</p>
+
+<p>If you have some suggestions, ideas&#8230; feel free to ping me on twitter @revolunet or in the comments below.</p>
+
+<p>My rackt-cli fork : <a href="https://github.com/revolunet/rackt-cli">https://github.com/revolunet/rackt-cli</a></p>
+
+<p>Original project : <a href="https://github.com/mzabriskie/rackt-cli">https://github.com/mzabriskie/rackt-cli</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -213,7 +322,7 @@
 
 <p>Focusing on a specific problem without worrying about third party is the key to solve it.</p>
 
-<p><img src="https://openmerchantaccount.com/img/lego-adjusted.jpg" alt="NPM" /></p>
+<p><img class="center" src="/images/lego-bricks.jpg"></p>
 
 <h2>Quality</h2>
 
@@ -2118,281 +2227,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/">AngularJS Tips&#8217;n&#8217;tricks Part 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-23T00:00:00+02:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2013</time>
-        
-         | <a href="/blog/2013/07/23/angularjs-tips-n-tricks-2/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Here&#8217;s a new batch of AngularJS tips and gotchas; If you didn&#8217;t read it yet, you can check the <a href="http://blog.revolunet.com/blog/2013/05/01/angular-tips-n-tricks/">part 1</a> and feel free to comment below :)</p>
-
-<h3>Access an element scope from outside</h3>
-
-<p>This is useful for debugging: in your Chrome console, highlight a node in the Elements tab, then, in the console, to check its scope :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nx">$0</span><span class="p">).</span><span class="nx">scope</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>or even :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">angular</span><span class="p">.</span><span class="nx">element</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;elementId&#39;</span><span class="p">)).</span><span class="nx">scope</span><span class="p">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The <a href="https://chrome.google.com/webstore/detail/angularjs-batarang/ighdmehidhipcmcojjgiloacoafjmpfk?utm_source=chrome-ntp-icon">Batarang Chrome Extension</a> is much powerful and let you inspect any scope, anywhere :)</p>
-
-<h3>Unwatch an expression</h3>
-
-<p>Sometimes you want to watch an expression only a few times, and then forget it. The <code>$watch</code> function returns a callback just for that. You just have to execute it back to destruct the watcher.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">watcher</span> <span class="o">=</span> <span class="nx">$scope</span><span class="p">.</span><span class="nx">$watch</span><span class="p">(</span><span class="s1">&#39;data.counter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">newValue</span><span class="p">,</span> <span class="nx">oldValue</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">iElement</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="mi">50</span> <span class="o">*</span> <span class="nx">newValue</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">newValue</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// autodestruction when data.counter reaches 10</span>
-</span><span class='line'>        <span class="nx">watcher</span><span class="p">();</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Group elements in a select</h3>
-
-<p>If you play with selects, the <code>ng-options</code> directive is <a href="http://docs.angularjs.org/api/ng.directive:select">quite powerful</a> and <a href="http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx">has many syntaxes</a>.</p>
-
-<p>For example you can easily group a model by attribute to have a nested select menu :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;select</span> <span class="na">ng-options=</span><span class="s">&quot;distrib.version group by distrib.name for distrib in distribs&quot;</span><span class="nt">&gt;&lt;/select&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course, just add an <code>ng-model</code> directive to your select to data-bind it to one of the values.</p>
-
-<h3>Filter falsy values</h3>
-
-<p>You can&#8217;t use the builtin filter for falsy attributes or values :/ I don&#8217;t know if this is a bug of feature, but a simple workaround is to use a custom filter function that you can expose on the scope. (you can also define your own filter).</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">testValues</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">42</span><span class="p">];</span>
-</span><span class='line'><span class="nx">$scope</span><span class="p">.</span><span class="nx">isFalsy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="o">!</span><span class="nx">val</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>{{ testValues|filter:true }}        //  [true]
-</span><span class='line'>{{ testValues|filter:5 }}           //  [5]
-</span><span class='line'>{{ testValues|filter:0 }}           //  [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, false, true, 0, -1, 5, 42]
-</span><span class='line'>{{ testValues|filter:false }}       //  [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, false, true, 0, -1, 5, 42]
-</span><span class='line'>{{ testValues|filter:isFalsy }}     //  [false, 0]
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Filter on objects</h3>
-
-<p>The builtin filter function is <a href="http://code.angularjs.org/1.1.5/docs/api/ng.filter:filter">quite powerful</a> and allows you to filter a list of objects on given properties only, or on everything, exactly or not, negated or not, etc&#8230;</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>{{ games|filter:&#39;street&#39; }}                       //  all games containing &quot;street&quot; in any property
-</span><span class='line'>{{ games|filter:&#39;!street&#39; }}                      //  all games NOT containing &quot;street&quot; in any property
-</span><span class='line'>{{ games|filter:{name:&#39;street&#39;} }}                //  all games containing &quot;street&quot; in their name
-</span><span class='line'>{{ games|filter:{name:&#39;street&#39;}:true }}           //  all games named exactly &quot;street&quot;
-</span><span class='line'>{{ games|filter:{name:&#39;street&#39;, device:&#39;PS3&#39;} }}  //  all games containing &quot;street&quot; in their name and PS3 in their device
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>ng-repeat with duplicate items</h3>
-
-<p>If for some reason you need to have duplicate items in your <code>ng-repeat</code> you can extend your <code>ng-repeat</code> expression with <code>track by $index</code> and it works :)</p>
-
-<h3>Directive : parse attribute without watching it</h3>
-
-<p>In one of your directive, if you need to have a read-only access to an attribute model, but without the automatic watch/binding, you can simply use <code>&amp;</code> instead of <code>=</code> when declaring the binding in the scope. You&#8217;ll then be able to access the model value . (this may break in future releases). This is a shortcut for using the <code>$parse</code> service on the current scope.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnCounter&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">count</span><span class="o">:</span> <span class="s1">&#39;&amp;rnCounter&#39;</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>    <span class="nx">link</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">iElement</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">dir</span><span class="p">(</span><span class="nx">scope</span><span class="p">.</span><span class="nx">count</span><span class="p">());</span>
-</span><span class='line'>      <span class="p">})</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Data-binding to a boolean</h3>
-
-<p>You can bind to a boolean value, but you <strong>can&#8217;t</strong> update that value from your directive.</p>
-
-<p>This won&#8217;t work :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-zippy</span> <span class="na">status=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;rnZippy&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">restrict</span><span class="o">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nx">scope</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">status</span><span class="o">:</span> <span class="s1">&#39;=?&#39;</span>
-</span><span class='line'>    <span class="p">},</span>
-</span><span class='line'>    <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">iElement</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="kd">function</span> <span class="nx">toggle</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">scope</span><span class="p">.</span><span class="nx">$apply</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>          <span class="nx">scope</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="o">!</span><span class="nx">scope</span><span class="p">.</span><span class="nx">status</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">});</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="nx">iElement</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="nx">toggle</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You need to use a real model, OR, initialise a new one and use it as your model instead :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">rn-zippy</span> <span class="na">ng-init=</span><span class="s">&quot;status=true&quot;</span> <span class="na">status=</span><span class="s">&quot;status&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Includes onload</h3>
-
-<p>You can trigger a callback when your <code>ng-include</code> partial is loaded :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">ng-inlude=</span><span class="s">&quot;&#39;partials/&#39; + page + &#39;.html&#39;&quot;</span> <span class="na">onload=</span><span class="s">&quot;callback()&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For the <code>ngView</code>, you need to listen to the <code>$viewContentLoaded</code> event.</p>
-
-<h3>Express testing</h3>
-
-<p>You know you should write serious tests suites ? There&#8217;s everything to help you in AngularJS with Karma test runner + Jasmine.</p>
-
-<p>Once you have many tests, they can take some time to execute and there&#8217;s a little trick to speed you up : you can limit the test-runner to a given test group by using <code>ddescribe</code> instead of <code>describe</code> and to a single test with <code>iit</code> instead of <code>it</code>.</p>
-
-<p>That&#8217;s awesome to focus on specific tests for a while.</p>
-
-<h3>Service decorators</h3>
-
-<p>You can easily decorate and modify any existing service or directive. That&#8217;s how the <code>ngMobile</code> overrides the <code>ngClick</code> directive to handle transparently the FastClick behaviour.</p>
-
-<p>Here&#8217;s an exemple that overrides the <code>$sniffer</code> service and fix the animation detection for older androids devices (landed in <a href="https://github.com/angular/angular.js/commit/ef5bc6c">ef5bc6c</a>) :</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">app</span><span class="p">.</span><span class="nx">config</span><span class="p">([</span><span class="s1">&#39;$provide&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$provide</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">$provide</span><span class="p">.</span><span class="nx">decorator</span><span class="p">(</span><span class="s1">&#39;$sniffer&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;$delegate&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$delegate</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span><span class="o">||!</span><span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">transitions</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitTransition</span><span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
-</span><span class='line'>      <span class="nx">$delegate</span><span class="p">.</span><span class="nx">animations</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">webkitAnimation</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">$delegate</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}]);</span>
-</span><span class='line'><span class="p">}]);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That&#8217;s all for today, feel free to ask and comment below :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2408,6 +2242,10 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/">Development workflow with rackt-cli</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/09/04/the-web-developer-survival-guide/">The web developer survival guide</a>
       </li>
     
@@ -2421,10 +2259,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     
       <li class="post">
         <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/28/create-resusable-angularjs-input-component/">Create a reusable AngularJS input form component</a>
       </li>
     
   </ul>
@@ -2465,7 +2299,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (2)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (3)</a></li></ul>
 </section>
 
   
