@@ -101,7 +101,7 @@ By separating concerns of your modules you'll improve your velocity and reduce h
 
 Focusing on a specific problem without worrying about third party is the key to solve it.
 
-![NPM](https://openmerchantaccount.com/img/lego-adjusted.jpg)
+{% img center /images/lego-bricks.jpg %}
 
 ## Quality
 
