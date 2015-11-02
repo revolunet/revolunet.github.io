@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2015-11-02T11:22:37+01:00</updated>
+  <updated>2015-11-02T11:30:45+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -78,7 +78,7 @@ git commit -m 'feat: awesome stuff'</p>
 
 <p>You can now focus on your code, tests and documentation !</p>
 
-<p>If you have some suggestions, ideas... feel free to ping me on twitter @revolunet or in the comments below.</p>
+<p>If you have some suggestions, ideas... feel free to ping me on twitter <a href="http://twitter.com/revolunet">@revolunet</a> or in the comments below.</p>
 
 <p>My rackt-cli fork : <a href="https://github.com/revolunet/rackt-cli">https://github.com/revolunet/rackt-cli</a></p>
 
