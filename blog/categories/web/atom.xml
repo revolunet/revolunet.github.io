@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2016-02-08T17:30:47+01:00</updated>
+  <updated>2016-02-08T22:01:48+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -22,7 +22,7 @@
 
 <p>Of course, a tailored-made admin interface can be "better", but well, Google Spreadsheet is here, <strong>instantly available</strong>, battle-tested, powerful, very flexible and as we'll see below, you can even extends the UI.</p>
 
-<p>Also note the powerful Google data APIs gives you <strong>full access to your data</strong> in various ways and there many other ways to exploit yout documents data (create executable APIs, publish the feeds...)</p>
+<p>Also note the powerful Google data APIs gives you <strong>full access to your data</strong> in various ways and there many other ways to exploit yout documents data (create executable APIs, publish the feeds, embed spreadsheet...)</p>
 
 <p>The main issues for me yet are the google apps scripts disastrous developer experience, but i'll give you some tips to reduce the pain :) (most of it is due to security model) and the UI that can be a bit slowish due to client/server interactions.</p>
 
@@ -52,7 +52,7 @@
 
 <h2>The <code>.gs</code> files</h2>
 
-<p>The code here is interpreted when the document opens.</p>
+<p>The code here is interpreted when the document opens, on the server-side.</p>
 
 <p>For example, here's how you'd add a new menu entry to your document :</p>
 
@@ -74,6 +74,8 @@ function onOpen() {
 
 <p>Then you can define a <code>selectGuests</code> function that do what you need.</p>
 
+<p>In our case, it will open our custom sidebar and pass necessary data (a list of available guests to select from a range in the spreadsheet).</p>
+
 <h2>A custom sidebar with a React widget</h2>
 
 <p>There are various approaches here :</p>
@@ -84,7 +86,7 @@ function onOpen() {
 </ul>
 
 
-<p>I prefer the second approach because its lighter and allow cient-side caching for libraries which is faster.</p>
+<p>I prefer the second approach because its lighter and allow cient-side caching for 3rd-party libraries which is faster.</p>
 
 <p>There is a little gem recently published at <a href="npmcdn.com">npmcdn.com</a>; this service from the well-named <a href="http://twitter.com/@mjackson">Michael Jackson</a> allows you to grab any npm module just by adding a script-tag to your html doc. This is the perfect tool to inject <strong>umd libraries</strong> into our iframe.</p>
 
