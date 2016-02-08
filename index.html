@@ -9,7 +9,7 @@
   <meta name="author" content="revolunet team">
 
   
-  <meta name="description" content="As advertised in my Web developer survival guide, modularisation is key to keep code maintenable, testable and understandable to others, and npm &hellip;">
+  <meta name="description" content="Sometimes you need a solid platform where people can collaborate in real-time and input data in a structured, reusable way. Depending on your needs &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,285 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/08/extend-google-apps-scripts-with-npmcdn-and-react/">Extend Google Spreadsheets With npmcdn.com and React</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-08T00:00:00+01:00" pubdate data-updated="true">Feb 8<span>th</span>, 2016</time>
+        
+         | <a href="/blog/2016/02/08/extend-google-apps-scripts-with-npmcdn-and-react/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sometimes you need a solid platform where people can <strong>collaborate in real-time and input data in a structured, reusable way</strong>. Depending on your needs and planning, Google Spreadsheet can be helpful in such cases, specially if you dont have time or ressources to create a full-blown &#8220;admin interface&#8221;.</p>
+
+<p>Of course, a tailored-made admin interface can be &#8220;better&#8221;, but well, Google Spreadsheet is here, <strong>instantly available</strong>, battle-tested, powerful, very flexible and as we&#8217;ll see below, you can even extends the UI.</p>
+
+<p>Also note the powerful Google data APIs gives you <strong>full access to your data</strong> in various ways and there many other ways to exploit yout documents data (create executable APIs, publish the feeds&#8230;)</p>
+
+<p>The main issues for me yet are the google apps scripts disastrous developer experience, but i&#8217;ll give you some tips to reduce the pain :) (most of it is due to security model) and the UI that can be a bit slowish due to client/server interactions.</p>
+
+<p>This example use React, because it&#8217;s sooo 2015, but you&#8217;d better use what makes you happy :)</p>
+
+<h2>How it works</h2>
+
+<p>You google spreadsheets can be extended with <a href="https://developers.google.com/apps-script/reference/spreadsheet/">Google Apps Scripts</a>. These are hosted Javascript files that execute on the server-side, in the Google infrastructure, and have access to various Google APIs and can be triggered right from your documents.</p>
+
+<p>In the case of spreadsheets, these scripts can open <strong>custom isolated modals or sidebars</strong>, which can host random client-side javascript inside an iframe, get data from your docs and send back results to them.</p>
+
+<p>So in this example, we&#8217;ll add a multi-selection widget to our spreadsheet, which will help our users create many-to-many relations in our spreadsheet.</p>
+
+<p><img src="//blog.revolunet.com/images/gdoc-apps-script-custom-widget.gif"></p>
+
+<h2>Google Apps Script editor</h2>
+
+<p>This is a <strong>major pain in the @$$</strong>. When you want to script your documents, you must use that editor which lacks all the basics. There are ways to use your preferred editor and GIT, but it&#8217;s for a later article.</p>
+
+<p>We&#8217;ll reduce the code needed here to the minimum : just some glue between our documents and our react widgets.</p>
+
+<p>From you spreadsheet, select <code>Tools &gt; Script Editor</code>.</p>
+
+<p>From here, you can add <code>.gs</code> scripts (server-side javascript) and <code>.html</code> templates which are your custom modals or sidebars and where you can interpolate some values from your docs, using old-school php-like tags.</p>
+
+<p>The code from your html files <strong>cannot talk directly to the documents</strong> but can execute functions from your <code>.gs</code> files.</p>
+
+<h2>The <code>.gs</code> files</h2>
+
+<p>The code here is interpreted when the document opens.</p>
+
+<p>For example, here&#8217;s how you&#8217;d add a new menu entry to your document :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// add a custom menu when the spreadsheet opens</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">onOpen</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>   <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nx">getUi</span><span class="p">()</span>
+</span><span class='line'>      <span class="c1">// create a new menu in your spreadsheet</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">createMenu</span><span class="p">(</span><span class="s1">&#39;My Custom menu&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="c1">// add an entry to that menu</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">addItem</span><span class="p">(</span><span class="s1">&#39;Select Guests&#39;</span><span class="p">,</span> <span class="s1">&#39;selectGuests&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="c1">// Warn: forgetting this line can drive you nuts</span>
+</span><span class='line'>      <span class="p">.</span><span class="nx">addToUi</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then you can define a <code>selectGuests</code> function that do what you need.</p>
+
+<h2>A custom sidebar with a React widget</h2>
+
+<p>There are various approaches here :</p>
+
+<ul>
+<li>create a full bundle with all your javascripts and insert it in the page</li>
+<li>use external scripts and add minimal code to the html</li>
+</ul>
+
+
+<p>I prefer the second approach because its lighter and allow cient-side caching for libraries which is faster.</p>
+
+<p>There is a little gem recently published at <a href="npmcdn.com">npmcdn.com</a>; this service from the well-named <a href="http://twitter.com/@mjackson">Michael Jackson</a> allows you to grab any npm module just by adding a script-tag to your html doc. This is the perfect tool to inject <strong>umd libraries</strong> into our iframe.</p>
+
+<p>Here&#8217;s an example sidebar.html :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;https://ssl.gstatic.com/docs/script/css/add-ons1.css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;//npmcdn.com/react@0.14.7/dist/react.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;//npmcdn.com/react-dom@0.14.7/dist/react-dom.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;//npmcdn.com/react-multiselect-revolunet@1.0.5&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/head&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;body&gt;&lt;/body&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;script&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// receive some values from spreadsheet here</span>
+</span><span class='line'>    <span class="c1">// turn back strings to JSON</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">choices</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="s2">&quot;&lt;?= choices ?&gt;&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// instantiate the react component with props</span>
+</span><span class='line'>    <span class="c1">// using the umd library name</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">cmp</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="s1">&#39;react-multiselect-revolunet&#39;</span><span class="p">],</span> <span class="p">{</span>
+</span><span class='line'>       <span class="nx">choices</span><span class="o">:</span> <span class="nx">choices</span><span class="p">,</span>
+</span><span class='line'>       <span class="nx">onChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selection</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="c1">// send result to spreadsheet function</span>
+</span><span class='line'>          <span class="nx">google</span><span class="p">.</span><span class="nx">script</span><span class="p">.</span><span class="nx">run</span><span class="p">.</span><span class="nx">setActiveCellValue</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">));</span>
+</span><span class='line'>       <span class="p">}</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// render the component</span>
+</span><span class='line'>    <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">cmp</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Open the Sidebar</h2>
+
+<p>The is an example <code>code.gs</code> that triggers our sidebar, send and receives values from it.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// this function will be called by our sidebar to update the cell value</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">setActiveCellValue</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nx">getActiveSheet</span><span class="p">().</span><span class="nx">getActiveCell</span><span class="p">().</span><span class="nx">setValue</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// this is called when user selects the entry in the custom menu</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">selectGuests</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// open our sidebar with a range of possibles from A2:A range</span>
+</span><span class='line'>  <span class="nx">openSideBar</span><span class="p">(</span><span class="s2">&quot;Select Guests&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;Sheet1&#39;!A2:A&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/*</span>
+</span><span class='line'><span class="cm"> * title: Title of the SideBar</span>
+</span><span class='line'><span class="cm"> * range: range where to get choices from</span>
+</span><span class='line'><span class="cm"> * valueIndex: 0-based index of the column in the range responsible of values</span>
+</span><span class='line'><span class="cm"> * labelIndex: 0-based index of the column in the range responsible of labels (can be the same as values)</span>
+</span><span class='line'><span class="cm">*/</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">openSideBar</span><span class="p">(</span><span class="nx">title</span><span class="p">,</span> <span class="nx">range</span><span class="p">,</span> <span class="nx">valueIndex</span><span class="p">,</span> <span class="nx">labelIndex</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// grab list of available choices</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">choices</span> <span class="o">=</span> <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nx">getActiveSheet</span><span class="p">().</span><span class="nx">getRange</span><span class="p">(</span><span class="nx">range</span><span class="p">).</span><span class="nx">getValues</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// create the template from HTML</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">tpl</span> <span class="o">=</span> <span class="nx">HtmlService</span><span class="p">.</span><span class="nx">createTemplateFromFile</span><span class="p">(</span><span class="s1">&#39;pane.html&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// add data to the templates. needs to be passed as strings !</span>
+</span><span class='line'>  <span class="c1">// data structure depends on your widget</span>
+</span><span class='line'>  <span class="nx">tpl</span><span class="p">.</span><span class="nx">choices</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">choices</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">choice</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">value</span><span class="o">:</span> <span class="nx">choice</span><span class="p">[</span><span class="nx">valueIndex</span><span class="p">],</span>
+</span><span class='line'>      <span class="nx">text</span><span class="o">:</span> <span class="nx">choice</span><span class="p">[</span><span class="nx">labelIndex</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>  <span class="p">}).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">val</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span><span class="p">.</span><span class="nx">text</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}));</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// now, evaluate and execute our template inside a sidebar</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">tpl</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">().</span><span class="nx">setSandboxMode</span><span class="p">(</span><span class="nx">HtmlService</span><span class="p">.</span><span class="nx">SandboxMode</span><span class="p">.</span><span class="nx">IFRAME</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">result</span><span class="p">.</span><span class="nx">setTitle</span><span class="p">(</span><span class="nx">title</span><span class="p">).</span><span class="nx">setWidth</span><span class="p">(</span><span class="mi">300</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nx">getUi</span><span class="p">().</span><span class="nx">showSidebar</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Conclusion</h2>
+
+<p>With these few tips, you&#8217;re now able to build on top of Google Spreadsheets and add the missing parts you need.</p>
+
+<p>Dont build your company on top of any closed-source product.</p>
+
+<p>Exploit the tools, push the limits, but always keep full control of your data. (see the recent <a href="http://venturebeat.com/2016/02/06/how-to-avoid-the-next-parse-shutdown-scenario/">Parse shutdown</a>)</p>
+
+<p>Once your spreadsheet is well-strutured, you can use the Google Data APIs to extract them, or use one of many available npm modules to do it, like <a href="https://www.npmjs.com/package/spreadsheet-to-json">spreadsheet-to-json</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2164,69 +2443,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/18/npm-vs-pip/">Npm vs Pip</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-18T00:00:00+02:00" pubdate data-updated="true">Sep 18<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/09/18/npm-vs-pip/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>After my morning <a href="https://twitter.com/revolunet/status/380210846578016256">twitter rant</a> about <code>npm install &gt; pip install</code> i need to add some clarifications and explain why i meant. Basically i meant that npm is much easier to use from a user perspective, which is an essential point to grow a community. Package management and dependencies is an important part of modern application development workflow and thus needs high consideration.</p>
-
-<p><a href="https://npmjs.org/">npm</a> (node packaged modules) was released at end of 2011 and for sure it&#8217;s inspired from many other packages manager while removing their commons hassles. Also, its used both on backend and on frontend projects (eg: AngularJS+grunt).</p>
-
-<p>Some of the <a href="http://www.pip-installer.org/en/latest/">pip</a> hassles are :</p>
-
-<ul>
-<li>you need to install virtualenv separately</li>
-<li>you need to configure it and run cryptic commands to activate virtualenvs</li>
-<li>you can install virtualenvwrapper to make thing easier though</li>
-<li>you still need to configure it though</li>
-<li>a fresh <code>pip install</code> in a project containing the standard requirements.txt does nothing</li>
-</ul>
-
-
-<p>On the other side, npm is a no-brainer to use :</p>
-
-<ul>
-<li><code>npm install</code> installs/upgrades any project dependencies</li>
-<li>there&#8217;s no notion of virtualenv, it just uses what you have in the current <code>node_modules</code> folder or in your global install.</li>
-</ul>
-
-
-<p>Both are for sure very powerful tools that goes far beyond this basic usage but this is daily work for the developer and also the first contact when entering a new project so it should work seamlessly.</p>
-
-<p>Please correct me if i&#8217;m wrong :)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2242,6 +2458,10 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/02/08/extend-google-apps-scripts-with-npmcdn-and-react/">Extend Google Spreadsheets with npmcdn.com and React</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/">Development workflow with rackt-cli</a>
       </li>
     
@@ -2255,10 +2475,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     
       <li class="post">
         <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS services</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
       </li>
     
   </ul>
@@ -2299,7 +2515,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (3)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (4)</a></li></ul>
 </section>
 
   
@@ -2308,7 +2524,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - revolunet team -
+  Copyright &copy; 2016 - revolunet team -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

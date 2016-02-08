@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2015-11-02T11:30:45+01:00</updated>
+  <updated>2016-02-08T17:28:10+01:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -12,6 +12,186 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Extend Google Spreadsheets with npmcdn.com and React]]></title>
+    <link href="http://blog.revolunet.com/blog/2016/02/08/extend-google-apps-scripts-with-npmcdn-and-react/"/>
+    <updated>2016-02-08T00:00:00+01:00</updated>
+    <id>http://blog.revolunet.com/blog/2016/02/08/extend-google-apps-scripts-with-npmcdn-and-react</id>
+    <content type="html"><![CDATA[<p>Sometimes you need a solid platform where people can <strong>collaborate in real-time and input data in a structured, reusable way</strong>. Depending on your needs and planning, Google Spreadsheet can be helpful in such cases, specially if you dont have time or ressources to create a full-blown "admin interface".</p>
+
+<p>Of course, a tailored-made admin interface can be "better", but well, Google Spreadsheet is here, <strong>instantly available</strong>, battle-tested, powerful, very flexible and as we'll see below, you can even extends the UI.</p>
+
+<p>Also note the powerful Google data APIs gives you <strong>full access to your data</strong> in various ways and there many other ways to exploit yout documents data (create executable APIs, publish the feeds...)</p>
+
+<p>The main issues for me yet are the google apps scripts disastrous developer experience, but i'll give you some tips to reduce the pain :) (most of it is due to security model) and the UI that can be a bit slowish due to client/server interactions.</p>
+
+<p>This example use React, because it's sooo 2015, but you'd better use what makes you happy :)</p>
+
+<h2>How it works</h2>
+
+<p>You google spreadsheets can be extended with <a href="https://developers.google.com/apps-script/reference/spreadsheet/">Google Apps Scripts</a>. These are hosted Javascript files that execute on the server-side, in the Google infrastructure, and have access to various Google APIs and can be triggered right from your documents.</p>
+
+<p>In the case of spreadsheets, these scripts can open <strong>custom isolated modals or sidebars</strong>, which can host random client-side javascript inside an iframe, get data from your docs and send back results to them.</p>
+
+<p>So in this example, we'll add a multi-selection widget to our spreadsheet, which will help our users create many-to-many relations in our spreadsheet.</p>
+
+<p><img src="//blog.revolunet.com/images/gdoc-apps-script-custom-widget.gif"></p>
+
+<h2>Google Apps Script editor</h2>
+
+<p>This is a <strong>major pain in the @$$</strong>. When you want to script your documents, you must use that editor which lacks all the basics. There are ways to use your preferred editor and GIT, but it's for a later article.</p>
+
+<p>We'll reduce the code needed here to the minimum : just some glue between our documents and our react widgets.</p>
+
+<p>From you spreadsheet, select <code>Tools &gt; Script Editor</code>.</p>
+
+<p>From here, you can add <code>.gs</code> scripts (server-side javascript) and <code>.html</code> templates which are your custom modals or sidebars and where you can interpolate some values from your docs, using old-school php-like tags.</p>
+
+<p>The code from your html files <strong>cannot talk directly to the documents</strong> but can execute functions from your <code>.gs</code> files.</p>
+
+<h2>The <code>.gs</code> files</h2>
+
+<p>The code here is interpreted when the document opens.</p>
+
+<p>For example, here's how you'd add a new menu entry to your document :</p>
+
+<p>```js
+// add a custom menu when the spreadsheet opens
+function onOpen() {
+   SpreadsheetApp.getUi()</p>
+
+<pre><code>  // create a new menu in your spreadsheet
+  .createMenu('My Custom menu')
+  // add an entry to that menu
+  .addItem('Select Guests', 'selectGuests')
+  // Warn: forgetting this line can drive you nuts
+  .addToUi();
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Then you can define a <code>selectGuests</code> function that do what you need.</p>
+
+<h2>A custom sidebar with a React widget</h2>
+
+<p>There are various approaches here :</p>
+
+<ul>
+<li>create a full bundle with all your javascripts and insert it in the page</li>
+<li>use external scripts and add minimal code to the html</li>
+</ul>
+
+
+<p>I prefer the second approach because its lighter and allow cient-side caching for libraries which is faster.</p>
+
+<p>There is a little gem recently published at <a href="npmcdn.com">npmcdn.com</a>; this service from the well-named <a href="http://twitter.com/@mjackson">Michael Jackson</a> allows you to grab any npm module just by adding a script-tag to your html doc. This is the perfect tool to inject <strong>umd libraries</strong> into our iframe.</p>
+
+<p>Here's an example sidebar.html :</p>
+
+<p>```html
+&lt;!DOCTYPE html>
+<html>
+  <head></p>
+
+<pre><code>&lt;link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css"&gt;
+&lt;script src="http://blog.revolunet.com//npmcdn.com/react@0.14.7/dist/react.js"&gt;&lt;/script&gt;
+&lt;script src="http://blog.revolunet.com//npmcdn.com/react-dom@0.14.7/dist/react-dom.js"&gt;&lt;/script&gt;
+&lt;script src="http://blog.revolunet.com//npmcdn.com/react-multiselect-revolunet@1.0.5"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>  </head>
+  <body></body>
+  <script></p>
+
+<pre><code>// receive some values from spreadsheet here
+// turn back strings to JSON
+var choices = JSON.parse("&lt;?= choices ?&gt;");
+
+// instantiate the react component with props
+// using the umd library name
+var cmp = React.createElement(window['react-multiselect-revolunet'], {
+   choices: choices,
+   onChange: function(selection) {
+      // send result to spreadsheet function
+      google.script.run.setActiveCellValue(selection.join(','));
+   }
+});
+
+// render the component
+ReactDOM.render(cmp, document.body);
+</code></pre>
+
+<p>  </script>
+</html>
+```</p>
+
+<h2>Open the Sidebar</h2>
+
+<p>The is an example <code>code.gs</code> that triggers our sidebar, send and receives values from it.</p>
+
+<p>```js
+// this function will be called by our sidebar to update the cell value
+function setActiveCellValue(value) {
+  SpreadsheetApp.getActiveSheet().getActiveCell().setValue(value);
+}</p>
+
+<p>// this is called when user selects the entry in the custom menu
+function selectGuests() {
+  // open our sidebar with a range of possibles from A2:A range
+  openSideBar("Select Guests", "'Sheet1'!A2:A", 0, 0);
+}</p>
+
+<p>/<em>
+ * title: Title of the SideBar
+ * range: range where to get choices from
+ * valueIndex: 0-based index of the column in the range responsible of values
+ * labelIndex: 0-based index of the column in the range responsible of labels (can be the same as values)
+</em>/
+function openSideBar(title, range, valueIndex, labelIndex) {</p>
+
+<p>  // grab list of available choices
+  var choices = SpreadsheetApp.getActiveSheet().getRange(range).getValues();</p>
+
+<p>  // create the template from HTML
+  var tpl = HtmlService.createTemplateFromFile('pane.html');</p>
+
+<p>  // add data to the templates. needs to be passed as strings !
+  // data structure depends on your widget
+  tpl.choices = JSON.stringify(choices.map(function(choice) {</p>
+
+<pre><code>return {
+  value: choice[valueIndex],
+  text: choice[labelIndex]
+};
+</code></pre>
+
+<p>  }).filter(function(val) {</p>
+
+<pre><code>return val.value &amp;&amp; val.text;
+</code></pre>
+
+<p>  }));</p>
+
+<p>  // now, evaluate and execute our template inside a sidebar
+  var result = tpl.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  result.setTitle(title).setWidth(300);
+  SpreadsheetApp.getUi().showSidebar(result);
+}
+```</p>
+
+<h2>Conclusion</h2>
+
+<p>With these few tips, you're now able to build on top of Google Spreadsheets and add the missing parts you need.</p>
+
+<p>Dont build your company on top of any closed-source product.</p>
+
+<p>Exploit the tools, push the limits, but always keep full control of your data. (see the recent <a href="http://venturebeat.com/2016/02/06/how-to-avoid-the-next-parse-shutdown-scenario/">Parse shutdown</a>)</p>
+
+<p>Once your spreadsheet is well-strutured, you can use the Google Data APIs to extract them, or use one of many available npm modules to do it, like <a href="https://www.npmjs.com/package/spreadsheet-to-json">spreadsheet-to-json</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Development workflow with rackt-cli]]></title>
