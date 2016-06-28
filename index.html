@@ -366,115 +366,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/">Development Workflow With Rackt-cli</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-11-01T00:00:00+01:00" pubdate data-updated="true">Nov 1<span>st</span>, 2015</time>
-        
-         | <a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>As advertised in my <a href="http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/">Web developer survival guide</a>, modularisation is key to keep code maintenable, testable and understandable to others, and npm makes this easy and fun.</p>
-
-<blockquote><p>see also <a href="https://github.com/sindresorhus/ama/issues/10">why writing small modules is important</a> by <a href="http://twitter.com/sindresorhus">@sindresorhus</a>.</p></blockquote>
-
-<p>But <strong>modularisation is not free</strong>, it comes at the cost of maintenability, specially if you use a complex toolchain like Babel + JSX + Tests&#8230; and have dozens of modules to maintain.</p>
-
-<p>In this article, i&#8217;ll explain what is <a href="https://github.com/revolunet/rackt-cli">rackt-cli</a>, and how it helps to stay productive, with a modern and sane workflow, especially in the context of ReactJS components.</p>
-
-<p>If you&#8217;re in AngularJS world, be sure to check <a href="https://github.com/ng-tools/ng-factory">ng-factory</a> from the awesomes <a href="http://twitter.com/olouv">@olouv</a> and <a href="http://twitter.com/douglasduteil">@douglasduteil</a>, which has the same goals, but with a different tech stack.</p>
-
-<p>Note that i work with a <a href="https://github.com/revolunet/rackt-cli">custom rackt-cli fork</a>, which make workflow even smoother IMHO :)</p>
-
-<p>There are already <a href="https://github.com/xgrommx/awesome-redux#boilerplate">tons</a> of <a href="https://github.com/erikras/react-redux-universal-hot-example">good</a> <a href="https://github.com/bloodyowl/react-boilerplate">boilerplates</a> around for the react stack, but once the boilerplate is used for your project, it became a part of it, and you end up with 50 different tooling for 50 modules.</p>
-
-<h4>rackt-cli solves this by isolating the workflow tasks from your code, so you can maintain them among various projects.</h4>
-
-<p>Basically, it&#8217;s just an opiniated boilerplate, a set of shared tasks that do the boring stuff for you, and rules to enforce some basic coding and publishing conventions.</p>
-
-<h2>What rackt-cli gives you :</h2>
-
-<ul>
-<li><strong>Webpack</strong>, because being able to bundle assets into Javascript is awesome</li>
-<li><strong>Babel</strong>, because ES6 is explicit, powerful, and less verbose</li>
-<li><strong>Hot-reload</strong>, because a better developer experience means happier developer</li>
-<li><strong>Testem + Mocha + expect-jsx</strong>, to test your code in any browser, with CI support.</li>
-<li><strong>NPM</strong> : automated NPM publishing (bundle only) + GIT tagging</li>
-<li><strong>Changelog</strong> : automated changelog from commits messages with <a href="https://github.com/ryanflorence/rf-changelog">rf-changelog</a></li>
-<li><strong>Gh-pages</strong> : publish your examples to gh-pages</li>
-<li><strong>Eslint</strong> : code conventions based on eslint-react</li>
-</ul>
-
-
-<h2>Typical workflow</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># create a nice boilerplate for your component</span>
-</span><span class='line'>rackt init my-component
-</span><span class='line'>
-</span><span class='line'><span class="c"># start to make some changes</span>
-</span><span class='line'>rackt server
-</span><span class='line'>git add awesome.js
-</span><span class='line'>git commit -m <span class="s1">&#39;feat: awesome stuff&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># test &amp; publish to npm</span>
-</span><span class='line'>rackt release
-</span><span class='line'>
-</span><span class='line'><span class="c"># publish examples to gh-pages</span>
-</span><span class='line'>rackt pages
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h1>And that&#8217;s it :)</h1>
-
-<p>You can now focus on your code, tests and documentation !</p>
-
-<p>If you have some suggestions, ideas&#8230; feel free to ping me on twitter <a href="http://twitter.com/revolunet">@revolunet</a> or in the comments below.</p>
-
-<p>My rackt-cli fork : <a href="https://github.com/revolunet/rackt-cli">https://github.com/revolunet/rackt-cli</a></p>
-
-<p>Original project : <a href="https://github.com/mzabriskie/rackt-cli">https://github.com/mzabriskie/rackt-cli</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/blog/2015/09/04/the-web-developer-survival-guide/">The Web Developer Survival Guide</a></h1>
     
     
@@ -2445,6 +2336,69 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/18/npm-vs-pip/">Npm vs Pip</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-18T00:00:00+02:00" pubdate data-updated="true">Sep 18<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/09/18/npm-vs-pip/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After my morning <a href="https://twitter.com/revolunet/status/380210846578016256">twitter rant</a> about <code>npm install &gt; pip install</code> i need to add some clarifications and explain why i meant. Basically i meant that npm is much easier to use from a user perspective, which is an essential point to grow a community. Package management and dependencies is an important part of modern application development workflow and thus needs high consideration.</p>
+
+<p><a href="https://npmjs.org/">npm</a> (node packaged modules) was released at end of 2011 and for sure it&#8217;s inspired from many other packages manager while removing their commons hassles. Also, its used both on backend and on frontend projects (eg: AngularJS+grunt).</p>
+
+<p>Some of the <a href="http://www.pip-installer.org/en/latest/">pip</a> hassles are :</p>
+
+<ul>
+<li>you need to install virtualenv separately</li>
+<li>you need to configure it and run cryptic commands to activate virtualenvs</li>
+<li>you can install virtualenvwrapper to make thing easier though</li>
+<li>you still need to configure it though</li>
+<li>a fresh <code>pip install</code> in a project containing the standard requirements.txt does nothing</li>
+</ul>
+
+
+<p>On the other side, npm is a no-brainer to use :</p>
+
+<ul>
+<li><code>npm install</code> installs/upgrades any project dependencies</li>
+<li>there&#8217;s no notion of virtualenv, it just uses what you have in the current <code>node_modules</code> folder or in your global install.</li>
+</ul>
+
+
+<p>Both are for sure very powerful tools that goes far beyond this basic usage but this is daily work for the developer and also the first contact when entering a new project so it should work seamlessly.</p>
+
+<p>Please correct me if i&#8217;m wrong :)</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2464,10 +2418,6 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
       </li>
     
       <li class="post">
-        <a href="/blog/2015/11/01/dev-workflow-with-rackt-cli/">Development workflow with rackt-cli</a>
-      </li>
-    
-      <li class="post">
         <a href="/blog/2015/09/04/the-web-developer-survival-guide/">The web developer survival guide</a>
       </li>
     
@@ -2477,6 +2427,10 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
     
       <li class="post">
         <a href="/blog/2014/02/14/angularjs-services-inheritance/">Object-oriented AngularJS services</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/05/unit-testing-angularjs-directive/">Unit testing an AngularJS directive</a>
       </li>
     
   </ul>
@@ -2517,7 +2471,7 @@ RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (4)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/angularjs/'>AngularJS (8)</a></li><li><a href='/blog/categories/apache/'>apache (1)</a></li><li><a href='/blog/categories/css/'>css (1)</a></li><li><a href='/blog/categories/google/'>google (1)</a></li><li><a href='/blog/categories/javascript/'>javascript (4)</a></li><li><a href='/blog/categories/mobile/'>mobile (3)</a></li><li><a href='/blog/categories/news/'>news (2)</a></li><li><a href='/blog/categories/octopress/'>octopress (1)</a></li><li><a href='/blog/categories/phonegap/'>phonegap (2)</a></li><li><a href='/blog/categories/python/'>python (1)</a></li><li><a href='/blog/categories/tech/'>tech (1)</a></li><li><a href='/blog/categories/web/'>web (3)</a></li></ul>
 </section>
 
   

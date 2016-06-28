@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | revolunet blog]]></title>
   <link href="http://blog.revolunet.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://blog.revolunet.com/"/>
-  <updated>2016-02-08T22:01:48+01:00</updated>
+  <updated>2016-06-28T23:58:10+02:00</updated>
   <id>http://blog.revolunet.com/</id>
   <author>
     <name><![CDATA[revolunet team]]></name>
@@ -192,79 +192,6 @@ function openSideBar(title, range, valueIndex, labelIndex) {</p>
 <p>Exploit the tools, push the limits, but always keep full control of your data. (see the recent <a href="http://venturebeat.com/2016/02/06/how-to-avoid-the-next-parse-shutdown-scenario/">Parse shutdown</a>)</p>
 
 <p>Once your spreadsheet is well-strutured, you can use the Google Data APIs to extract them, or use one of many available npm modules to do it, like <a href="https://www.npmjs.com/package/spreadsheet-to-json">spreadsheet-to-json</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Development workflow with rackt-cli]]></title>
-    <link href="http://blog.revolunet.com/blog/2015/11/01/dev-workflow-with-rackt-cli/"/>
-    <updated>2015-11-01T00:00:00+01:00</updated>
-    <id>http://blog.revolunet.com/blog/2015/11/01/dev-workflow-with-rackt-cli</id>
-    <content type="html"><![CDATA[<p>As advertised in my <a href="http://blog.revolunet.com/blog/2015/09/04/the-web-developer-survival-guide/">Web developer survival guide</a>, modularisation is key to keep code maintenable, testable and understandable to others, and npm makes this easy and fun.</p>
-
-<blockquote><p>see also <a href="https://github.com/sindresorhus/ama/issues/10">why writing small modules is important</a> by <a href="http://twitter.com/sindresorhus">@sindresorhus</a>.</p></blockquote>
-
-<p>But <strong>modularisation is not free</strong>, it comes at the cost of maintenability, specially if you use a complex toolchain like Babel + JSX + Tests... and have dozens of modules to maintain.</p>
-
-<p>In this article, i'll explain what is <a href="https://github.com/revolunet/rackt-cli">rackt-cli</a>, and how it helps to stay productive, with a modern and sane workflow, especially in the context of ReactJS components.</p>
-
-<p>If you're in AngularJS world, be sure to check <a href="https://github.com/ng-tools/ng-factory">ng-factory</a> from the awesomes <a href="http://twitter.com/olouv">@olouv</a> and <a href="http://twitter.com/douglasduteil">@douglasduteil</a>, which has the same goals, but with a different tech stack.</p>
-
-<p>Note that i work with a <a href="https://github.com/revolunet/rackt-cli">custom rackt-cli fork</a>, which make workflow even smoother IMHO :)</p>
-
-<p>There are already <a href="https://github.com/xgrommx/awesome-redux#boilerplate">tons</a> of <a href="https://github.com/erikras/react-redux-universal-hot-example">good</a> <a href="https://github.com/bloodyowl/react-boilerplate">boilerplates</a> around for the react stack, but once the boilerplate is used for your project, it became a part of it, and you end up with 50 different tooling for 50 modules.</p>
-
-<h4>rackt-cli solves this by isolating the workflow tasks from your code, so you can maintain them among various projects.</h4>
-
-<p>Basically, it's just an opiniated boilerplate, a set of shared tasks that do the boring stuff for you, and rules to enforce some basic coding and publishing conventions.</p>
-
-<h2>What rackt-cli gives you :</h2>
-
-<ul>
-<li><strong>Webpack</strong>, because being able to bundle assets into Javascript is awesome</li>
-<li><strong>Babel</strong>, because ES6 is explicit, powerful, and less verbose</li>
-<li><strong>Hot-reload</strong>, because a better developer experience means happier developer</li>
-<li><strong>Testem + Mocha + expect-jsx</strong>, to test your code in any browser, with CI support.</li>
-<li><strong>NPM</strong> : automated NPM publishing (bundle only) + GIT tagging</li>
-<li><strong>Changelog</strong> : automated changelog from commits messages with <a href="https://github.com/ryanflorence/rf-changelog">rf-changelog</a></li>
-<li><strong>Gh-pages</strong> : publish your examples to gh-pages</li>
-<li><strong>Eslint</strong> : code conventions based on eslint-react</li>
-</ul>
-
-
-<h2>Typical workflow</h2>
-
-<p>```sh</p>
-
-<h1>create a nice boilerplate for your component</h1>
-
-<p>rackt init my-component</p>
-
-<h1>start to make some changes</h1>
-
-<p>rackt server
-git add awesome.js
-git commit -m 'feat: awesome stuff'</p>
-
-<h1>test &amp; publish to npm</h1>
-
-<p>rackt release</p>
-
-<h1>publish examples to gh-pages</h1>
-
-<p>rackt pages</p>
-
-<p>```</p>
-
-<h1>And that's it :)</h1>
-
-<p>You can now focus on your code, tests and documentation !</p>
-
-<p>If you have some suggestions, ideas... feel free to ping me on twitter <a href="http://twitter.com/revolunet">@revolunet</a> or in the comments below.</p>
-
-<p>My rackt-cli fork : <a href="https://github.com/revolunet/rackt-cli">https://github.com/revolunet/rackt-cli</a></p>
-
-<p>Original project : <a href="https://github.com/mzabriskie/rackt-cli">https://github.com/mzabriskie/rackt-cli</a></p>
 ]]></content>
   </entry>
   
