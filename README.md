@@ -2,9 +2,7 @@
 
 ## Introduction
 
-Ce site web va envoyer du lourd très bientôt.
-
-En attendant lien vers l'intro GIT : https://hackmd.io/_2VTNwvXTe2C4suCRgpYlQ?both
+Voir [l'introduction à Git et GitHub](./intro-git-github)
 
 ## Usage du site web
 
