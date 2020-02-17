@@ -22,10 +22,10 @@ GIT historise tous les changements donc n'aies pas peur de détruire quelque cho
 
 ![](https://i.imgur.com/1jrfQWR.png)
 
-- 💡 Par convention la branche par défaut est `master`
-- 👉 [exemple de diff](https://github.com/SocialGouv/code-du-travail-numerique/pull/2350/files)
-- 👉 créer un compte sur [GitHub](https://github.com)
-- 💪 apprendre le CLI GIT : try.github.com
+💡 Par convention la branche par défaut est `master`
+👉 [exemple de diff](https://github.com/SocialGouv/code-du-travail-numerique/pull/2350/files)
+👉 créer un compte sur [GitHub](https://github.com)
+💪 apprendre le CLI GIT : try.github.com
 
 ### GitHub, GitLab
 
@@ -53,10 +53,10 @@ Et une couche "sociale" qui permet d'explorer les écosystèmes open-source.
 
 Sur GitHub ou GitLab, les **repositories** sont regroupés par `username` (github.com/ivangabriele/dumdum) ou par `organisation`(github.com/SocialGouv/ui-core) et peuvent être publics ou privés.
 
-- 👉 [exemple de PR](https://github.com/SocialGouv/code-du-travail-numerique/pull/963)
-- 👉 [exemples de milestones](https://github.com/SocialGouv/code-du-travail-numerique/milestones?state=closed)
-- 👉 [exemples de kanban](https://github.com/ansible/ansible/projects/27)
-- 👉 s'entrainer au markdown sur hackmd.io
+👉 [exemple de PR](https://github.com/SocialGouv/code-du-travail-numerique/pull/963)
+👉 [exemples de milestones](https://github.com/SocialGouv/code-du-travail-numerique/milestones?state=closed)
+👉 [exemples de kanban](https://github.com/ansible/ansible/projects/27)
+👉 s'entrainer au markdown sur hackmd.io
 
 ## Utiliser GitHub pour collaborer
 
@@ -83,7 +83,7 @@ Sur GitHub ou GitLab, les **repositories** sont regroupés par `username` (githu
 
 💡 Plusieurs workflow GIT existent selon la taille de l'équipe, le type de projet...
 
-👉 Pouvoir lier les infos métier et le code permet de tracer tout l'historique d'un projet, de partager et capitaliser sur la connaissance, d
+👉 Pouvoir lier les infos métier et le code permet de tracer tout l'historique d'un projet, de partager et capitaliser sur la connaissance, de faciliter les futures évolutions.
 
 ### Milestones
 
@@ -121,4 +121,3 @@ Pour créer un site exposé sur username.github.io:
 - hackmd.io : créer du contenu markdown en mode collaboratif
 - markdownguide.org : tout sur le markdown
 - [LiceCap](https://www.cockos.com/licecap) : créer des captures d'écran en GIF animé pour les changelogs
-
